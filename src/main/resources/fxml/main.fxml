@@ -4,37 +4,80 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" hgap="10" minHeight="400.0" minWidth="600.0" vgap="10"
-          xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="org.usfirst.frc.team25.scouting.client.Controller">
-    <columnConstraints>
-        <ColumnConstraints/>
-        <ColumnConstraints/>
-        <ColumnConstraints/>
-        <ColumnConstraints/>
-        <ColumnConstraints/>
-        <ColumnConstraints/>
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-    </rowConstraints>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.MeshView?>
+<?import javafx.scene.text.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" minHeight="400.0" minWidth="600.0"
+      xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="org.usfirst.frc.team25.scouting.client.Controller">
     <children>
-        <Button mnemonicParsing="false" text="Choose Data Folder" GridPane.rowIndex="2" GridPane.valignment="TOP"/>
+        <Pane prefHeight="80.0" prefWidth="600.0">
+            <children>
+                <ImageView fitHeight="88.0" fitWidth="76.0" layoutX="-86.0" layoutY="2.0" pickOnBounds="true"
+                           preserveRatio="true" x="100.0">
+                    <image>
+                        <Image url="@../img/team_25_logo.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fitHeight="76.0" fitWidth="91.0" layoutX="108.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../img/deep_space_logo.png"/>
+                    </image>
+                </ImageView>
+                <Button layoutX="198.0" layoutY="40.0" mnemonicParsing="false" text="Choose Data Folder"
+                        fx:id="chooseDataFolderButton"/>
+                <Text layoutX="200.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Scouting Client v3.0">
+                    <font>
+                        <Font name="Calibri Bold" size="22.0"/>
+                    </font>
+                </Text>
+                <Text layoutX="329.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="C:/Users/sng/Documents/Raider Robotix">
+                    <font>
+                        <Font name="Calibri" size="14.0"/>
+                    </font>
+                </Text>
+                <Line endX="100.0" endY="-25.0" layoutY="100.0" startX="100.0" startY="-100.0"/>
+            </children>
+        </Pane>
+        <MeshView/>
+        <Pane prefHeight="75.0" prefWidth="600.0">
+            <children>
+                <Button layoutX="14.0" layoutY="0.0" mnemonicParsing="false" text="Generate Files"/>
+                <CheckBox layoutX="14.0" layoutY="35.0" mnemonicParsing="false" text="Combine JSON"/>
+                <CheckBox layoutX="126.0" layoutY="35.0" mnemonicParsing="false" text="Picklist"/>
+                <CheckBox layoutX="198.0" layoutY="35.0" mnemonicParsing="false" text="CSV"/>
+                <CheckBox layoutX="251.0" layoutY="35.0" mnemonicParsing="false" text="Fix errors"/>
+                <CheckBox layoutX="329.0" layoutY="35.0" mnemonicParsing="false" text="Backup JSON"/>
+                <CheckBox layoutX="437.0" layoutY="35.0" mnemonicParsing="false" text="Predictions"/>
+            </children>
+        </Pane>
+        <Pane prefHeight="100.0" prefWidth="600.0">
+            <children>
+
+                <RadioButton layoutX="14.0" layoutY="63.0" mnemonicParsing="false" text="Team-based"/>
+                <RadioButton layoutX="110.0" layoutY="63.0" mnemonicParsing="false" text="Alliance-based"/>
+                <TextField layoutX="200.0" layoutY="59.0" prefHeight="25.0" prefWidth="70.0"
+                           promptText="Team 1"/>
+                <TextField layoutX="280.0" layoutY="59.0" prefHeight="25.0" prefWidth="70.0"
+                           promptText="Team 2"/>
+                <TextField layoutX="360.0" layoutY="59.0" prefHeight="25.0" prefWidth="70.0"
+                           promptText="Team 3"/>
+                <Text layoutX="14.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="Aggregate reports">
+                    <font>
+                        <Font name="Calibri Bold" size="18.0"/>
+                    </font>
+                </Text>
+                <Button layoutX="487.0" layoutY="59.0" mnemonicParsing="false" text="Generate"/>
+
+            </children>
+        </Pane>
         <Pane prefHeight="94.0" prefWidth="594.0" GridPane.rowIndex="9">
             <children>
-                <RadioButton layoutX="14.0" layoutY="63.0" mnemonicParsing="false" text="All Events - Current Year"/>
-                <RadioButton layoutX="179.0" layoutY="63.0" mnemonicParsing="false" text="Event Code"/>
-                <TextField layoutX="273.0" layoutY="59.0"/>
+                <RadioButton layoutX="14.0" layoutY="63.0" mnemonicParsing="false" text="All events in current year"/>
+                <RadioButton layoutX="179.0" layoutY="63.0" mnemonicParsing="false" text="Individual event"/>
+                <TextField layoutX="300.0" layoutY="59.0" prefHeight="25.0" prefWidth="167.0"
+                           promptText="Team number or event code"/>
                 <Text layoutX="14.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0"
                       text="Download The Blue Alliance Data">
                     <font>
@@ -44,15 +87,5 @@
                 <Button layoutX="487.0" layoutY="59.0" mnemonicParsing="false" text="Download"/>
             </children>
         </Pane>
-        <ImageView fitHeight="105.0" fitWidth="99.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../img/deep_space_logo.png"/>
-            </image>
-        </ImageView>
-        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" x="100.0">
-            <image>
-                <Image url="@../img/team_25_logo.png"/>
-            </image>
-        </ImageView>
     </children>
-</GridPane>
+</VBox>
