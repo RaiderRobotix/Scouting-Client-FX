@@ -1,0 +1,36 @@
+buildscript {
+    dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'javafx-gradle-plugin'
+
+group 'org.usfirst.frc.team25.scouting'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'com.google.code.gson:gson:2.7'
+    compile files('libs/TBA-APIv3-Java-Library.jar')
+}
+
+jfx {
+    
+}
+
+mainClassName = 'org.usfirst.frc.team25.scouting.client.Main'
