@@ -33,4 +33,4 @@ jfx {
 
 }
 
-mainClassName = 'org.usfirst.frc.team25.scouting.client.Main'
+mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
