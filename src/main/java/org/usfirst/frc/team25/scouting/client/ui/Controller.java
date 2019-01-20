@@ -1,9 +1,11 @@
 package org.usfirst.frc.team25.scouting.client.ui;
 
+import com.thebluealliance.api.v3.TBA;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
+import org.usfirst.frc.team25.scouting.client.data.BlueAlliance;
 
 import java.io.File;
 
@@ -22,7 +24,7 @@ public class Controller {
     @FXML
     private TextField analysisTeamOne, analysisTeamTwo, analysisTeamThree, teamNumEventCode;
 
-    private File currentDirectory;
+    private File currentDataDirectory;
 
     public void initialize() {
 
@@ -43,13 +45,13 @@ public class Controller {
             File selectedDirectory = directoryChooser.showDialog(chooseDataFolderButton.getScene().getWindow());
 
             if (selectedDirectory == null) {
-                if (currentDirectory == null) {
+                if (currentDataDirectory == null) {
                     statusTextBox.setText("Invalid or no data directory selected!");
                 } else {
-                    statusTextBox.setText(currentDirectory.getAbsolutePath() + " retained as data directory");
+                    statusTextBox.setText(currentDataDirectory.getAbsolutePath() + " retained as data directory");
                 }
             } else {
-                currentDirectory = selectedDirectory;
+                currentDataDirectory = selectedDirectory;
                 statusTextBox.setText(selectedDirectory.getAbsolutePath() + " selected as data directory");
                 dataDirectoryDisplay.setText(selectedDirectory.getAbsolutePath());
                 generateFilesButton.setDisable(false);
@@ -75,7 +77,13 @@ public class Controller {
         });
 
         downloadDataButton.setOnAction(event -> {
+            if (teamEventsDownload.isSelected()) {
 
+            } else {
+                String response = BlueAlliance.downloadEventTeamData(currentDataDirectory, teamNumEventCode.getText()
+                        , new TBA(BlueAlliance.API_KEY));
+
+            }
         });
 
         displayReportButton.setOnAction(event -> {

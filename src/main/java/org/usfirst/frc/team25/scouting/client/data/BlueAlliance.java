@@ -46,19 +46,21 @@ public class BlueAlliance {
      *
      * @param outputFolder Output folder for downloaded files
      * @param eventCode    Fully qualified event key
-     * @return True if download of team list is successful, false otherwise
+     * @return Status text of the download
      */
-    private static boolean downloadEventTeamData(File outputFolder, String eventCode, TBA tba) {
+    public static String downloadEventTeamData(File outputFolder, String eventCode, TBA tba) {
         try {
             String eventShortName = tba.eventRequest.getEvent(eventCode).getKey();
             exportSimpleTeamList(eventCode, outputFolder.getAbsolutePath() + "\\Teams - " + eventShortName, tba);
             exportTeamList(eventCode, outputFolder.getAbsolutePath() + "\\TeamNames - " + eventShortName, tba);
             exportMatchList(eventCode, outputFolder.getAbsolutePath() + "\\Matches - " + eventShortName, tba);
+            //TODO delete empty files
         } catch (Exception e) {
-            return false;
+            return "Data download for event " + eventCode + " failed.\nInvalid event key or no Internet access" +
+                    ".\nPlease try again.";
         }
 
-        return true;
+        return "Successfully downloaded team data for event " + eventCode;
     }
 
     /**
@@ -68,7 +70,7 @@ public class BlueAlliance {
      * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
      * @param fileName  File name of output file, without extension
      */
-    private static void exportSimpleTeamList(String eventCode, String fileName, TBA tba) throws FileNotFoundException {
+    public static void exportSimpleTeamList(String eventCode, String fileName, TBA tba) throws FileNotFoundException {
 
 
         StringBuilder teamList = new StringBuilder();
