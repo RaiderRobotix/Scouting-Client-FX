@@ -1,6 +1,8 @@
-## FRC Scouting Client [![Build Status](https://travis-ci.org/spencerng/Scouting-Client-FX.svg?branch=master)](https://travis-ci.org/spencerng/Scouting-Client-FX)
+# FRC Scouting Client [![Build Status](https://travis-ci.org/spencerng/Scouting-Client-FX.svg?branch=master)](https://travis-ci.org/spencerng/Scouting-Client-FX)
 
 A Java-based desktop client that processes scouting data from JSON files and pulls data from The Blue Alliance. To be used with the [Android scouting app](https://github.com/spencerng/Scouting-App).
+
+Built with JavaFX for the 2019 FRC season and beyond.
 
 Features:
  
