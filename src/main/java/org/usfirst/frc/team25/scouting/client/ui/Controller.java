@@ -38,7 +38,7 @@ public class Controller {
 
         dataDirectoryDisplay.setText("");
 
-        chooseDataFolderButton.setOnMouseClicked(event -> {
+        chooseDataFolderButton.setOnAction(event -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(chooseDataFolderButton.getScene().getWindow());
 
@@ -58,15 +58,27 @@ public class Controller {
             }
         });
 
-        generateFilesButton.setOnMouseClicked(event -> {
+        allianceBasedReport.setOnAction(event -> {
+            analysisTeamTwo.setDisable(!allianceBasedReport.isSelected());
+            analysisTeamThree.setDisable(!allianceBasedReport.isSelected());
+        });
+
+        teamBasedReport.setOnAction(event -> {
+            analysisTeamTwo.setDisable(teamBasedReport.isSelected());
+            analysisTeamThree.setDisable(teamBasedReport.isSelected());
+            analysisTeamTwo.setText("");
+            analysisTeamThree.setText("");
+        });
+
+        generateFilesButton.setOnAction(event -> {
 
         });
 
-        downloadDataButton.setOnMouseClicked(event -> {
+        downloadDataButton.setOnAction(event -> {
 
         });
 
-        displayReportButton.setOnMouseClicked(event -> {
+        displayReportButton.setOnAction(event -> {
 
         });
 

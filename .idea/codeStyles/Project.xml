@@ -24,9 +24,6 @@
           </group>
         </groups>
       </arrangement>
-      <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
-      <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />
-      <option name="WRAP_LONG_LINES" value="true" />
     </codeStyleSettings>
   </code_scheme>
 </component>
