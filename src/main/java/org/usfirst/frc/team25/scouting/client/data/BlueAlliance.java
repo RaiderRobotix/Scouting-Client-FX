@@ -21,22 +21,31 @@ import java.util.Calendar;
  */
 public class BlueAlliance {
 
-    public static String API_KEY;
+    private static TBA TBA;
+
+    public static void initializeApi(Class c) {
+        String apiKey = FileManager.getFileString(new File(c.getResource("/secret.txt").getFile()));
+        TBA = new TBA(apiKey);
+    }
 
     /**
      * Downloads all data from events that Team 25 is playing in for the current calendar year
      *
      * @param outputFolder Output folder for downloaded files
      */
-    public static void downloadRaiderEvents(File outputFolder, TBA tba) {
-
+    public static String downloadTeamEvents(File outputFolder, int teamNum) {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        String response = "Downloading event data for Team " + teamNum + " in " + year + "\n";
         try {
-            for (Event event : tba.teamRequest.getEvents(25, Calendar.getInstance().get(Calendar.YEAR))) {
-                downloadEventTeamData(outputFolder, event.getKey(), tba);
+            for (Event event : TBA.teamRequest.getEvents(teamNum, year)) {
+                response += "\n" + downloadEventTeamData(outputFolder, event.getKey()) + "\n";
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
+            response = teamNum + " is an invalid team number.\nPlease try again.";
         }
+
+        return response;
 
     }
 
@@ -48,19 +57,28 @@ public class BlueAlliance {
      * @param eventCode    Fully qualified event key
      * @return Status text of the download
      */
-    public static String downloadEventTeamData(File outputFolder, String eventCode, TBA tba) {
+    public static String downloadEventTeamData(File outputFolder, String eventCode) {
+
+        String response = "Successfully downloaded data for event " + eventCode;
+
         try {
-            String eventShortName = tba.eventRequest.getEvent(eventCode).getKey();
-            exportSimpleTeamList(eventCode, outputFolder.getAbsolutePath() + "\\Teams - " + eventShortName, tba);
-            exportTeamList(eventCode, outputFolder.getAbsolutePath() + "\\TeamNames - " + eventShortName, tba);
-            exportMatchList(eventCode, outputFolder.getAbsolutePath() + "\\Matches - " + eventShortName, tba);
-            //TODO delete empty files
+            String eventShortName = TBA.eventRequest.getEvent(eventCode).getKey();
+            if (exportSimpleTeamList(eventCode, outputFolder.getAbsolutePath() + "\\Teams - " + eventShortName)) {
+                response += "\nSimple team list downloaded";
+            }
+            if (exportTeamList(eventCode, outputFolder.getAbsolutePath() + "\\TeamNames - " + eventShortName)) {
+                response += "\nTeam names downloaded";
+            }
+            if (exportMatchList(eventCode, outputFolder.getAbsolutePath() + "\\Matches - " + eventShortName)) {
+                response += "\nMatch schedule downloaded";
+            }
+
         } catch (Exception e) {
-            return "Data download for event " + eventCode + " failed.\nInvalid event key or no Internet access" +
+            response = "Data download for event " + eventCode + " failed.\nInvalid event key or no Internet access" +
                     ".\nPlease try again.";
         }
 
-        return "Successfully downloaded team data for event " + eventCode;
+        return response;
     }
 
     /**
@@ -70,16 +88,16 @@ public class BlueAlliance {
      * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
      * @param fileName  File name of output file, without extension
      */
-    public static void exportSimpleTeamList(String eventCode, String fileName, TBA tba) throws FileNotFoundException {
+    public static boolean exportSimpleTeamList(String eventCode, String fileName) throws FileNotFoundException {
 
 
         StringBuilder teamList = new StringBuilder();
         ArrayList<Team> teams;
         try {
-            teams = Sorters.sortByTeamNum(new ArrayList<>(Arrays.asList(tba.eventRequest.getTeams(eventCode))));
+            teams = Sorters.sortByTeamNum(new ArrayList<>(Arrays.asList(TBA.eventRequest.getTeams(eventCode))));
         } catch (IOException e) {
             e.printStackTrace();
-            return;
+            return false;
         }
         for (Team team : teams) {
             teamList.append(team.getTeamNumber()).append(",");
@@ -87,9 +105,12 @@ public class BlueAlliance {
         StringBuilder output = new StringBuilder(teamList.toString());
         output.setCharAt(output.length() - 1, ' ');
 
-        FileManager.outputFile(fileName, "csv", teamList.toString());
+        if (!teamList.toString().isEmpty()) {
+            FileManager.outputFile(fileName, "csv", teamList.toString());
+            return true;
+        }
 
-
+        return false;
     }
 
     /**
@@ -100,20 +121,26 @@ public class BlueAlliance {
      * @param fileName  File name of output file, without extension
      */
 
-    private static void exportTeamList(String eventCode, String fileName, TBA tba) throws FileNotFoundException {
+    private static boolean exportTeamList(String eventCode, String fileName) throws FileNotFoundException {
 
         StringBuilder teamList = new StringBuilder();
 
         try {
             for (Team team :
-                    Sorters.sortByTeamNum(new ArrayList<>(Arrays.asList(tba.eventRequest.getTeams(eventCode))))) {
+                    Sorters.sortByTeamNum(new ArrayList<>(Arrays.asList(TBA.eventRequest.getTeams(eventCode))))) {
                 teamList.append(team.getTeamNumber()).append(",").append(team.getNickname()).append(",\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return;
+            return false;
         }
-        FileManager.outputFile(fileName, "csv", teamList.toString());
+
+        if (!teamList.toString().isEmpty()) {
+            FileManager.outputFile(fileName, "csv", teamList.toString());
+            return true;
+        }
+
+        return false;
 
     }
 
@@ -124,11 +151,11 @@ public class BlueAlliance {
      * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
      * @param fileName  File name of output, without extension
      */
-    private static void exportMatchList(String eventCode, String fileName, TBA tba) throws FileNotFoundException {
+    private static boolean exportMatchList(String eventCode, String fileName) throws FileNotFoundException {
         StringBuilder matchList = new StringBuilder();
         try {
             for (Match match :
-                    Sorters.sortByMatchNum(Sorters.filterQualification(new ArrayList<>(Arrays.asList(tba.eventRequest.getMatches(eventCode)))))) {
+                    Sorters.sortByMatchNum(Sorters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))))) {
 
                 matchList.append(match.getMatchNumber()).append(",");
                 for (int i = 0; i < 2; i++) //iterate through two alliances
@@ -146,11 +173,16 @@ public class BlueAlliance {
 
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            return;
+            return false;
         }
-        FileManager.outputFile(fileName, "csv", matchList.toString());
+
+        if (!matchList.toString().isEmpty()) {
+            FileManager.outputFile(fileName, "csv", matchList.toString());
+            return true;
+        }
+
+        return false;
 
     }
 
@@ -159,11 +191,11 @@ public class BlueAlliance {
      *
      * @param outputFolder Output folder for downloaded files
      */
-    public static void downloadRaiderEvents(File outputFolder, int year, TBA tba) {
+    public static void downloadTeamEvents(File outputFolder, int year, int teamNum) {
 
         try {
-            for (Event event : tba.teamRequest.getEvents(25, year)) {
-                downloadEventTeamData(outputFolder, event.getKey(), tba);
+            for (Event event : TBA.teamRequest.getEvents(teamNum, year)) {
+                downloadEventTeamData(outputFolder, event.getKey());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -171,13 +203,20 @@ public class BlueAlliance {
 
     }
 
-    public static void downloadEventMatchData(String eventCode, TBA tba, File outputDirectory) throws IOException {
+    public static boolean downloadEventMatchData(String eventCode, File outputDirectory) throws IOException {
         ArrayList<Match> matches =
-                Sorters.sortByMatchNum(Sorters.filterQualification(new ArrayList<>(Arrays.asList(tba.eventRequest.getMatches(eventCode)))));
+                Sorters.sortByMatchNum(Sorters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))));
+
+        if (matches.size() == 0) {
+            return false;
+        }
+
         Gson gson = new Gson();
         String jsonString = gson.toJson(matches);
         FileManager.outputFile(outputDirectory.getAbsolutePath() + "\\ScoreBreakdown - " + eventCode, "json",
                 jsonString);
+
+        return true;
     }
 
 

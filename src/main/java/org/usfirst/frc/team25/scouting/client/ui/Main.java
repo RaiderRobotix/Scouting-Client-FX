@@ -7,9 +7,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.usfirst.frc.team25.scouting.client.data.BlueAlliance;
-import org.usfirst.frc.team25.scouting.client.data.FileManager;
-
-import java.io.File;
 
 public class Main extends Application {
 
@@ -31,8 +28,7 @@ public class Main extends Application {
             System.exit(0);
         });
 
-        // File isn't committed to git, but must be created locally
-        BlueAlliance.API_KEY = FileManager.getFileString(new File(getClass().getResource("/secret.txt").getFile()));
+        BlueAlliance.initializeApi(getClass());
 
     }
 }

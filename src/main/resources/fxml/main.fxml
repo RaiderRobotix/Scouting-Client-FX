@@ -22,7 +22,7 @@
         <RowConstraints/>
         <RowConstraints/>
     </rowConstraints>
-    <Pane prefHeight="105.0" prefWidth="600.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+    <Pane prefHeight="105.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <ImageView fitHeight="88.0" fitWidth="76.0" layoutX="-86.0" layoutY="16.0" pickOnBounds="true"
                    preserveRatio="true" x="100.0">
             <Image url="@../img/team_25_logo.png"/>
@@ -47,62 +47,60 @@
         </Text>
         <Line endX="100.0" endY="-25.0" layoutY="120.0" startX="100.0" startY="-100.0"/>
     </Pane>
-    <Pane prefHeight="108.0" prefWidth="600.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+    <Pane prefHeight="108.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
         <Text layoutX="14.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data Processing">
             <font>
                 <Font name="Calibri Bold" size="18.0"/>
             </font>
         </Text>
-        <Button disable="true" layoutX="343.0" layoutY="50.0" mnemonicParsing="false" text="Generate Files"
-                fx:id="generateFilesButton"/>
-        <CheckBox layoutX="14.0" layoutY="45.0" mnemonicParsing="false" text="Combine JSON"
-                  fx:id="combineJson"/>
-        <CheckBox layoutX="126.0" layoutY="45.0" mnemonicParsing="false" text="Picklists"
-                  fx:id="generatePicklists"/>
-        <CheckBox layoutX="126.0" layoutY="77.0" mnemonicParsing="false" text="CSV" fx:id="generateCsv"/>
-        <CheckBox layoutX="205.0" layoutY="46.0" mnemonicParsing="false" text="Fix errors" fx:id="fixErrors"/>
-        <CheckBox layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Backup JSON" fx:id="backupJson"/>
-        <CheckBox layoutX="205.0" layoutY="77.0" mnemonicParsing="false" text="Predictions"
-                  fx:id="generatePredictions"/>
+        <Button fx:id="generateFilesButton" disable="true" layoutX="343.0" layoutY="50.0" mnemonicParsing="false"
+                text="Generate Files"/>
+        <CheckBox fx:id="combineJson" layoutX="14.0" layoutY="45.0" mnemonicParsing="false" text="Combine JSON"/>
+        <CheckBox fx:id="generatePicklists" layoutX="126.0" layoutY="45.0" mnemonicParsing="false" text="Picklists"/>
+        <CheckBox fx:id="generateCsv" layoutX="126.0" layoutY="77.0" mnemonicParsing="false" text="CSV"/>
+        <CheckBox fx:id="fixErrors" layoutX="205.0" layoutY="46.0" mnemonicParsing="false" text="Fix errors"/>
+        <CheckBox fx:id="backupJson" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Backup JSON"/>
+        <CheckBox fx:id="generatePredictions" layoutX="205.0" layoutY="77.0" mnemonicParsing="false"
+                  text="Predictions"/>
     </Pane>
-    <Pane prefHeight="60.0" prefWidth="600.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+    <Pane prefHeight="60.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
 
-        <RadioButton layoutX="14.0" layoutY="43.0" mnemonicParsing="false" selected="true" text="Team-based"
-                     fx:id="teamBasedReport"/>
-        <RadioButton layoutX="110.0" layoutY="43.0" mnemonicParsing="false" text="Alliance-based"
-                     fx:id="allianceBasedReport"/>
-        <TextField layoutX="230.0" layoutY="39.0" prefHeight="25.0" prefWidth="70.0" promptText="Team 1"
-                   fx:id="analysisTeamOne"/>
-        <TextField disable="true" layoutX="308.0" layoutY="39.0" prefHeight="25.0" prefWidth="70.0"
-                   promptText="Team 2" fx:id="analysisTeamTwo"/>
-        <TextField disable="true" layoutX="388.0" layoutY="39.0" prefHeight="25.0" prefWidth="70.0"
-                   promptText="Team 3" fx:id="analysisTeamThree"/>
+        <RadioButton fx:id="teamBasedReport" layoutX="14.0" layoutY="43.0" mnemonicParsing="false" selected="true"
+                     text="Team-based"/>
+        <RadioButton fx:id="allianceBasedReport" layoutX="110.0" layoutY="43.0" mnemonicParsing="false"
+                     text="Alliance-based"/>
+        <TextField fx:id="analysisTeamOne" layoutX="230.0" layoutY="39.0" prefHeight="25.0" prefWidth="70.0"
+                   promptText="Team 1"/>
+        <TextField fx:id="analysisTeamTwo" disable="true" layoutX="308.0" layoutY="39.0" prefHeight="25.0"
+                   prefWidth="70.0" promptText="Team 2"/>
+        <TextField fx:id="analysisTeamThree" disable="true" layoutX="388.0" layoutY="39.0" prefHeight="25.0"
+                   prefWidth="70.0" promptText="Team 3"/>
         <Text layoutX="14.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Aggregate reports">
             <font>
                 <Font name="Calibri Bold" size="18.0"/>
             </font>
         </Text>
-        <Button disable="true" layoutX="487.0" layoutY="39.0" mnemonicParsing="false" text="Display"
-                fx:id="displayReportButton"/>
+        <Button fx:id="displayReportButton" disable="true" layoutX="487.0" layoutY="39.0" mnemonicParsing="false"
+                text="Display"/>
 
     </Pane>
-    <Pane prefHeight="85.0" prefWidth="600.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-        <RadioButton layoutX="14.0" layoutY="56.0" mnemonicParsing="false" text="All events in current year"
-                     fx:id="teamEventsDownload" selected="true"/>
-        <RadioButton layoutX="179.0" layoutY="56.0" mnemonicParsing="false" text="Individual event"
-                     fx:id="eventDownload"/>
-        <TextField layoutX="300.0" layoutY="52.0" prefHeight="25.0" prefWidth="167.0"
-                   promptText="Team number or event code" fx:id="teamNumEventCode"/>
+    <Pane prefHeight="85.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <RadioButton fx:id="teamEventsDownload" layoutX="14.0" layoutY="56.0" mnemonicParsing="false" selected="true"
+                     text="All events in current year"/>
+        <RadioButton fx:id="eventDownload" layoutX="179.0" layoutY="56.0" mnemonicParsing="false"
+                     text="Individual event"/>
+        <TextField fx:id="teamNumEventCode" layoutX="300.0" layoutY="52.0" prefHeight="25.0" prefWidth="167.0"
+                   promptText="Team number or event code"/>
         <Text layoutX="14.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0"
               text="Download The Blue Alliance Data">
             <font>
                 <Font name="Calibri Bold" size="18.0"/>
             </font>
         </Text>
-        <Button disable="true" layoutX="487.0" layoutY="52.0" mnemonicParsing="false" text="Download"
-                fx:id="downloadDataButton"/>
+        <Button fx:id="downloadDataButton" disable="true" layoutX="487.0" layoutY="52.0" mnemonicParsing="false"
+                text="Download"/>
     </Pane>
-    <TextArea fx:id="statusTextBox" editable="false" prefHeight="350.0" prefWidth="200.0" wrapText="true"
+    <TextArea fx:id="statusTextBox" editable="false" prefHeight="350.0" prefWidth="242.0" wrapText="true"
               GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="4"
               GridPane.valignment="CENTER">
         <GridPane.margin>

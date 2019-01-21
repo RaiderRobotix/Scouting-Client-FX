@@ -1,6 +1,5 @@
 package org.usfirst.frc.team25.scouting.client.ui;
 
-import com.thebluealliance.api.v3.TBA;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
@@ -77,13 +76,20 @@ public class Controller {
         });
 
         downloadDataButton.setOnAction(event -> {
+            String response;
             if (teamEventsDownload.isSelected()) {
-
+                try {
+                    response = BlueAlliance.downloadTeamEvents(currentDataDirectory,
+                            Integer.parseInt(teamNumEventCode.getText()));
+                } catch (NumberFormatException e) {
+                    response = teamNumEventCode.getText() + " is not a valid team number";
+                }
             } else {
-                String response = BlueAlliance.downloadEventTeamData(currentDataDirectory, teamNumEventCode.getText()
-                        , new TBA(BlueAlliance.API_KEY));
+                response = BlueAlliance.downloadEventTeamData(currentDataDirectory, teamNumEventCode.getText());
 
             }
+
+            statusTextBox.setText(response);
         });
 
         displayReportButton.setOnAction(event -> {

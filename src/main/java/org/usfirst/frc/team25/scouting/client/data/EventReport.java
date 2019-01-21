@@ -2,7 +2,6 @@ package org.usfirst.frc.team25.scouting.client.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.thebluealliance.api.v3.TBA;
 import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.MatchScoreBreakdown2018Alliance;
 import org.usfirst.frc.team25.scouting.client.models.*;
@@ -52,18 +51,14 @@ class EventReport {
     }
 
     private void fixInaccuraciesTBA() {
-        TBA tba;
 
-        String apiKey = BlueAlliance.API_KEY;
 
-        if (!apiKey.isEmpty()) {
-            tba = new TBA(apiKey);
-            try {
-                BlueAlliance.downloadEventMatchData("2018" + event, tba, directory);
-            } catch (IOException e2) {
-                e2.printStackTrace();
-            }
+        try {
+            BlueAlliance.downloadEventMatchData("2018" + event, directory);
+        } catch (IOException e2) {
+            e2.printStackTrace();
         }
+
 
         try {
 
