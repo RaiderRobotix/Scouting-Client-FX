@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Class of static methods used for file I/O
@@ -21,7 +23,7 @@ import java.util.ArrayList;
  */
 public class FileManager {
 
-    private static final String FILE_EXTENSION_REGEX = "\\.(?=[^.]+$)";
+    public static final String FILE_EXTENSION_REGEX = "\\.(?=[^.]+$)";
 
 
     /**
@@ -167,5 +169,69 @@ public class FileManager {
         return gson.fromJson(FileManager.getFileString(fileName),
                 new TypeToken<ArrayList<Match>>() {
                 }.getType());
+    }
+
+    public static File getTeamNameList(File directory) {
+
+        for (File file : FileManager.getFilesFromDirectory(directory)) {
+            String fileName = file.getName();
+            try {
+                System.out.println(fileName);
+                if (fileName.split(FILE_EXTENSION_REGEX)[1].equals("csv") && fileName.contains("TeamNames")) {
+                    return file;
+                }
+            } catch (Exception e) {
+
+            }
+
+        }
+
+        return null;
+    }
+
+    public static boolean deleteIndividualDataFiles(File directory) {
+        for (File file : getDataFiles(directory)) {
+            if (!file.getName().contains("All")) {
+                if (!file.delete()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static ArrayList<File> getDataFiles(File directory) {
+
+        ArrayList<File> jsonFileList = new ArrayList<>();
+
+        for (File file : FileManager.getFilesFromDirectory(directory)) {
+            String fileName = file.getName();
+            try {
+                if (fileName.split(FILE_EXTENSION_REGEX)[1].equals("json") && fileName.contains("Data")) {
+                    jsonFileList.add(file);
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+
+            }
+        }
+
+        return jsonFileList;
+    }
+
+    public static boolean createBackup(ArrayList<File> files, File rootDirectory) {
+
+        File backupDirectory = new File(rootDirectory.getAbsolutePath() + "/backup");
+        if (!backupDirectory.exists()) {
+            backupDirectory.mkdirs();
+        }
+
+        for (File file : files) {
+            String newFileName = file.getName().split(FILE_EXTENSION_REGEX)[0] + " - Backup " + new SimpleDateFormat(
+                    "MM-dd HH-mm").format(new Date()) + "." + file.getName().split(FILE_EXTENSION_REGEX)[1];
+            File backupFile = new File(backupDirectory.getAbsolutePath() + "/" + newFileName);
+            outputFile(backupFile, getFileString(file));
+        }
+
+        return true;
     }
 }

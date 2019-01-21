@@ -17,24 +17,27 @@ import java.util.HashMap;
  *
  * @author sng
  */
-class EventReport {
+public class EventReport {
 
     /**
-     * Unsorted list of ScoutEntrys TODO create method to sort them
+     * Unsorted list of ScoutEntries
      */
     private final ArrayList<ScoutEntry> scoutEntries;
     private final String event;
     private final File directory;
-    private final HashMap<Integer, TeamReport> teamReports = new HashMap<>();
-    private String inaccuracyList = "";
+    private HashMap<Integer, TeamReport> teamReports;
+    private String inaccuracyList;
     private File teamNameList;
     private HashMap<Integer, Integer> pickPoints;
 
     public EventReport(ArrayList<ScoutEntry> entries, String event, File directory) {
+        teamReports = new HashMap<>();
+        inaccuracyList = "";
+
         scoutEntries = entries;
         this.event = event;
         this.directory = directory;
-        fixInaccuraciesTBA();
+
         for (ScoutEntry entry : scoutEntries) {
 
             entry.calculateDerivedStats();
@@ -50,20 +53,19 @@ class EventReport {
 
     }
 
-    private void fixInaccuraciesTBA() {
-
+    public void fixInaccuraciesTBA() {
 
         try {
-            BlueAlliance.downloadEventMatchData("2018" + event, directory);
-        } catch (IOException e2) {
-            e2.printStackTrace();
+            BlueAlliance.downloadEventMatchData(event, directory);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
         try {
 
             ArrayList<Match> matchData = FileManager.deserializeScoreBreakdown(
-                    new File(directory.getAbsoluteFile() + "\\ScoreBreakdown - 2018" + event + ".json"));
+                    new File(directory.getAbsoluteFile() + "\\ScoreBreakdown - " + event + ".json"));
 
 
             for (ScoutEntry entry : scoutEntries) {
@@ -157,9 +159,8 @@ class EventReport {
                 }
 
             }
-        } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -449,10 +450,14 @@ class EventReport {
     }
 
     public void generatePicklists(File outputDirectory) {
-        PicklistGenerator pg = new PicklistGenerator(scoutEntries, outputDirectory);
+        PicklistGenerator pg = new PicklistGenerator(scoutEntries, outputDirectory, event);
         pg.generateBogoCompareList();
         pg.generateComparePointList();
         pg.generatePickPointList();
+    }
+
+    public void generateMatchPredictions(File outputDirectory) {
+
     }
 
     public TeamReport getTeamReport(int teamNum) {

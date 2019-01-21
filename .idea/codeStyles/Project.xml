@@ -20,7 +20,7 @@
           </group>
           <group>
             <type>DEPENDENT_METHODS</type>
-            <order>BREADTH_FIRST</order>
+            <order>DEPTH_FIRST</order>
           </group>
         </groups>
       </arrangement>

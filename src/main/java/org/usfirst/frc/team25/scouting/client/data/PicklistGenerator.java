@@ -41,14 +41,17 @@ class PicklistGenerator {
      * The directory to output the generated picklists
      */
     private final File outputDirectory;
+    private String eventName;
 
-    public PicklistGenerator(ArrayList<ScoutEntry> scoutEntries, File outputDirectory) {
+    public PicklistGenerator(ArrayList<ScoutEntry> scoutEntries, File outputDirectory, String eventName) {
         this.scoutEntries = scoutEntries;
         this.outputDirectory = outputDirectory;
 
         comparisons = new ArrayList<Comparison>();
         teamNums = new ArrayList<Integer>();
         compLookup = new HashMap<>();
+
+        this.eventName = eventName;
 
         //Create list of all comparisons from the scout entries
         for (ScoutEntry entry : scoutEntries) {
@@ -295,8 +298,7 @@ class PicklistGenerator {
                             tree = new RankingTree(bestTree.getTreeHashMap());
                         }
                     }
-					/*System.out.println("Printing new tree"+tree.toString());
-						System.out.println("Compliance: " + tree.getCompliancePercent(comparisons));*/
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -305,7 +307,7 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\topo_sort_list.txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Topological Sort - " + eventName + ".txt"),
                 rankTreeStringToStringList(tree));
     }
 
@@ -354,7 +356,7 @@ class PicklistGenerator {
             }
         } while (swapsNeeded);
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\head_to_head_" + listTitle + ".txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Head to Head - " + eventName + ".txt"),
                 arrayListToStringList(orderedList));
 
     }
@@ -443,12 +445,10 @@ class PicklistGenerator {
 
 
         bestTree = new RankingTree(bestRanks);
-        System.out.println(bestTree);
-        System.out.println("Compliance: " + bestTree.getCompliancePercent(comparisons));
 
         //generateHeadToHeadList(bestTree.toArrayList(), "bogo");
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\bogo_compare_list.txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Bogo Compare - " + eventName + ".txt"),
                 rankTreeStringToStringList(bestTree));
     }
 
@@ -475,7 +475,7 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\compare_point_list.txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Compare Points - " + eventName + ".txt"),
                 hashMapToStringList(compareList));
     }
 
@@ -523,7 +523,8 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\picknum_list.txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Pick Points" + eventName +
+                        ".txt"),
                 hashMapToStringList(pickPoints));
 
     }

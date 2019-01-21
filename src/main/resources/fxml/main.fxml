@@ -10,18 +10,7 @@
 <GridPane xmlns:fx="http://javafx.com/fxml/1" minHeight="370.0" minWidth="820.0"
           xmlns="http://javafx.com/javafx/8.0.172-ea"
           fx:controller="org.usfirst.frc.team25.scouting.client.ui.Controller">
-    <columnConstraints>
-        <ColumnConstraints/>
-        <ColumnConstraints/>
-        <ColumnConstraints/>
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-        <RowConstraints/>
-    </rowConstraints>
+
     <Pane prefHeight="105.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <ImageView fitHeight="88.0" fitWidth="76.0" layoutX="-86.0" layoutY="16.0" pickOnBounds="true"
                    preserveRatio="true" x="100.0">
