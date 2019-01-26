@@ -9,6 +9,8 @@ import org.usfirst.frc.team25.scouting.client.models.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,8 +44,8 @@ public class EventReport {
 
             entry.calculateDerivedStats();
 
-
             int teamNum = entry.getPreMatch().getTeamNum();
+
             if (!teamReports.containsKey(teamNum)) {
                 teamReports.put(teamNum, new TeamReport(teamNum));
             }
@@ -89,10 +91,6 @@ public class EventReport {
                             sb = match.getScoreBreakdown().getBlue();
                         }
 
-                        if (!entry.getTeleOp().getFieldLayout().equals(sb.getTba_gameData())) {
-                            inaccuracies += "plate lighting, ";
-                            entry.getTeleOp().setFieldLayout(sb.getTba_gameData());
-                        }
 
                         boolean actualAutoRun = false;
                         boolean actualClimb = false;
@@ -124,31 +122,19 @@ public class EventReport {
                                     "Climbing");
                         }
 
-                        if (actualAutoRun != entry.getAuto().isAutoLineCross()) {
+                        if (actualAutoRun != entry.getAuto().isReachHabLine()) {
                             inaccuracies += "auto run, ";
-                            entry.getAuto().setAutoLineCross(actualAutoRun);
+                            entry.getAuto().setReachHabLine(actualAutoRun);
                         }
 
-                        if (actualClimb != entry.getTeleOp().isSuccessfulRungClimb() && actualClimb != entry.getTeleOp().isOtherRobotClimb()) {
-                            inaccuracies += "is actually climbing (manually check), ";
-                        }
-                        //not completely accurate due to random nature of levitate
-                        if (actualPark != entry.getTeleOp().isParked() && !actualLevitate) {
-                            inaccuracies += "parking, ";
-                            entry.getTeleOp().setParked(actualPark);
-                        }
+
                         if (actualLevitate && partnersClimb && !entry.getPostMatch().robotQuickCommentSelections.get(
                                 "Climb/park unneeded (levitate used and others climbed)")) {
                             entry.getPostMatch().robotQuickCommentSelections.put("Climb/park unneeded (levitate used " +
                                     "and others climbed)", true);
                             inaccuracies += "climb/park unneeded, ";
                         }
-                        if (!actualClimb && (entry.getTeleOp().isSuccessfulRungClimb() || entry.getTeleOp().isOtherRobotClimb())) {
-                            entry.getTeleOp().setOtherRobotClimb(false);
-                            entry.getTeleOp().setOtherRobotClimbType("");
-                            entry.getTeleOp().setSuccessfulRungClimb(false);
-                            inaccuracies += "not actually climbing, ";
-                        }
+
 
                         if (!inaccuracies.isEmpty()) {
                             inaccuracyList += prefix + inaccuracies + "\n";
@@ -195,6 +181,7 @@ public class EventReport {
         //        formatString.append("Avg. gears: ").append(Statistics.round(report.avgTeleOpGears, 2)).append("<br>");
         //        formatString.append("Gear counts: ");
         //
+
 
         formatString.append("</html>");
         return formatString.toString();
@@ -269,58 +256,6 @@ public class EventReport {
         teamNameList = list;
     }
 
-    public void generateTeamReportSpreadsheet(File outputDirectory) {
-        final String COMMA = ",";
-
-        //        StringBuilder fileContents = new StringBuilder("teamNum,teamName,avgAutoScore,sdAutoScore,
-        //        avgTeleOpScore,sdTeleOpScore,avgMatchScore,sdMatchScore,reachBaselinePercentage,avgAutoKpa,
-        //        sdAutoKpa,avgTeleOpKpa,sdTeleOpKpa,avgAutoGears,sdAutoGears,autoGearAttemptSuccessPercent,
-        //        autoGearPegLoc,leftPegPercent,rightPegPercent,centerPegPercent,totalLeftPegSuccess,
-        //        totalRightPegSuccess,totalCenterPegSuccess,avgTeleOpGears,sdTeleOpGears,avgDroppedGears,
-        //        avgHighGoals,sdHighGoals,avgLowGoals,sdLowGoals,avgHoppers,avgPointsPerCycle,sdPointsPerCycle,
-        //        avgCycles,sdCycles,takeoffPercentage,takeoffAttemptPercentage,takeoffAttemptSuccessPercentage,
-        //        pilotPlayPercentage,avgTeleOpKpaFuelFocus,avgTeleOpGearsGearFocus,fuelFocusPercent,
-        //        gearFocusPercent,hasPickup,hasIntake,isActive,doNotPick,frequentRobotCommentStr,
-        //        frequentPilotCommentStr,allComments,\n");
-        //        for (int key : teamReports.keySet()) {
-        //            TeamReport report = teamReports.get(key);
-        //            fileContents.append(report.teamNum).append(COMMA).append(report.teamName).append(COMMA).append
-        //            (report.avgAutoScore).append(COMMA).append(report.sdAutoScore).append(COMMA).append(report
-        //            .avgTeleOpScore).append(COMMA).append(report.sdTeleOpScore).append(COMMA).append(report
-        //            .avgMatchScore).append(COMMA).append(report.sdMatchScore).append(COMMA).append(report
-        //            .autoRunPercentage).append(COMMA).append(report.avgAutoKpa).append(COMMA).append(report
-        //            .sdAutoKpa).append(COMMA).append(report.avgTeleOpKpa).append(COMMA).append(report.sdTeleOpKpa)
-        //            .append(COMMA).append(report.avgAutoGears).append(COMMA).append(report.sdAutoGears).append
-        //            (COMMA).append(report.autoGearAttemptSuccessPercent).append(COMMA).append(report
-        //            .autoGearPegLoc).append(COMMA).append(report.leftPegPercent).append(COMMA).append(report
-        //            .rightPegPercent).append(COMMA).append(report.centerPegPercent).append(COMMA).append(report
-        //            .totalLeftPegSuccess).append(COMMA).append(report.totalRightPegSuccess).append(COMMA).append
-        //            (report.totalCenterPegSuccess).append(COMMA).append(report.avgTeleOpGears).append(COMMA).append
-        //            (report.sdTeleOpGears).append(COMMA).append(report.avgDroppedGears).append(COMMA).append(report
-        //            .avgHighGoals).append(COMMA).append(report.sdHighGoals).append(COMMA).append(report
-        //            .avgLowGoals).append(COMMA).append(report.sdLowGoals).append(COMMA).append(report.avgHoppers)
-        //            .append(COMMA).append(report.avgPointsPerCycle).append(COMMA).append(report.sdPointsPerCycle)
-        //            .append(COMMA).append(report.avgCycles).append(COMMA).append(report.sdCycles).append(COMMA)
-        //            .append(report.takeoffPercentage).append(COMMA).append(report.takeoffAttemptPercentage).append
-        //            (COMMA).append(report.takeoffAttemptSuccessPercentage).append(COMMA).append(report
-        //            .pilotPlayPercentage).append(COMMA).append(report.avgTeleOpKpaFuelFocus).append(COMMA).append
-        //            (report.avgTeleOpGearsGearFocus).append(COMMA).append(report.fuelFocusPercent).append(COMMA)
-        //            .append(report.gearFocusPercent).append(COMMA).append(report.hasPickup).append(COMMA).append
-        //            (report.hasIntake).append(COMMA).append(report.isActive).append(COMMA).append(report.doNotPick)
-        //            .append(COMMA).append(report.frequentRobotCommentStr).append(COMMA).append(report
-        //            .frequentPilotCommentStr).append(COMMA).append(report.allComments).append(COMMA).append('\n');
-        //
-        //        }
-        //
-        //
-        //        try {
-        //            FileManager.outputFile(outputDirectory.getAbsolutePath() + "\\TeamReports - " + event, "csv",
-        //            fileContents.toString());
-        //        } catch (FileNotFoundException e) {
-        //            //
-        //            e.printStackTrace();
-        //        }
-    }
 
     /**
      * Generates summary and team Excel spreadsheets
@@ -329,6 +264,7 @@ public class EventReport {
      */
     public void generateRawSpreadsheet(File outputDirectory) {
         final String COMMA = ",";
+        //TODO programatically generate this
         StringBuilder header = new StringBuilder("Scout Name,Match Num,Scouting Pos,Team Num,Starting Pos,Field Layout,"
                 + "Near Switch Auto,Far Switch Auto,Near Scale Auto,Far Scale Auto,Center Switch Auto,Center Scale " +
                 "Auto,"
@@ -358,11 +294,29 @@ public class EventReport {
             TeleOp tele = entry.getTeleOp();
             PostMatch post = entry.getPostMatch();
 
-            fileContents.append(pre.getScoutName()).append(COMMA).append(pre.getMatchNum()).append(COMMA).append(pre.getScoutPos()).append(COMMA).append(pre.getTeamNum()).append(COMMA).append(pre.getStartingPos()).append(COMMA).append(tele.getFieldLayout()).append(COMMA).append(entry.isNearSwitchAuto()).append(COMMA).append(entry.isFarSwitchAuto()).append(COMMA).append(entry.isNearScaleAuto()).append(COMMA).append(entry.isFarScaleAuto()).append(COMMA).append(entry.isCenterSwitchAuto()).append(COMMA).append(entry.isCenterScaleAuto()).append(COMMA);
-            fileContents.append(auto.getSwitchCubes()).append(COMMA).append(auto.getScaleCubes()).append(COMMA).append(auto.getExchangeCubes()).append(COMMA).append(auto.getPowerCubePilePickup()).append(COMMA).append(auto.getSwitchAdjacentPickup()).append(COMMA).append(auto.getCubesDropped()).append(COMMA).append(auto.isAutoLineCross()).append(COMMA).append(auto.isNullTerritoryFoul()).append(COMMA).append(auto.isCubeDropOpponentSwitchPlate()).append(COMMA).append(auto.isCubeDropOpponentScalePlate()).append(COMMA);
+            Object[] dataObjects = {entry.getPreMatch(), entry.getAuto(), entry.getTeleOp(), entry.getPostMatch()};
 
-            fileContents.append(tele.getFirstCubeTime()).append(COMMA).append(tele.getOwnSwitchCubes()).append(COMMA).append(tele.getScaleCubes()).append(COMMA).append(tele.getOpponentSwitchCubes()).append(COMMA).append(tele.getExchangeCubes()).append(COMMA).append(tele.getCubesDropped()).append(COMMA).append(tele.getClimbsAssisted()).append(COMMA).append(tele.isParked()).append(COMMA).append(tele.isAttemptRungClimb()).append(COMMA).append(tele.isSuccessfulRungClimb()).append(COMMA).append(tele.isOtherRobotClimb()).append(COMMA).append(tele.getOtherRobotClimbType()).append(COMMA);
-            fileContents.append(post.getFocus()).append(COMMA).append(post.getRobotComment()).append(COMMA).append(post.getRobotQuickCommentStr()).append(COMMA).append(post.getPickNumber()).append(COMMA);
+
+            for (Object dataObject : dataObjects) {
+                // returns all members including private members but not inherited members.
+                Field[] fields = dataObject.getClass().getDeclaredFields();
+
+                for (Field metric : fields) {
+                    Object metricValue = "";
+                    for (Method m : TeleOp.class.getMethods()) {
+                        if (m.getName().contains(metric.getName()) && m.getParameterTypes().length == 0) {
+                            try {
+                                metricValue = m.invoke(dataObject);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                    }
+                    fileContents.append(metricValue).append(",");
+                }
+
+            }
 
             for (String key : keys) {
                 fileContents.append(post.getRobotQuickCommentSelections().get(key)).append(COMMA);

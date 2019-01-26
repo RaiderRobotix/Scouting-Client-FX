@@ -1,115 +1,127 @@
 package org.usfirst.frc.team25.scouting.client.models;
 
-
 /**
  * Container holding data from the tele-operated period
  * Includes endgame data
  */
 public class TeleOp {
 
-    private final float firstCubeTime;
-    private final int ownSwitchCubes;
-    private final int scaleCubes;
-    private final int opponentSwitchCubes;
-    private final int exchangeCubes;
-    private final int cubesDropped;
-    private final int climbsAssisted;
-    private final boolean attemptRungClimb;
-    private boolean parked;
-    private boolean successfulRungClimb;
-    private boolean otherRobotClimb;
-    private String otherRobotClimbType, fieldLayout;
+    private final int cargoShipHatches;
+    private final int cargoShipCargo;
+    private final int rocketLevelOneCargo;
+    private final int rocketLevelOneHatches;
+    private final int rocketLevelTwoCargo;
+    private final int rocketLevelTwoHatches;
+    private final int rocketLevelThreeCargo;
+    private final int rocketLevelThreeHatches;
+    private final int hatchesDropped;
+    private final int cargoDropped;
 
-    public TeleOp(float firstCubeTime, int ownSwitchCubes, int scaleCubes, int opponentSwitchCubes,
-                  int exchangeCubes, int cubesDropped, int climbsAssisted, boolean parked,
-                  boolean attemptRungClimb, boolean successfulRungClimb, boolean otherRobotClimb,
-                  String otherRobotClimbType, String fieldLayout) {
-        this.firstCubeTime = firstCubeTime;
-        this.ownSwitchCubes = ownSwitchCubes;
-        this.scaleCubes = scaleCubes;
-        this.opponentSwitchCubes = opponentSwitchCubes;
-        this.exchangeCubes = exchangeCubes;
-        this.cubesDropped = cubesDropped;
-        this.climbsAssisted = climbsAssisted;
-        this.parked = parked;
-        this.attemptRungClimb = attemptRungClimb;
-        this.successfulRungClimb = successfulRungClimb;
-        this.otherRobotClimb = otherRobotClimb;
-        this.otherRobotClimbType = otherRobotClimbType;
-        this.fieldLayout = fieldLayout;
+    private final boolean climbAssisted;
+    private final int attemptHabClimbLevel;
+    private final int successHabClimbLevel;
+    private final boolean attemptHabClimb;
+    private final boolean successHabClimb;
+    private final int assistingClimbTeamNumber;
+    private final int otherRobotClimbsAssisted;
+    private final int highestClimbAssisted;
+
+    public TeleOp(int cargoShipHatches, int cargoShipCargo, int rocketLevelOneCargo,
+                  int rocketLevelOneHatches, int rocketLevelTwoCargo, int rocketLevelTwoHatches,
+                  int rocketLevelThreeCargo, int rocketLevelThreeHatches, int hatchesDropped,
+                  int cargoDropped, boolean climbAssisted, int attemptHabClimbLevel,
+                  int successHabClimbLevel, boolean attemptHabClimb, boolean successHabClimb,
+                  int assistingClimbTeamNumber, int otherRobotClimbsAssisted,
+                  int highestClimbAssisted) {
+        this.cargoShipHatches = cargoShipHatches;
+        this.cargoShipCargo = cargoShipCargo;
+        this.rocketLevelOneCargo = rocketLevelOneCargo;
+        this.rocketLevelOneHatches = rocketLevelOneHatches;
+        this.rocketLevelTwoCargo = rocketLevelTwoCargo;
+        this.rocketLevelTwoHatches = rocketLevelTwoHatches;
+        this.rocketLevelThreeCargo = rocketLevelThreeCargo;
+        this.rocketLevelThreeHatches = rocketLevelThreeHatches;
+        this.hatchesDropped = hatchesDropped;
+        this.cargoDropped = cargoDropped;
+        this.climbAssisted = climbAssisted;
+        this.attemptHabClimbLevel = attemptHabClimbLevel;
+        this.successHabClimbLevel = successHabClimbLevel;
+        this.attemptHabClimb = attemptHabClimb;
+        this.successHabClimb = successHabClimb;
+        this.assistingClimbTeamNumber = assistingClimbTeamNumber;
+        this.otherRobotClimbsAssisted = otherRobotClimbsAssisted;
+        this.highestClimbAssisted = highestClimbAssisted;
     }
 
-    public float getFirstCubeTime() {
-        return firstCubeTime;
+    public int getCargoShipHatches() {
+        return cargoShipHatches;
     }
 
-    public int getOwnSwitchCubes() {
-        return ownSwitchCubes;
+    public int getCargoShipCargo() {
+        return cargoShipCargo;
     }
 
-    public int getScaleCubes() {
-        return scaleCubes;
+    public int getRocketLevelOneCargo() {
+        return rocketLevelOneCargo;
     }
 
-    public int getOpponentSwitchCubes() {
-        return opponentSwitchCubes;
+    public int getRocketLevelOneHatches() {
+        return rocketLevelOneHatches;
     }
 
-    public int getExchangeCubes() {
-        return exchangeCubes;
+    public int getRocketLevelTwoCargo() {
+        return rocketLevelTwoCargo;
     }
 
-    public int getCubesDropped() {
-        return cubesDropped;
+    public int getRocketLevelTwoHatches() {
+        return rocketLevelTwoHatches;
     }
 
-    public int getClimbsAssisted() {
-        return climbsAssisted;
+    public int getRocketLevelThreeCargo() {
+        return rocketLevelThreeCargo;
     }
 
-    public boolean isParked() {
-        return parked;
+    public int getRocketLevelThreeHatches() {
+        return rocketLevelThreeHatches;
     }
 
-    public void setParked(boolean parked) {
-        this.parked = parked;
+    public int getHatchesDropped() {
+        return hatchesDropped;
     }
 
-    public boolean isAttemptRungClimb() {
-        return attemptRungClimb;
+    public int getCargoDropped() {
+        return cargoDropped;
     }
 
-    public boolean isSuccessfulRungClimb() {
-        return successfulRungClimb;
+    public boolean isClimbAssisted() {
+        return climbAssisted;
     }
 
-    public void setSuccessfulRungClimb(boolean successfulRungClimb) {
-        this.successfulRungClimb = successfulRungClimb;
+    public int getAttemptHabClimbLevel() {
+        return attemptHabClimbLevel;
     }
 
-    public boolean isOtherRobotClimb() {
-        return otherRobotClimb;
+    public int getSuccessHabClimbLevel() {
+        return successHabClimbLevel;
     }
 
-    public void setOtherRobotClimb(boolean otherRobotClimb) {
-        this.otherRobotClimb = otherRobotClimb;
+    public boolean isAttemptHabClimb() {
+        return attemptHabClimb;
     }
 
-    public String getOtherRobotClimbType() {
-        return otherRobotClimbType;
+    public boolean isSuccessHabClimb() {
+        return successHabClimb;
     }
 
-    public void setOtherRobotClimbType(String otherRobotClimbType) {
-        this.otherRobotClimbType = otherRobotClimbType;
+    public int getAssistingClimbTeamNumber() {
+        return assistingClimbTeamNumber;
     }
 
-    public String getFieldLayout() {
-        return fieldLayout;
+    public int getOtherRobotClimbsAssisted() {
+        return otherRobotClimbsAssisted;
     }
 
-    public void setFieldLayout(String fieldLayout) {
-        this.fieldLayout = fieldLayout;
+    public int getHighestClimbAssisted() {
+        return highestClimbAssisted;
     }
-
-
 }
