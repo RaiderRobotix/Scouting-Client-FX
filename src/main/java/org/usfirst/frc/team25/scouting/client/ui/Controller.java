@@ -116,8 +116,11 @@ public class Controller {
             }
 
             if (generateCsv.isSelected()) {
-                report.generateRawSpreadsheet(currentDataDirectory);
-                status += "\nRaw data spreadsheet generated";
+                if (report.generateRawSpreadsheet(currentDataDirectory)) {
+                    status += "\nRaw data spreadsheet generated";
+                } else {
+                    status += "\nRaw data spreadsheet failed to generate. Are you sure the CSV file isn't open?";
+                }
             }
 
             if (generatePicklists.isSelected()) {

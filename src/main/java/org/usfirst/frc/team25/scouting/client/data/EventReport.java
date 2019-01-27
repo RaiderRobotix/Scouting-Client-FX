@@ -252,47 +252,16 @@ public class EventReport {
 
     }
 
-    public void setTeamNameList(File list) {
-        teamNameList = list;
-    }
-
-
     /**
      * Generates summary and team Excel spreadsheets
      *
      * @param outputDirectory Output directory for generated fields
      */
-    public void generateRawSpreadsheet(File outputDirectory) {
-        final String COMMA = ",";
-        //TODO programatically generate this
-        StringBuilder header = new StringBuilder("Scout Name,Match Num,Scouting Pos,Team Num,Starting Pos,Field Layout,"
-                + "Near Switch Auto,Far Switch Auto,Near Scale Auto,Far Scale Auto,Center Switch Auto,Center Scale " +
-                "Auto,"
-                + "Auto Switch Cubes,Auto Scale Cubes,Auto Exchange Cubes,Auto PCP Pickup,"
-                + "Auto Switch Adj Pickup,"
-                + "Auto Cubes Dropped,Auto Line Cross,Auto Null Territory Foul,"
-                + "Auto Drop Opponent Switch,Auto Drop Opponent Scale,"
-                + "Tele First Cube Time,Tele Own Switch Cubes,Tele Scale Cubes,"
-                + "Tele Opponent Switch Cubes,Tele Exchange Cubes,Tele Cubes Dropped,"
-                + "Climbs Assisted,Parked,Attempt Rung Climb,Success Rung Climb,"
-                + "Climb on Other Robot,Other Robot Climb Type,"
-                + "Focus,Robot Comment,Robot Quick Comment Str,Pick Points,");
+    public boolean generateRawSpreadsheet(File outputDirectory) {
 
-        ArrayList<String> keys = new ArrayList<>();
+        StringBuilder fileContents = new StringBuilder(generateSpreadsheetHeader() + "\n");
 
-
-        for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-            header.append(removeCommas(key)).append(",");
-            keys.add(key);
-        }
-
-
-        StringBuilder fileContents = new StringBuilder(header + "\n");
         for (ScoutEntry entry : scoutEntries) {
-            PreMatch pre = entry.getPreMatch();
-            Autonomous auto = entry.getAuto();
-            TeleOp tele = entry.getTeleOp();
-            PostMatch post = entry.getPostMatch();
 
             Object[] dataObjects = {entry.getPreMatch(), entry.getAuto(), entry.getTeleOp(), entry.getPostMatch()};
 
@@ -303,10 +272,25 @@ public class EventReport {
 
                 for (Field metric : fields) {
                     Object metricValue = "";
-                    for (Method m : TeleOp.class.getMethods()) {
-                        if (m.getName().contains(metric.getName()) && m.getParameterTypes().length == 0) {
+
+                    //Index to account  for the substring shift from "is" or "get"
+                    int shiftIndex = 3;
+
+                    if (metric.getType() == boolean.class) {
+                        shiftIndex = 2;
+                    }
+
+                    //We'll output the quick comment HashMap separately
+                    if (metric.getType() == HashMap.class) {
+                        continue;
+                    }
+
+                    for (Method m : dataObject.getClass().getMethods()) {
+
+                        if (m.getName().substring(shiftIndex).toLowerCase().equals(metric.getName().toLowerCase()) && m.getParameterTypes().length == 0) {
                             try {
                                 metricValue = m.invoke(dataObject);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -318,21 +302,55 @@ public class EventReport {
 
             }
 
-            for (String key : keys) {
-                fileContents.append(post.getRobotQuickCommentSelections().get(key)).append(COMMA);
+            for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+                fileContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(",");
             }
-
 
             fileContents.append('\n');
         }
-
 
         try {
             FileManager.outputFile(outputDirectory.getAbsolutePath() + "\\Data - All - " + event, "csv",
                     fileContents.toString());
         } catch (FileNotFoundException e) {
+
             e.printStackTrace();
+            return false;
         }
+        return true;
+    }
+
+    public void setTeamNameList(File list) {
+        teamNameList = list;
+    }
+
+    private String generateSpreadsheetHeader() {
+        StringBuilder header = new StringBuilder();
+
+        String[] shortNames = {"Pre", "Auto", "Post"};
+        Class[] dataModels = {PreMatch.class, Autonomous.class, TeleOp.class, PostMatch.class};
+
+        for (int i = 0; i < shortNames.length; i++) {
+            Field[] fields = dataModels[i].getDeclaredFields();
+
+            for (Field metric : fields) {
+                if (metric.getType() == HashMap.class) {
+                    continue;
+                }
+
+                if (i == 1 || i == 2) {
+                    header.append(shortNames[i] + " - ");
+                }
+                header.append(metric.getName() + ",");
+            }
+        }
+
+        for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+            header.append(removeCommas(key)).append(",");
+        }
+
+
+        return header.toString();
     }
 
     /**
