@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import com.thebluealliance.api.v3.models.Match;
 import org.usfirst.frc.team25.scouting.client.models.ScoutEntry;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -56,29 +55,7 @@ public class FileManager {
 
     }
 
-    /**
-     * Launches a GUI file explorer to select an output folder
-     *
-     * @param frame       JFrame used to launch GUI
-     * @param dialogTitle Title of selection dialog
-     * @return File object containing file path. null if window is closed before selection
-     */
-    public static File selectFolder(JFrame frame, String dialogTitle) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File(System.getProperty("user.home") + "\\Documents\\FRC Data")); //GUI
-        // dialog opens at user path, documents, at a folder called FRC Data
-        chooser.setDialogTitle(dialogTitle);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
 
-        if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-            return chooser.getSelectedFile();
-        } else {
-            return null;
-        }
-
-
-    }
 
     /**
      * Gets list of files from directory

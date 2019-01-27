@@ -29,9 +29,9 @@ public class ScoutEntry implements Serializable {
     }
 
     public void calculateDerivedStats() {
-        //int teleOpPoints =
-        //        2 * (teleOp.getRocketLevelOneHatches() + teleOp.getRocketLevelTwoHatches() + teleOp
-        //        .getRocketLevelThreeHatches());
+        int teleOpPoints =
+                2 * (teleOp.getRocketLevelOneHatches() + teleOp.getRocketLevelTwoHatches() + teleOp
+                        .getRocketLevelThreeHatches());
 
         postMatch.generateQuickCommentStr();
 

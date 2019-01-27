@@ -1,5 +1,6 @@
 package org.usfirst.frc.team25.scouting.client.models;
 
+
 /**
  * Container holding data from the tele-operated period
  * Includes endgame data
@@ -17,7 +18,7 @@ public class TeleOp {
     private final int hatchesDropped;
     private final int cargoDropped;
 
-    private final boolean climbAssisted;
+    private final boolean climbAssistedByPartners;
     private final int attemptHabClimbLevel;
     private final int successHabClimbLevel;
     private final boolean attemptHabClimb;
@@ -29,7 +30,7 @@ public class TeleOp {
     public TeleOp(int cargoShipHatches, int cargoShipCargo, int rocketLevelOneCargo,
                   int rocketLevelOneHatches, int rocketLevelTwoCargo, int rocketLevelTwoHatches,
                   int rocketLevelThreeCargo, int rocketLevelThreeHatches, int hatchesDropped,
-                  int cargoDropped, boolean climbAssisted, int attemptHabClimbLevel,
+                  int cargoDropped, boolean climbAssistedByPartners, int attemptHabClimbLevel,
                   int successHabClimbLevel, boolean attemptHabClimb, boolean successHabClimb,
                   int assistingClimbTeamNumber, int otherRobotClimbsAssisted,
                   int highestClimbAssisted) {
@@ -43,7 +44,7 @@ public class TeleOp {
         this.rocketLevelThreeHatches = rocketLevelThreeHatches;
         this.hatchesDropped = hatchesDropped;
         this.cargoDropped = cargoDropped;
-        this.climbAssisted = climbAssisted;
+        this.climbAssistedByPartners = climbAssistedByPartners;
         this.attemptHabClimbLevel = attemptHabClimbLevel;
         this.successHabClimbLevel = successHabClimbLevel;
         this.attemptHabClimb = attemptHabClimb;
@@ -93,8 +94,8 @@ public class TeleOp {
         return cargoDropped;
     }
 
-    public boolean isClimbAssisted() {
-        return climbAssisted;
+    public boolean isClimbAssistedByPartners() {
+        return climbAssistedByPartners;
     }
 
     public int getAttemptHabClimbLevel() {

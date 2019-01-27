@@ -172,7 +172,6 @@ public class EventReport {
         }
         formatString.append("</h2><h3>Auto</h3>");
 
-
         //        formatString.append("Cross baseline: ").append(Statistics.round(report.autoRunPercentage, 2))
         //        .append("% (").append(report.totalReachBaseline).append("/").append(report.entries.size()).append
         //        (")").append("<br>");
@@ -190,7 +189,7 @@ public class EventReport {
 
     //TODO update this
     public String allianceReport(int t1, int t2, int t3) {
-        String formatString = "<html>";
+        String formatString = "";
         TeamReport r1 = teamReports.get(t1), r2 = teamReports.get(t2), r3 = teamReports.get(t3);
 
         Alliance a = new Alliance(r1, r2, r3);
@@ -228,7 +227,7 @@ public class EventReport {
         //        formatString += "Total kPa: " + Statistics.round(a.totalKpa, 2) + "<br>";
         //        formatString += "Avg. score (predicted): " + Statistics.round(a.predictedScore, 2) + "<br>";
 
-        formatString += "</html>";
+
         return formatString;
 
     }
@@ -320,14 +319,13 @@ public class EventReport {
         return true;
     }
 
-    public void setTeamNameList(File list) {
-        teamNameList = list;
-    }
-
+    /**
+     * Automatically generates spreadsheet header based on object model field variables
+     */
     private String generateSpreadsheetHeader() {
         StringBuilder header = new StringBuilder();
 
-        String[] shortNames = {"Pre", "Auto", "Post"};
+        String[] shortNames = {"Pre", "Auto", "Tele", "Post"};
         Class[] dataModels = {PreMatch.class, Autonomous.class, TeleOp.class, PostMatch.class};
 
         for (int i = 0; i < shortNames.length; i++) {
@@ -341,7 +339,7 @@ public class EventReport {
                 if (i == 1 || i == 2) {
                     header.append(shortNames[i] + " - ");
                 }
-                header.append(metric.getName() + ",");
+                header.append(convertCamelToSentenceCase(metric.getName()) + ",");
             }
         }
 
@@ -351,6 +349,17 @@ public class EventReport {
 
 
         return header.toString();
+    }
+
+    /**
+     * @param camelCaseString A string in lower camelCase
+     * @return The string in sentence case, with space separations. E.g., "numRocketHatches" becomes "Num rocket
+     * hatches"
+     */
+    public static String convertCamelToSentenceCase(String camelCaseString) {
+        //TODO write this
+
+        return camelCaseString;
     }
 
     /**
@@ -388,6 +397,10 @@ public class EventReport {
             return false;
         }
         return true;
+    }
+
+    public void setTeamNameList(File list) {
+        teamNameList = list;
     }
 
 
