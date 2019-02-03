@@ -153,7 +153,6 @@ public class FileManager {
         for (File file : FileManager.getFilesFromDirectory(directory)) {
             String fileName = file.getName();
             try {
-                System.out.println(fileName);
                 if (fileName.split(FILE_EXTENSION_REGEX)[1].equals("csv") && fileName.contains("TeamNames")) {
                     return file;
                 }

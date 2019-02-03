@@ -162,5 +162,9 @@ public class TeamReport {
         return newString.toString();
     }
 
+    public String getQuickStatus() {
+        return "";
+    }
+
 
 }

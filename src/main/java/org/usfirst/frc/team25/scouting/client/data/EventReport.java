@@ -161,76 +161,8 @@ public class EventReport {
     }
 
 
-    // TODO Update this
-    public String quickTeamReport(int teamNum) {
-        StringBuilder formatString = new StringBuilder("<html>");
-        TeamReport report = teamReports.get(teamNum);
-
-        formatString.append("<h2>Team ").append(teamNum);
-        if (report.getTeamName() != null) {
-            formatString.append(" - ").append(report.getTeamName());
-        }
-        formatString.append("</h2><h3>Auto</h3>");
-
-        //        formatString.append("Cross baseline: ").append(Statistics.round(report.autoRunPercentage, 2))
-        //        .append("% (").append(report.totalReachBaseline).append("/").append(report.entries.size()).append
-        //        (")").append("<br>");
-        formatString.append("<h3>Tele-Op</h3>");
-
-        //        formatString.append("Avg. gears: ").append(Statistics.round(report.avgTeleOpGears, 2)).append("<br>");
-        //        formatString.append("Gear counts: ");
-        //
 
 
-        formatString.append("</html>");
-        return formatString.toString();
-
-    }
-
-    //TODO update this
-    public String allianceReport(int t1, int t2, int t3) {
-        String formatString = "";
-        TeamReport r1 = teamReports.get(t1), r2 = teamReports.get(t2), r3 = teamReports.get(t3);
-
-        Alliance a = new Alliance(r1, r2, r3);
-        a.calculateStats();
-
-        formatString += "<h2>" + t1 + ", " + t2 + ", " + t3 + "</h2><h3>Auto</h3>";
-
-        //        formatString += "1+ BL cross: "
-        //                + Statistics.round(a.atLeastOneBaselinePercent, 2)
-        //                + "%<br>";
-        //        formatString += "2+ BL cross: "
-        //                + Statistics.round(a.atLeastTwoBaselinePercent, 2)
-        //                + "%<br>";
-        //        formatString += "3 BL cross: "
-        //                + Statistics.round(a.allBaselinePercent, 2)
-        //                + "%<br>";
-        //        formatString += "Place gear: "
-        //                + Statistics.round(a.autoGearPercent, 2)
-        //                + "%<br>";
-        //        formatString += "Avg. kPa: " + Statistics.round(a.autoKpa, 2) + "<br>";
-
-        formatString += "<h3>Tele-Op</h3>";
-        //        formatString += "Avg. kPa: " + Statistics.round(a.teleopKpa, 2) + "<br>";
-        //        formatString += "1+ takeoff: "
-        //                + Statistics.round(a.atLeastOneTakeoffPercent, 2)
-        //                + "%<br>";
-        //        formatString += "2+ takeoff: "
-        //                + Statistics.round(a.atLeastTwoTakeoffPercent, 2)
-        //                + "%<br>";
-        //        formatString += "3 takeoff: "
-        //                + Statistics.round(a.allTakeoffPercent, 2)
-        //                + "%<br>";
-        //        formatString += "<h3>Overall</h3>";
-        //        formatString += "Total gears: " + Statistics.round(a.totalGears, 2) + "<br>";
-        //        formatString += "Total kPa: " + Statistics.round(a.totalKpa, 2) + "<br>";
-        //        formatString += "Avg. score (predicted): " + Statistics.round(a.predictedScore, 2) + "<br>";
-
-
-        return formatString;
-
-    }
 
     public void processTeamReports() {
 
@@ -447,6 +379,10 @@ public class EventReport {
 
     public TeamReport getTeamReport(int teamNum) {
         return teamReports.get(teamNum);
+    }
+
+    public Alliance getAllianceReport(int teamOne, int teamTwo, int teamThree) {
+        return new Alliance(teamReports.get(teamOne), teamReports.get(teamTwo), teamReports.get(teamThree));
     }
 
 }

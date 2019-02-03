@@ -78,6 +78,8 @@ class Statistics {
     }
 
 
+
+
     /* Calculates the success rate of an event in all matches
 
       @param success Array with number of successes

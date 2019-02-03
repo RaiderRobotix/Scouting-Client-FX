@@ -9,7 +9,11 @@ public class ScoutEntry implements Serializable {
     private Autonomous auto;
     private TeleOp teleOp;
     private PostMatch postMatch;
-    private transient int calculatedPointContribution, totalHatches, totalCargo;
+    private transient int sandstormPoints, teleOpPoints, calculatedPointContribution, autoHatches, autoCargo,
+            teleOpHatches, teleOpCargo, totalHatches, totalCargo;
+
+
+    private transient String autoMode;
 
 
     public PreMatch getPreMatch() {
@@ -29,9 +33,7 @@ public class ScoutEntry implements Serializable {
     }
 
     public void calculateDerivedStats() {
-        int teleOpPoints =
-                2 * (teleOp.getRocketLevelOneHatches() + teleOp.getRocketLevelTwoHatches() + teleOp
-                        .getRocketLevelThreeHatches());
+        //TODO calculate the above
 
         postMatch.generateQuickCommentStr();
 

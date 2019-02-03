@@ -27,6 +27,10 @@ public class Controller {
     @FXML
     private TextField analysisTeamOne, analysisTeamTwo, analysisTeamThree, teamNumEventCode;
 
+    private EventReport eventReport;
+    private ArrayList<File> jsonFileList;
+    private String eventName;
+
     private File currentDataDirectory;
 
     public void initialize() {
@@ -79,26 +83,12 @@ public class Controller {
 
             String status = "";
 
-            ArrayList<File> jsonFileList = FileManager.getDataFiles(currentDataDirectory);
-
-            if (jsonFileList.size() == 0) {
-                addStatus("No JSON data files found in " + currentDataDirectory.getAbsolutePath() +
-                        ".\nPlease select another directory.");
-                return;
-            }
-
-            String eventName = jsonFileList.get(0).getName().split(FileManager.FILE_EXTENSION_REGEX)[0].split(" - ")[2];
-
-
-            ArrayList<ScoutEntry> scoutEntries = FileManager.deserializeData(jsonFileList);
-
-
-            EventReport report = new EventReport(scoutEntries, eventName, currentDataDirectory);
+            retrieveEventReport();
 
             File teamNameList = FileManager.getTeamNameList(currentDataDirectory);
 
             if (teamNameList != null) {
-                report.setTeamNameList(teamNameList);
+                eventReport.setTeamNameList(teamNameList);
             }
 
             if (backupJson.isSelected()) {
@@ -106,7 +96,7 @@ public class Controller {
                 status += "Backup JSON files created";
             }
 
-            if (combineJson.isSelected() && report.generateCombineJson(currentDataDirectory)) {
+            if (combineJson.isSelected() && eventReport.generateCombineJson(currentDataDirectory)) {
                 status += "\nCombined data JSON file generated";
 
                 if (FileManager.deleteIndividualDataFiles(currentDataDirectory)) {
@@ -116,7 +106,7 @@ public class Controller {
             }
 
             if (generateCsv.isSelected()) {
-                if (report.generateRawSpreadsheet(currentDataDirectory)) {
+                if (eventReport.generateRawSpreadsheet(currentDataDirectory)) {
                     status += "\nRaw data spreadsheet generated";
                 } else {
                     status += "\nRaw data spreadsheet failed to generate. Are you sure the CSV file isn't open?";
@@ -124,18 +114,18 @@ public class Controller {
             }
 
             if (generatePicklists.isSelected()) {
-                report.generatePicklists(currentDataDirectory);
+                eventReport.generatePicklists(currentDataDirectory);
                 status += "\nPicklists generated";
             }
 
             if (generatePredictions.isSelected()) {
-                report.generateMatchPredictions(currentDataDirectory);
+                eventReport.generateMatchPredictions(currentDataDirectory);
                 status += "\nFuture match predictions generated";
             }
 
             if (fixErrors.isSelected()) {
-                report.generateInaccuracyList(currentDataDirectory);
-                report.fixInaccuraciesTBA();
+                eventReport.generateInaccuracyList(currentDataDirectory);
+                eventReport.fixInaccuraciesTBA();
                 status += "\nInaccuracies fixed and inaccuracy list generated";
             }
 
@@ -168,8 +158,37 @@ public class Controller {
 
         displayReportButton.setOnAction(event -> {
 
+            retrieveEventReport();
+
+            if (teamBasedReport.isSelected()) {
+                int teamNum = Integer.parseInt(analysisTeamOne.getText());
+                addStatus(eventReport.getTeamReport(teamNum).getQuickStatus());
+            } else {
+                int teamOne = Integer.parseInt(analysisTeamOne.getText());
+                int teamTwo = Integer.parseInt(analysisTeamTwo.getText());
+                int teamThree = Integer.parseInt(analysisTeamThree.getText());
+                addStatus(eventReport.getAllianceReport(teamOne, teamTwo, teamThree).getQuickAllianceReport());
+            }
         });
 
+    }
+
+    private void retrieveEventReport() {
+        this.jsonFileList = FileManager.getDataFiles(currentDataDirectory);
+
+        if (jsonFileList.size() == 0) {
+            addStatus("No JSON data files found in " + currentDataDirectory.getAbsolutePath() +
+                    ".\nPlease select another directory.");
+            return;
+        }
+
+        eventName = jsonFileList.get(0).getName().split(FileManager.FILE_EXTENSION_REGEX)[0].split(" - ")[2];
+
+
+        ArrayList<ScoutEntry> scoutEntries = FileManager.deserializeData(jsonFileList);
+
+
+        this.eventReport = new EventReport(scoutEntries, eventName, currentDataDirectory);
     }
 
     private void addStatus(String message) {
