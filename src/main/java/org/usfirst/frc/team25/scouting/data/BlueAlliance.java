@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.client.data;
+package org.usfirst.frc.team25.scouting.data;
 
 import com.google.gson.Gson;
 import com.thebluealliance.api.v3.TBA;

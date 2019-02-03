@@ -1,8 +1,8 @@
-package org.usfirst.frc.team25.scouting.client.data;
+package org.usfirst.frc.team25.scouting.data;
 
-import org.usfirst.frc.team25.scouting.client.models.Comparison;
-import org.usfirst.frc.team25.scouting.client.models.RankingTree;
-import org.usfirst.frc.team25.scouting.client.models.ScoutEntry;
+import org.usfirst.frc.team25.scouting.data.models.Comparison;
+import org.usfirst.frc.team25.scouting.data.models.RankingTree;
+import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
 import java.util.ArrayList;

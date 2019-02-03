@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.client.data;
+package org.usfirst.frc.team25.scouting.data;
 
 /**
  * Class for alliance-based calculations and stats

@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.usfirst.frc.team25.scouting.client.data.BlueAlliance;
+import org.usfirst.frc.team25.scouting.data.BlueAlliance;
 
 public class Main extends Application {
 

@@ -1,9 +1,9 @@
-package org.usfirst.frc.team25.scouting.client.data;
+package org.usfirst.frc.team25.scouting.data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thebluealliance.api.v3.models.Match;
-import org.usfirst.frc.team25.scouting.client.models.ScoutEntry;
+import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
 import java.io.FileNotFoundException;

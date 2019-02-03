@@ -1,6 +1,6 @@
-package org.usfirst.frc.team25.scouting.client.models;
+package org.usfirst.frc.team25.scouting.data.models;
 
-import org.usfirst.frc.team25.scouting.client.data.Sorters;
+import org.usfirst.frc.team25.scouting.data.Sorters;
 
 import java.util.ArrayList;
 import java.util.HashMap;

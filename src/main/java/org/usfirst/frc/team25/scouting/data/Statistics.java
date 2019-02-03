@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.client.data;
+package org.usfirst.frc.team25.scouting.data;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

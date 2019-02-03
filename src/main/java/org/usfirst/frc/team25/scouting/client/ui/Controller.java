@@ -4,10 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
-import org.usfirst.frc.team25.scouting.client.data.BlueAlliance;
-import org.usfirst.frc.team25.scouting.client.data.EventReport;
-import org.usfirst.frc.team25.scouting.client.data.FileManager;
-import org.usfirst.frc.team25.scouting.client.models.ScoutEntry;
+import org.usfirst.frc.team25.scouting.data.BlueAlliance;
+import org.usfirst.frc.team25.scouting.data.EventReport;
+import org.usfirst.frc.team25.scouting.data.FileManager;
+import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
 import java.util.ArrayList;

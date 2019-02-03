@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.client.models;
+package org.usfirst.frc.team25.scouting.data.models;
 
 
 /**
@@ -7,32 +7,32 @@ package org.usfirst.frc.team25.scouting.client.models;
  */
 public class TeleOp {
 
-    private final int cargoShipHatches;
-    private final int cargoShipCargo;
-    private final int rocketLevelOneCargo;
-    private final int rocketLevelOneHatches;
-    private final int rocketLevelTwoCargo;
-    private final int rocketLevelTwoHatches;
-    private final int rocketLevelThreeCargo;
-    private final int rocketLevelThreeHatches;
-    private final int hatchesDropped;
-    private final int cargoDropped;
+    private int cargoShipHatches;
+    private int cargoShipCargo;
+    private int rocketLevelOneCargo;
+    private int rocketLevelOneHatches;
+    private int rocketLevelTwoCargo;
+    private int rocketLevelTwoHatches;
+    private int rocketLevelThreeCargo;
+    private int rocketLevelThreeHatches;
+    private int hatchesDropped;
+    private int cargoDropped;
 
-    private final boolean climbAssistedByPartners;
-    private final int attemptHabClimbLevel;
-    private final int successHabClimbLevel;
-    private final boolean attemptHabClimb;
-    private final boolean successHabClimb;
-    private final int assistingClimbTeamNumber;
-    private final int otherRobotClimbsAssisted;
-    private final int highestClimbAssisted;
+    private boolean climbAssistedByPartners;
+    private int attemptHabClimbLevel;
+    private int successHabClimbLevel;
+    private boolean attemptHabClimb;
+    private boolean successHabClimb;
+    private int assistingClimbTeamNumber;
+    private int numberOfPartnerClimbsAssisted;
+    private int highestClimbAssisted;
 
     public TeleOp(int cargoShipHatches, int cargoShipCargo, int rocketLevelOneCargo,
                   int rocketLevelOneHatches, int rocketLevelTwoCargo, int rocketLevelTwoHatches,
                   int rocketLevelThreeCargo, int rocketLevelThreeHatches, int hatchesDropped,
                   int cargoDropped, boolean climbAssistedByPartners, int attemptHabClimbLevel,
                   int successHabClimbLevel, boolean attemptHabClimb, boolean successHabClimb,
-                  int assistingClimbTeamNumber, int otherRobotClimbsAssisted,
+                  int assistingClimbTeamNumber, int numberOfPartnerClimbsAssisted,
                   int highestClimbAssisted) {
         this.cargoShipHatches = cargoShipHatches;
         this.cargoShipCargo = cargoShipCargo;
@@ -50,7 +50,7 @@ public class TeleOp {
         this.attemptHabClimb = attemptHabClimb;
         this.successHabClimb = successHabClimb;
         this.assistingClimbTeamNumber = assistingClimbTeamNumber;
-        this.otherRobotClimbsAssisted = otherRobotClimbsAssisted;
+        this.numberOfPartnerClimbsAssisted = numberOfPartnerClimbsAssisted;
         this.highestClimbAssisted = highestClimbAssisted;
     }
 
@@ -118,8 +118,8 @@ public class TeleOp {
         return assistingClimbTeamNumber;
     }
 
-    public int getOtherRobotClimbsAssisted() {
-        return otherRobotClimbsAssisted;
+    public int getNumberOfPartnerClimbsAssisted() {
+        return numberOfPartnerClimbsAssisted;
     }
 
     public int getHighestClimbAssisted() {
