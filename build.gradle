@@ -27,6 +27,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'com.google.code.gson:gson:2.7'
     compile files('libs/TBA-APIv3-Java-Library.jar')
+    compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
 }
 
 jfx {

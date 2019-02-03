@@ -5,6 +5,7 @@ import com.thebluealliance.api.v3.TBA;
 import com.thebluealliance.api.v3.models.Event;
 import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.Team;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,8 +24,11 @@ public class BlueAlliance {
 
     private static TBA TBA;
 
-    public static void initializeApi(Class c) {
-        String apiKey = FileManager.getFileString(new File(c.getResource("/secret.txt").getFile()));
+    public static void initializeApi(Class c) throws IOException {
+
+
+        String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"), "utf5");
+
         TBA = new TBA(apiKey);
     }
 
