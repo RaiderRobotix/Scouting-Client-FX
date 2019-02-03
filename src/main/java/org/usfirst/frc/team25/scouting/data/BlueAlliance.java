@@ -27,8 +27,8 @@ public class BlueAlliance {
     public static void initializeApi(Class c) throws IOException {
 
 
-        String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"), "utf5");
-
+        String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"), "utf-8");
+        System.out.println("API key: " + apiKey);
         TBA = new TBA(apiKey);
     }
 

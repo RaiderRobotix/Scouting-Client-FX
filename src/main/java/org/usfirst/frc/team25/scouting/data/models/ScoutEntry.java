@@ -9,7 +9,8 @@ public class ScoutEntry implements Serializable {
     private Autonomous auto;
     private TeleOp teleOp;
     private PostMatch postMatch;
-    private transient int sandstormPoints, teleOpPoints, calculatedPointContribution, autoHatches, autoCargo,
+    private transient int sandstormPoints, teleOpPoints, climbPoints, calculatedPointContribution, autoHatches,
+            autoCargo,
             teleOpHatches, teleOpCargo, totalHatches, totalCargo;
 
 

@@ -3,12 +3,20 @@
     <output-path>$PROJECT_DIR$/out/artifacts/org_usfirst_frc_team25_scouting_client_main</output-path>
     <properties id="javafx-properties">
       <options>
+        <option name="alias" value="" />
         <option name="appClass" value="org.usfirst.frc.team25.scouting.client.ui.Main" />
-        <option name="description" value="" />
+        <option name="description" value="Scouting client for Destination: Deep Space" />
+        <option name="enabledSigning" value="true" />
         <option name="htmlPlaceholderId" value="" />
-        <option name="title" value="" />
+        <option name="icons">
+          <JavaFxApplicationIcons>
+            <option name="windowsIcon" value="$PROJECT_DIR$/src/main/resources/img/team_25_logo.ico" />
+          </JavaFxApplicationIcons>
+        </option>
+        <option name="keystore" value="" />
+        <option name="title" value="Raider Robotix Scouting Client" />
         <option name="vendor" value="" />
-        <option name="version" value="" />
+        <option name="version" value="v3.0" />
       </options>
     </properties>
     <root id="root">

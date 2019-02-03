@@ -161,9 +161,6 @@ public class EventReport {
     }
 
 
-
-
-
     public void processTeamReports() {
 
         for (Integer key : teamReports.keySet()) {
@@ -374,7 +371,7 @@ public class EventReport {
     }
 
     public void generateMatchPredictions(File outputDirectory) {
-
+        //TODO write this
     }
 
     public TeamReport getTeamReport(int teamNum) {

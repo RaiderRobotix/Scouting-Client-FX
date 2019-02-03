@@ -93,7 +93,7 @@ public class Controller {
 
             if (backupJson.isSelected()) {
                 FileManager.createBackup(jsonFileList, currentDataDirectory);
-                status += "Backup JSON files created";
+                status += "\nBackup JSON files created";
             }
 
             if (combineJson.isSelected() && eventReport.generateCombineJson(currentDataDirectory)) {
@@ -132,7 +132,7 @@ public class Controller {
             if (status.isEmpty()) {
                 addStatus("Please select data processing options!");
             } else {
-                addStatus("Data processing for event " + eventName + " successful:\n\n" + status);
+                addStatus("Data processing for event " + eventName + " successful:\n" + status);
             }
 
         });
@@ -161,12 +161,28 @@ public class Controller {
             retrieveEventReport();
 
             if (teamBasedReport.isSelected()) {
-                int teamNum = Integer.parseInt(analysisTeamOne.getText());
+
+                int teamNum;
+                try {
+                    teamNum = Integer.parseInt(analysisTeamOne.getText());
+                } catch (NumberFormatException e) {
+                    addStatus("Invalid or missing team number. Please try again.");
+                    return;
+                }
+
                 addStatus(eventReport.getTeamReport(teamNum).getQuickStatus());
             } else {
-                int teamOne = Integer.parseInt(analysisTeamOne.getText());
-                int teamTwo = Integer.parseInt(analysisTeamTwo.getText());
-                int teamThree = Integer.parseInt(analysisTeamThree.getText());
+                int teamOne, teamTwo, teamThree;
+
+                try {
+                    teamOne = Integer.parseInt(analysisTeamOne.getText());
+                    teamTwo = Integer.parseInt(analysisTeamTwo.getText());
+                    teamThree = Integer.parseInt(analysisTeamThree.getText());
+                } catch (NumberFormatException e) {
+                    addStatus("Invalid or missing team number(s). Please try again.");
+                    return;
+                }
+
                 addStatus(eventReport.getAllianceReport(teamOne, teamTwo, teamThree).getQuickAllianceReport());
             }
         });

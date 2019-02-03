@@ -33,7 +33,7 @@ public class Main extends Application {
         try {
             BlueAlliance.initializeApi(getClass());
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
 
     }
