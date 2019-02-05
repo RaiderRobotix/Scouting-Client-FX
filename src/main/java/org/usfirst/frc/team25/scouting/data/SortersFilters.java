@@ -4,7 +4,9 @@ import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.SimpleMatch;
 import com.thebluealliance.api.v3.models.SimpleTeam;
 import com.thebluealliance.api.v3.models.Team;
+import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -12,7 +14,7 @@ import java.util.*;
  *
  * @author sng
  */
-public class Sorters {
+public class SortersFilters {
 
     /**
      * Method implementing a Comparator to sort Matches
@@ -85,5 +87,41 @@ public class Sorters {
         }
 
         return sortedMap;
+    }
+
+    /**
+     * @param scoutEntries ArrayList of all scout entries from an event to filter
+     * @param objectClass  Class reference to the desired data object model to filter (e.g. TeleOp.class)
+     * @return ArrayList of the desired data object from all entries
+     */
+    public static ArrayList<Object> filterDataObject(ArrayList<ScoutEntry> scoutEntries, Class objectClass) {
+        ArrayList<Object> filteredList = new ArrayList<>();
+
+        Method correctGetter = null;
+
+        for (Method m : ScoutEntry.class.getMethods()) {
+
+            if (m.getName().substring(3).toLowerCase().equals(objectClass.getSimpleName().toLowerCase()) && m.getParameterTypes().length == 0) {
+                correctGetter = m;
+                break;
+            }
+        }
+
+
+        try {
+            if (correctGetter != null) {
+
+                for (ScoutEntry entry : scoutEntries) {
+                    filteredList.add(correctGetter.invoke(entry));
+
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return filteredList;
+
     }
 }

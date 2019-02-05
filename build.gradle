@@ -15,7 +15,7 @@ apply plugin: 'application'
 apply plugin: 'javafx-gradle-plugin'
 
 group 'org.usfirst.frc.team25.scouting'
-version '1.0-SNAPSHOT'
+version '3.0'
 
 sourceCompatibility = 1.8
 
@@ -26,7 +26,7 @@ repositories {
 //create a single Jar with all dependencies
 task createJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Gradle Jar File Example',
+        attributes 'Implementation-Title': 'Raider Robotix Scouting',
                 'Implementation-Version': version,
                 'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
     }

@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class ScoutEntry implements Serializable {
 
     private PreMatch preMatch;
-    private Autonomous auto;
+    private Autonomous autonomous;
     private TeleOp teleOp;
     private PostMatch postMatch;
     private transient int sandstormPoints, teleOpPoints, climbPoints, calculatedPointContribution, autoHatches,
@@ -21,8 +21,8 @@ public class ScoutEntry implements Serializable {
         return preMatch;
     }
 
-    public Autonomous getAuto() {
-        return auto;
+    public Autonomous getAutonomous() {
+        return autonomous;
     }
 
     public TeleOp getTeleOp() {

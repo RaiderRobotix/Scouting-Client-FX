@@ -30,13 +30,12 @@ public class EventReport {
     private HashMap<Integer, TeamReport> teamReports;
     private String inaccuracyList;
     private File teamNameList;
-    private HashMap<Integer, Integer> pickPoints;
 
     public EventReport(ArrayList<ScoutEntry> entries, String event, File directory) {
         teamReports = new HashMap<>();
         inaccuracyList = "";
 
-        scoutEntries = entries;
+        this.scoutEntries = entries;
         this.event = event;
         this.directory = directory;
 
@@ -52,6 +51,7 @@ public class EventReport {
 
             teamReports.get(teamNum).addEntry(entry);
         }
+
 
     }
 
@@ -122,9 +122,9 @@ public class EventReport {
                                     "Climbing");
                         }
 
-                        if (actualAutoRun != entry.getAuto().isReachHabLine()) {
+                        if (actualAutoRun != entry.getAutonomous().isReachHabLine()) {
                             inaccuracies += "auto run, ";
-                            entry.getAuto().setReachHabLine(actualAutoRun);
+                            entry.getAutonomous().setReachHabLine(actualAutoRun);
                         }
 
 
@@ -167,17 +167,13 @@ public class EventReport {
 
             TeamReport report = teamReports.get(key);
             if (teamNameList != null) {
+
                 report.autoGetTeamName(teamNameList);
 
             }
-            report.calculateStats();
 
-
-            teamReports.put(key, report);
-
+            report.findFrequentComments();
         }
-
-
     }
 
     /**
@@ -191,7 +187,8 @@ public class EventReport {
 
         for (ScoutEntry entry : scoutEntries) {
 
-            Object[] dataObjects = {entry.getPreMatch(), entry.getAuto(), entry.getTeleOp(), entry.getPostMatch()};
+            Object[] dataObjects = {entry.getPreMatch(), entry.getAutonomous(), entry.getTeleOp(),
+                    entry.getPostMatch()};
 
 
             for (Object dataObject : dataObjects) {
@@ -268,47 +265,19 @@ public class EventReport {
                 if (i == 1 || i == 2) {
                     header.append(shortNames[i] + " - ");
                 }
-                header.append(convertCamelToSentenceCase(metric.getName()) + ",");
+                header.append(StringProcessing.convertCamelToSentenceCase(metric.getName()) + ",");
             }
         }
 
         for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-            header.append(removeCommas(key)).append(",");
+            header.append(StringProcessing.removeCommasBreaks(key)).append(",");
         }
 
 
         return header.toString();
     }
 
-    /**
-     * @param camelCaseString A string in lower camelCase
-     * @return The string in sentence case, with space separations. E.g., "numRocketHatches" becomes "Num rocket
-     * hatches"
-     */
-    public static String convertCamelToSentenceCase(String camelCaseString) {
-        //TODO write this
 
-        return camelCaseString;
-    }
-
-    /**
-     * Helper method to prevent manual comments with commas
-     * from changing CSV format
-     *
-     * @param s String to be processed
-     * @return String without commas
-     */
-    private String removeCommas(String s) {
-        StringBuilder newString = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) != ',') {
-                newString.append(s.charAt(i));
-            } else {
-                newString.append("; ");
-            }
-        }
-        return newString.toString();
-    }
 
     /**
      * Serializes the ArrayList of all ScoutEntrys into a JSON file
@@ -329,7 +298,7 @@ public class EventReport {
     }
 
     public void setTeamNameList(File list) {
-        teamNameList = list;
+        this.teamNameList = list;
     }
 
 
@@ -378,8 +347,8 @@ public class EventReport {
         return teamReports.get(teamNum);
     }
 
-    public Alliance getAllianceReport(int teamOne, int teamTwo, int teamThree) {
-        return new Alliance(teamReports.get(teamOne), teamReports.get(teamTwo), teamReports.get(teamThree));
+    public AllianceReport getAllianceReport(int teamOne, int teamTwo, int teamThree) {
+        return new AllianceReport(teamReports.get(teamOne), teamReports.get(teamTwo), teamReports.get(teamThree));
     }
 
 }

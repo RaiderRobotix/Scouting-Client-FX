@@ -487,7 +487,7 @@ class PicklistGenerator {
      * @return Formatted list, with tree levels not clamped down
      */
     private String hashMapToStringList(HashMap<Integer, Integer> teamPointsMap) {
-        teamPointsMap = Sorters.sortByComparator(teamPointsMap, false);
+        teamPointsMap = SortersFilters.sortByComparator(teamPointsMap, false);
         StringBuilder result = new StringBuilder();
         int rank = 1;
         for (Map.Entry<Integer, Integer> entry : teamPointsMap.entrySet()) {
@@ -526,6 +526,24 @@ class PicklistGenerator {
         FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Pick Points" + eventName +
                         ".txt"),
                 hashMapToStringList(pickPoints));
+
+    }
+
+    /**
+     * Generates a list based on a calculated ability to be a good first pick robot
+     * Calculated ability derived from collected metrics (e.g. climbs, cargo, hatches)
+     * TODO write this
+     */
+    public void generateCalculatedFirstPicklist() {
+
+    }
+
+    /**
+     * Generates a list based on a calculated ability to be a good first pick robot
+     * Calculated ability derived from collected metrics (e.g. climbs, cargo, hatches)
+     * TODO write this
+     */
+    public void generateCalculatedSecondPicklist() {
 
     }
 

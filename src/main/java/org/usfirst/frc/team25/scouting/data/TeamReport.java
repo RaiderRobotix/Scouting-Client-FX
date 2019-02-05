@@ -1,5 +1,6 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import org.usfirst.frc.team25.scouting.data.models.Autonomous;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
@@ -14,22 +15,44 @@ import java.util.HashMap;
  */
 public class TeamReport {
 
-    final String autoGearPegLoc = "";
-    final transient String frequentPilotCommentStr = "";
-    final ArrayList<Integer> teleOpCubes = new ArrayList<>();
     private final transient ArrayList<ScoutEntry> entries;
-    private final int teamNum; //transient because it's the key of the HashMap in EventReport
-    private final ArrayList<Integer> totalSwitchCubes = new ArrayList<>();
-    private final ArrayList<Integer> totalScaleCubes = new ArrayList<>();
-    private final ArrayList<Integer> totalCubes = new ArrayList<>();
-    private final ArrayList<Integer> totalDroppedCubes = new ArrayList<>();
-    private final ArrayList<Double> firstCubeTimes = new ArrayList<>();
-    private String teamName;
-    private transient String frequentRobotCommentStr = "";
+    private final int teamNum;
+    private String teamName, frequentRobotCommentStr, allComments;
 
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
         entries = new ArrayList<>();
+
+    }
+
+    /**
+     * Generates an easily-readable report with relevant stats on an team's capability
+     *
+     * @return A formatted string with relevant aggregate team stats
+     */
+    public String getQuickStatus() {
+        //TODO write this
+        String statusString = "Team " + getTeamNum();
+
+        if (!getTeamName().isEmpty()) {
+            statusString += " - " + getTeamName();
+        }
+
+        statusString += "\n\nAutonomous:\n";
+
+
+        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+
+        statusString += "Avg. cargo ship cargo: " + Statistics.round(Statistics.average(autoList, "cargoShipCargo"), 2);
+
+        statusString += "\n\nTele-Op:\n";
+
+        statusString += "\n\nEndgame:\n";
+
+        statusString += "\n\nOverall:\n";
+
+
+        return statusString;
     }
 
     public String getTeamName() {
@@ -46,22 +69,18 @@ public class TeamReport {
         String[] values = data.split(",\n");
 
         for (String value : values) {
+
             if (value.split(",")[0].equals(Integer.toString(teamNum))) {
 
                 teamName = value.split(",")[1];
-                return; //Terminates the method
+                return;
             }
         }
     }
 
-    public void calculateStats() {
-
-        calculateTotals();
-
-        //Calculate percentages, averages, standard deviations here
+    public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
-
 
         for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
             commentFrequencies.put(key, 0);
@@ -75,95 +94,41 @@ public class TeamReport {
         ArrayList<String> frequentRobotComment = new ArrayList<>();
 
         for (String key : commentFrequencies.keySet()) {
+
+            // Feel free to change this ratio
             if (commentFrequencies.get(key) >= entries.size() / 4.0) {
                 frequentRobotComment.add(key);
             }
         }
 
-
-        boolean doNotPick = frequentRobotComment.contains("Do not pick (explain)");
-        boolean isActive = frequentRobotComment.contains("Active gear mech.");
-        boolean hasIntake = frequentRobotComment.contains("Fuel intake");
-        //Instance variables below should not be serialized but may be accessed by EventReports for analysis
-        boolean hasPickup = frequentRobotComment.contains("Gear pickup");
-
-        frequentRobotComment.remove("Do not pick (explain)");
-        frequentRobotComment.remove("Active gear mech.");
-        frequentRobotComment.remove("Fuel intake");
-        frequentRobotComment.remove("Gear pickup");
-
-        commentFrequencies = new HashMap<>();
-
-
         for (String comment : frequentRobotComment) {
-            frequentRobotCommentStr += removeCommas(comment) + ';';
+            frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + ';';
         }
 
-        computeRankingMetrics();
-
-        String allComments = "";
+        allComments = "";
         for (ScoutEntry entry : entries) {
             if (!entry.getPostMatch().getRobotComment().equals("")) {
                 allComments += entry.getPostMatch().getRobotComment() + "; ";
             }
-			/*if(!autoGearPegLoc.contains(entry.getAuto().getGearPeg()))
-				autoGearPegLoc+=entry.getAuto().getGearPeg()+"; ";*/
+
         }
 
 
-    }
-
-    private void calculateTotals() {
-
-        //Calculate total variables declared above
-        //i.e. total cubes delivered in teleop
-    }
-
-    private String removeCommas(String s) {
-        StringBuilder newString = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) != ',') {
-                newString.append(s.charAt(i));
-            } else {
-                newString.append("; ");
-            }
-        }
-        return newString.toString();
-    }
-
-    private void computeRankingMetrics() {
-        double autoAbility = 0;
-        double teleOpAbility = 0;
-        double driveTeamAbility = 0;
-        double robotQualities = 0;
-        double firstPickAbility = 0;
-        double secondPickAbility = 0;
-    }
-
-    public int getTeamNum() {
-        return teamNum;
     }
 
     public void addEntry(ScoutEntry entry) {
-        entry.getPostMatch().setRobotComment(removeCommasAndBreaks(entry.getPostMatch().getRobotComment()));
+        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment()));
 
         entries.add(entry);
     }
 
-    private String removeCommasAndBreaks(String s) {
-        StringBuilder newString = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) != ',' && s.charAt(i) != '\n') {
-                newString.append(s.charAt(i));
-            } else {
-                newString.append("; ");
-            }
-        }
-        return newString.toString();
+    public ArrayList<ScoutEntry> getEntries() {
+        return this.entries;
     }
 
-    public String getQuickStatus() {
-        return "";
+
+    public int getTeamNum() {
+        return teamNum;
     }
 
 

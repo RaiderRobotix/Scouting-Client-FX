@@ -16,7 +16,7 @@ import java.util.Calendar;
 
 
 /**
- * Class of static methods used to interface with online data from The Blue Alliance
+ * Class of static methods used to interface with online data from The Blue AllianceReport
  *
  * @author sng
  */
@@ -28,7 +28,6 @@ public class BlueAlliance {
 
 
         String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"), "utf-8");
-        System.out.println("API key: " + apiKey);
         TBA = new TBA(apiKey);
     }
 
@@ -98,7 +97,7 @@ public class BlueAlliance {
         StringBuilder teamList = new StringBuilder();
         ArrayList<Team> teams;
         try {
-            teams = Sorters.sortByTeamNum(new ArrayList<>(Arrays.asList(TBA.eventRequest.getTeams(eventCode))));
+            teams = SortersFilters.sortByTeamNum(new ArrayList<>(Arrays.asList(TBA.eventRequest.getTeams(eventCode))));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -131,7 +130,7 @@ public class BlueAlliance {
 
         try {
             for (Team team :
-                    Sorters.sortByTeamNum(new ArrayList<>(Arrays.asList(TBA.eventRequest.getTeams(eventCode))))) {
+                    SortersFilters.sortByTeamNum(new ArrayList<>(Arrays.asList(TBA.eventRequest.getTeams(eventCode))))) {
                 teamList.append(team.getTeamNumber()).append(",").append(team.getNickname()).append(",\n");
             }
         } catch (IOException e) {
@@ -159,7 +158,7 @@ public class BlueAlliance {
         StringBuilder matchList = new StringBuilder();
         try {
             for (Match match :
-                    Sorters.sortByMatchNum(Sorters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))))) {
+                    SortersFilters.sortByMatchNum(SortersFilters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))))) {
 
                 matchList.append(match.getMatchNumber()).append(",");
                 for (int i = 0; i < 2; i++) //iterate through two alliances
@@ -209,7 +208,7 @@ public class BlueAlliance {
 
     public static boolean downloadEventMatchData(String eventCode, File outputDirectory) throws IOException {
         ArrayList<Match> matches =
-                Sorters.sortByMatchNum(Sorters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))));
+                SortersFilters.sortByMatchNum(SortersFilters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))));
 
         if (matches.size() == 0) {
             return false;
