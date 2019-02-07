@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_org.usfirst.frc.team25.scouting.client.main" default="compile.module.org.usfirst.frc.team25.scouting.client.main">
+  <dirname property="module.org.usfirst.frc.team25.scouting.client.main.basedir" file="${ant.file.module_org.usfirst.frc.team25.scouting.client.main}"/>
+  
+  <property name="module.jdk.home.org.usfirst.frc.team25.scouting.client.main" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.org.usfirst.frc.team25.scouting.client.main" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.org.usfirst.frc.team25.scouting.client.main" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.org.usfirst.frc.team25.scouting.client.main" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="org.usfirst.frc.team25.scouting.client.main.output.dir" value="${module.org.usfirst.frc.team25.scouting.client.main.basedir}/../../out/production/classes"/>
+  <property name="org.usfirst.frc.team25.scouting.client.main.testoutput.dir" value="${module.org.usfirst.frc.team25.scouting.client.main.basedir}/../../out/production/classes"/>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.main.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.main.module.production.classpath">
+    <path refid="${module.jdk.classpath.org.usfirst.frc.team25.scouting.client.main}"/>
+    <pathelement location="${basedir}/libs/TBA-APIv3-Java-Library.jar"/>
+    <path refid="library.gradle:_com.google.code.gson:gson:2.7.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.0.1.classpath"/>
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.main.runtime.production.module.classpath">
+    <pathelement location="${org.usfirst.frc.team25.scouting.client.main.output.dir}"/>
+    <pathelement location="${basedir}/libs/TBA-APIv3-Java-Library.jar"/>
+    <path refid="library.gradle:_com.google.code.gson:gson:2.7.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.0.1.classpath"/>
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.main.module.classpath">
+    <path refid="${module.jdk.classpath.org.usfirst.frc.team25.scouting.client.main}"/>
+    <pathelement location="${org.usfirst.frc.team25.scouting.client.main.output.dir}"/>
+    <pathelement location="${basedir}/libs/TBA-APIv3-Java-Library.jar"/>
+    <path refid="library.gradle:_com.google.code.gson:gson:2.7.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.0.1.classpath"/>
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.main.runtime.module.classpath">
+    <pathelement location="${org.usfirst.frc.team25.scouting.client.main.output.dir}"/>
+    <pathelement location="${basedir}/libs/TBA-APIv3-Java-Library.jar"/>
+    <path refid="library.gradle:_com.google.code.gson:gson:2.7.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.0.1.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.org.usfirst.frc.team25.scouting.client.main">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.org.usfirst.frc.team25.scouting.client.main">
+    <patternset refid="excluded.from.module.org.usfirst.frc.team25.scouting.client.main"/>
+  </patternset>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.main.module.sourcepath">
+    <dirset dir="${module.org.usfirst.frc.team25.scouting.client.main.basedir}/../../src/main">
+      <include name="java"/>
+      <include name="resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.org.usfirst.frc.team25.scouting.client.main" depends="compile.module.org.usfirst.frc.team25.scouting.client.main.production,compile.module.org.usfirst.frc.team25.scouting.client.main.tests" description="Compile module org.usfirst.frc.team25.scouting.client.main"/>
+  
+  <target name="compile.module.org.usfirst.frc.team25.scouting.client.main.production" depends="register.custom.compilers" description="Compile module org.usfirst.frc.team25.scouting.client.main; production classes">
+    <mkdir dir="${org.usfirst.frc.team25.scouting.client.main.output.dir}"/>
+    <javac2 destdir="${org.usfirst.frc.team25.scouting.client.main.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.org.usfirst.frc.team25.scouting.client.main}/javac">
+      <compilerarg line="${compiler.args.org.usfirst.frc.team25.scouting.client.main}"/>
+      <bootclasspath refid="org.usfirst.frc.team25.scouting.client.main.module.bootclasspath"/>
+      <classpath refid="org.usfirst.frc.team25.scouting.client.main.module.production.classpath"/>
+      <src refid="org.usfirst.frc.team25.scouting.client.main.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.org.usfirst.frc.team25.scouting.client.main"/>
+    </javac2>
+    
+    <copy todir="${org.usfirst.frc.team25.scouting.client.main.output.dir}">
+      <fileset dir="${module.org.usfirst.frc.team25.scouting.client.main.basedir}/../../src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.org.usfirst.frc.team25.scouting.client.main.basedir}/../../src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.org.usfirst.frc.team25.scouting.client.main.tests" depends="register.custom.compilers,compile.module.org.usfirst.frc.team25.scouting.client.main.production" description="compile module org.usfirst.frc.team25.scouting.client.main; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.org.usfirst.frc.team25.scouting.client.main" description="cleanup module">
+    <delete dir="${org.usfirst.frc.team25.scouting.client.main.output.dir}"/>
+    <delete dir="${org.usfirst.frc.team25.scouting.client.main.testoutput.dir}"/>
+  </target>
+</project>

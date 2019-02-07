@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_org.usfirst.frc.team25.scouting.client" default="compile.module.org.usfirst.frc.team25.scouting.client">
+  <dirname property="module.org.usfirst.frc.team25.scouting.client.basedir" file="${ant.file.module_org.usfirst.frc.team25.scouting.client}"/>
+  
+  <property name="module.jdk.home.org.usfirst.frc.team25.scouting.client" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.org.usfirst.frc.team25.scouting.client" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.org.usfirst.frc.team25.scouting.client" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.org.usfirst.frc.team25.scouting.client" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="org.usfirst.frc.team25.scouting.client.output.dir" value="${module.org.usfirst.frc.team25.scouting.client.basedir}/../../out/production/org.usfirst.frc.team25.scouting.client"/>
+  <property name="org.usfirst.frc.team25.scouting.client.testoutput.dir" value="${module.org.usfirst.frc.team25.scouting.client.basedir}/../../out/test/org.usfirst.frc.team25.scouting.client"/>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.module.production.classpath">
+    <path refid="${module.jdk.classpath.org.usfirst.frc.team25.scouting.client}"/>
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.runtime.production.module.classpath">
+    <pathelement location="${org.usfirst.frc.team25.scouting.client.output.dir}"/>
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.module.classpath">
+    <path refid="${module.jdk.classpath.org.usfirst.frc.team25.scouting.client}"/>
+    <pathelement location="${org.usfirst.frc.team25.scouting.client.output.dir}"/>
+  </path>
+  
+  <path id="org.usfirst.frc.team25.scouting.client.runtime.module.classpath">
+    <pathelement location="${org.usfirst.frc.team25.scouting.client.testoutput.dir}"/>
+    <pathelement location="${org.usfirst.frc.team25.scouting.client.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.org.usfirst.frc.team25.scouting.client">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.org.usfirst.frc.team25.scouting.client">
+    <patternset refid="excluded.from.module.org.usfirst.frc.team25.scouting.client"/>
+  </patternset>
+  
+  
+  <target name="compile.module.org.usfirst.frc.team25.scouting.client" depends="compile.module.org.usfirst.frc.team25.scouting.client.production,compile.module.org.usfirst.frc.team25.scouting.client.tests" description="Compile module org.usfirst.frc.team25.scouting.client"/>
+  
+  <target name="compile.module.org.usfirst.frc.team25.scouting.client.production" depends="register.custom.compilers" description="Compile module org.usfirst.frc.team25.scouting.client; production classes"/>
+  
+  <target name="compile.module.org.usfirst.frc.team25.scouting.client.tests" depends="register.custom.compilers,compile.module.org.usfirst.frc.team25.scouting.client.production" description="compile module org.usfirst.frc.team25.scouting.client; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.org.usfirst.frc.team25.scouting.client" description="cleanup module">
+    <delete dir="${org.usfirst.frc.team25.scouting.client.output.dir}"/>
+    <delete dir="${org.usfirst.frc.team25.scouting.client.testoutput.dir}"/>
+  </target>
+</project>
