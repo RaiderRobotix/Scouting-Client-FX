@@ -67,29 +67,6 @@ public class FileManager {
         return directory.listFiles();
     }
 
-    /**
-     * Executes a command line statement to generate a LaTeX file
-     * Deletes excess files as well
-     *
-     * @param outputDirectory Directory for the output PDF file
-     * @param filePath        Path to TeX source file
-     */
-    public static void compilePdfLatex(String outputDirectory, String filePath) {
-        try {
-            Runtime.getRuntime().exec("pdflatex -output-directory=" + outputDirectory + " " + filePath);
-            String[] directories = filePath.split("\\\\");
-            String fileName = directories[directories.length - 1].split(FILE_EXTENSION_REGEX)[0];
-
-            Thread.sleep(500); //Needed to register files into filesystem
-
-            deleteFile(outputDirectory + "\\" + fileName + ".aux");
-            deleteFile(outputDirectory + "\\" + fileName + ".log");
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-    }
 
     private static void deleteFile(String filePath) {
         try {

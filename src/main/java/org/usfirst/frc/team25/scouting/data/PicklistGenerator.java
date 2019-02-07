@@ -307,7 +307,7 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Topological Sort - " + eventName + ".txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Topological Sort - " + eventName + ".txt"),
                 rankTreeStringToStringList(tree));
     }
 
@@ -356,7 +356,7 @@ class PicklistGenerator {
             }
         } while (swapsNeeded);
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Head to Head - " + eventName + ".txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Head to Head - " + eventName + ".txt"),
                 arrayListToStringList(orderedList));
 
     }
@@ -448,7 +448,7 @@ class PicklistGenerator {
 
         //generateHeadToHeadList(bestTree.toArrayList(), "bogo");
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Bogo Compare - " + eventName + ".txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Bogo Compare - " + eventName + ".txt"),
                 rankTreeStringToStringList(bestTree));
     }
 
@@ -475,7 +475,7 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Compare Points - " + eventName + ".txt"),
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Compare Points - " + eventName + ".txt"),
                 hashMapToStringList(compareList));
     }
 
@@ -523,7 +523,7 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\Picklist - Pick Points" + eventName +
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Pick Points" + eventName +
                         ".txt"),
                 hashMapToStringList(pickPoints));
 

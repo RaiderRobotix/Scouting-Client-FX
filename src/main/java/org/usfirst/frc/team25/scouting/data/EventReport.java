@@ -67,7 +67,7 @@ public class EventReport {
         try {
 
             ArrayList<Match> matchData = FileManager.deserializeScoreBreakdown(
-                    new File(directory.getAbsoluteFile() + "\\ScoreBreakdown - " + event + ".json"));
+                    new File(directory.getAbsoluteFile() + "/ScoreBreakdown - " + event + ".json"));
 
 
             for (ScoutEntry entry : scoutEntries) {
@@ -238,7 +238,7 @@ public class EventReport {
         }
 
         try {
-            FileManager.outputFile(outputDirectory.getAbsolutePath() + "\\Data - All - " + event, "csv",
+            FileManager.outputFile(outputDirectory.getAbsolutePath() + "/Data - All - " + event, "csv",
                     fileContents.toString());
         } catch (FileNotFoundException e) {
 
@@ -320,7 +320,7 @@ public class EventReport {
         Gson gson = new Gson();
         String jsonString = gson.toJson(scoutEntries);
         try {
-            FileManager.outputFile(outputDirectory.getAbsolutePath() + "\\Data - All - " + event, "json", jsonString);
+            FileManager.outputFile(outputDirectory.getAbsolutePath() + "/Data - All - " + event, "json", jsonString);
         } catch (FileNotFoundException e) {
 
             return false;
@@ -350,7 +350,7 @@ public class EventReport {
 
         String jsonString = gson.toJson(teamReportList);
         try {
-            FileManager.outputFile(outputDirectory.getAbsolutePath() + "\\TeamReports - " + event, "json", jsonString);
+            FileManager.outputFile(outputDirectory.getAbsolutePath() + "/TeamReports - " + event, "json", jsonString);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -359,7 +359,7 @@ public class EventReport {
 
     public void generateInaccuracyList(File outputDirectory) {
         if (!inaccuracyList.isEmpty()) {
-            FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "\\inaccuracies.txt"), inaccuracyList);
+            FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "/inaccuracies.txt"), inaccuracyList);
         }
     }
 

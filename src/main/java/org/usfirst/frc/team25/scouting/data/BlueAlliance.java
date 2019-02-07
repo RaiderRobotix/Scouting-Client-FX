@@ -67,13 +67,13 @@ public class BlueAlliance {
 
         try {
             String eventShortName = TBA.eventRequest.getEvent(eventCode).getKey();
-            if (exportSimpleTeamList(eventCode, outputFolder.getAbsolutePath() + "\\Teams - " + eventShortName)) {
+            if (exportSimpleTeamList(eventCode, outputFolder.getAbsolutePath() + "/Teams - " + eventShortName)) {
                 response += "\nSimple team list downloaded";
             }
-            if (exportTeamList(eventCode, outputFolder.getAbsolutePath() + "\\TeamNames - " + eventShortName)) {
+            if (exportTeamList(eventCode, outputFolder.getAbsolutePath() + "/TeamNames - " + eventShortName)) {
                 response += "\nTeam names downloaded";
             }
-            if (exportMatchList(eventCode, outputFolder.getAbsolutePath() + "\\Matches - " + eventShortName)) {
+            if (exportMatchList(eventCode, outputFolder.getAbsolutePath() + "/Matches - " + eventShortName)) {
                 response += "\nMatch schedule downloaded";
             }
 
@@ -217,7 +217,7 @@ public class BlueAlliance {
 
         Gson gson = new Gson();
         String jsonString = gson.toJson(matches);
-        FileManager.outputFile(outputDirectory.getAbsolutePath() + "\\ScoreBreakdown - " + eventCode, "json",
+        FileManager.outputFile(outputDirectory.getAbsolutePath() + "//ScoreBreakdown - " + eventCode, "json",
                 jsonString);
 
         return true;
