@@ -39,3 +39,4 @@ jfx {
     appName="raider-client"
 }
 
+mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'

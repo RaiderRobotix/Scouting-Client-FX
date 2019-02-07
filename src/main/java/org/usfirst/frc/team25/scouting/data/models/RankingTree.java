@@ -1,6 +1,6 @@
 package org.usfirst.frc.team25.scouting.data.models;
 
-import org.usfirst.frc.team25.scouting.data.Sorters;
+import org.usfirst.frc.team25.scouting.data.SortersFilters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,7 +154,7 @@ public class RankingTree {
      * a node on each line, followed by a comma and its level
      */
     public String toString() {
-        ranks = Sorters.sortByComparator(ranks, false);
+        ranks = SortersFilters.sortByComparator(ranks, false);
         StringBuilder result = new StringBuilder();
         for (Map.Entry<Integer, Integer> entry : ranks.entrySet()) {
             try {
@@ -174,7 +174,7 @@ public class RankingTree {
      */
     public ArrayList<Integer> toArrayList() {
         ArrayList<Integer> result = new ArrayList<>();
-        ranks = Sorters.sortByComparator(ranks, false);
+        ranks = SortersFilters.sortByComparator(ranks, false);
         for (Map.Entry<Integer, Integer> entry : ranks.entrySet()) {
             try {
                 result.add(entry.getKey());

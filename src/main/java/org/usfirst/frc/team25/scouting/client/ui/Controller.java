@@ -31,7 +31,7 @@ public class Controller {
     private ArrayList<File> jsonFileList;
     private String eventName;
 
-    private File currentDataDirectory;
+    private File currentDataDirectory, teamNameList;
 
     public void initialize() {
 
@@ -84,12 +84,6 @@ public class Controller {
             String status = "";
 
             retrieveEventReport();
-
-            File teamNameList = FileManager.getTeamNameList(currentDataDirectory);
-
-            if (teamNameList != null) {
-                eventReport.setTeamNameList(teamNameList);
-            }
 
             if (backupJson.isSelected()) {
                 FileManager.createBackup(jsonFileList, currentDataDirectory);
@@ -165,12 +159,16 @@ public class Controller {
                 int teamNum;
                 try {
                     teamNum = Integer.parseInt(analysisTeamOne.getText());
+                    if (!eventReport.isTeamPlaying(teamNum)) {
+                        addStatus("Invalid team number for event " + eventName + ". Please try again.");
+                    } else {
+                        addStatus(eventReport.getTeamReport(teamNum).getQuickStatus());
+                    }
                 } catch (NumberFormatException e) {
                     addStatus("Invalid or missing team number. Please try again.");
-                    return;
                 }
 
-                addStatus(eventReport.getTeamReport(teamNum).getQuickStatus());
+
             } else {
                 int teamOne, teamTwo, teamThree;
 
@@ -178,17 +176,25 @@ public class Controller {
                     teamOne = Integer.parseInt(analysisTeamOne.getText());
                     teamTwo = Integer.parseInt(analysisTeamTwo.getText());
                     teamThree = Integer.parseInt(analysisTeamThree.getText());
+                    if (!eventReport.isTeamPlaying(teamOne) || !eventReport.isTeamPlaying(teamTwo) || !eventReport.isTeamPlaying(teamThree)) {
+                        addStatus("Invalid team number(s) for event " + eventName + ". Please try again.");
+                    } else {
+                        addStatus(eventReport.getAllianceReport(teamOne, teamTwo, teamThree).getQuickAllianceReport());
+                    }
                 } catch (NumberFormatException e) {
                     addStatus("Invalid or missing team number(s). Please try again.");
-                    return;
+
                 }
 
-                addStatus(eventReport.getAllianceReport(teamOne, teamTwo, teamThree).getQuickAllianceReport());
             }
         });
 
     }
 
+    /**
+     * Retrieves JSON data files from the selected data directory and converts them into an EventReport for data
+     * processing
+     */
     private void retrieveEventReport() {
         this.jsonFileList = FileManager.getDataFiles(currentDataDirectory);
 
@@ -203,10 +209,22 @@ public class Controller {
 
         ArrayList<ScoutEntry> scoutEntries = FileManager.deserializeData(jsonFileList);
 
+        this.teamNameList = FileManager.getTeamNameList(currentDataDirectory);
 
         this.eventReport = new EventReport(scoutEntries, eventName, currentDataDirectory);
+
+        if (teamNameList != null) {
+            eventReport.setTeamNameList(teamNameList);
+        }
+
+        eventReport.processTeamReports();
     }
 
+    /**
+     * Adds a status display to the user-facing text box, with a separator between statuses
+     *
+     * @param message Text to display to the user
+     */
     private void addStatus(String message) {
         statusTextBox.setText(message + "\n====================\n" + statusTextBox.getText());
     }
