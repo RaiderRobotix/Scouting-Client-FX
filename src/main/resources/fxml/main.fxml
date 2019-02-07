@@ -23,9 +23,9 @@
         <Button fx:id="chooseDataFolderButton" layoutX="204.0" layoutY="53.0" mnemonicParsing="false"
                 text="Choose Data Folder"/>
         <Text layoutX="204.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Raider Robotix Scouting Client - v3.0">
+              text="Raider Robotix Scouting Client - v3.01">
             <font>
-                <Font name="Calibri Bold" size="22.0"/>
+                <Font name="Calibri Bold" size="20.0"/>
             </font>
         </Text>
         <Text fx:id="dataDirectoryDisplay" layoutX="204.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0"

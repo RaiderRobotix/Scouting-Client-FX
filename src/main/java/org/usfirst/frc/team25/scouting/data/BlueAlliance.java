@@ -28,7 +28,7 @@ public class BlueAlliance {
 
 
         String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"), "utf-8");
-        System.out.println("API key: " + apiKey);
+
         TBA = new TBA(apiKey);
     }
 

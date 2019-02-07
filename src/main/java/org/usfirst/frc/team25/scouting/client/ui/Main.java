@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.usfirst.frc.team25.scouting.data.BlueAlliance;
 
@@ -20,6 +21,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/main.fxml"));
+
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/team_25_logo.png")));
         primaryStage.setTitle("Raider Robotix Scouting Client");
         primaryStage.setScene(new Scene(root, 820, 370));
         primaryStage.setResizable(false);

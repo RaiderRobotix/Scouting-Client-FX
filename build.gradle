@@ -15,24 +15,12 @@ apply plugin: 'application'
 apply plugin: 'javafx-gradle-plugin'
 
 group 'org.usfirst.frc.team25.scouting'
-version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
-}
-
-//create a single Jar with all dependencies
-task createJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'Gradle Jar File Example',
-                'Implementation-Version': version,
-                'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
-    }
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
 }
 
 
@@ -44,7 +32,10 @@ dependencies {
 }
 
 jfx {
-
+    mainClass = 'org.usfirst.frc.team25.scouting.client.ui.Main'
+    vendor = 'Raider Robotix'
+    jfxMainAppJarName = "raider-deep-space-client-v3.XX.jar"
+    nativeReleaseVersion = "v3.01"
+    appName="raider-client"
 }
 
-mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
