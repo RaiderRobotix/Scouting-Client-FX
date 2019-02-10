@@ -1,11 +1,16 @@
 package org.usfirst.frc.team25.scouting.data;
 
 import org.usfirst.frc.team25.scouting.data.models.Autonomous;
+import org.usfirst.frc.team25.scouting.data.models.PostMatch;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
+import org.usfirst.frc.team25.scouting.data.models.TeleOp;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static org.usfirst.frc.team25.scouting.data.Statistics.average;
+import static org.usfirst.frc.team25.scouting.data.Statistics.sum;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
@@ -17,7 +22,7 @@ public class TeamReport {
 
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
-    private String teamName, frequentRobotCommentStr, allComments;
+    private String teamName = "", frequentRobotCommentStr, allComments;
 
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
@@ -43,13 +48,37 @@ public class TeamReport {
 
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
 
-        statusString += "Avg. cargo ship cargo: " + Statistics.round(Statistics.average(autoList, "cargoShipCargo"), 2);
+        statusString += "\nAvg. cargo ship cargo: " + Statistics.round(average(autoList, "cargoShipCargo"), 2);
+        statusString += "\nAvg. cargo ship hatches: " + Statistics.round(average(autoList, "cargoShipHatches"), 2);
+        statusString += "\nAvg. rocket cargo: " + Statistics.round(average(autoList, "rocketCargo"), 2);
+        statusString += "\nAvg. rocket hatches: " + Statistics.round(average(autoList, "rocketHatches"),2);
+        statusString += "\nAvg. cargo dropped: " + Statistics.round(average(autoList, "cargoDropped"), 2);
+        statusString += "\nAvg. hatches dropped: " + Statistics.round(average(autoList, "hatchesDropped"), 2);
 
         statusString += "\n\nTele-Op:\n";
 
+        ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
+
+        statusString += "\nAvg. cargo ship cargo: " + Statistics.round(average(teleList, "cargoShipCargo"),2);
+        statusString += "\nAvg. cargo ship hatches: " + Statistics.round(average(teleList, "cargoShipHatches"),2);
+        statusString += "\nAvg. rocket level 1 cargo: " +  Statistics.round(average(teleList, "rocketLevelOneCargo"),2);
+        statusString += "\nAvg. rocket level 2 cargo: " +  Statistics.round(average(teleList, "rocketLevelTwoCargo"),2);
+        statusString += "\nAvg. rocket level 3 cargo: " +  Statistics.round(average(teleList, "rocketLevelThreeCargo"),2);
+        statusString += "\nAvg. rocket level 1 hatches: " +  Statistics.round(average(teleList, "rocketLevelOneHatches"),2);
+        statusString += "\nAvg. rocket level 2 hatches: " +  Statistics.round(average(teleList, "rocketLevelTwoHatches"),2);
+        statusString += "\nAvg. rocket level 3 hatches: " +  Statistics.round(average(teleList, "rocketLevelThreeHatches"),2);
+        statusString += "\nAvg. cargo dropped: " +  Statistics.round(average(teleList, "cargoDropped"),2);
+        statusString += "\nAvg. hatches dropped: " +  Statistics.round(average(teleList, "hatchesDropped"),2);
+        
         statusString += "\n\nEndgame:\n";
 
+        ArrayList<Object> postList = SortersFilters.filterDataObject(entries,PostMatch.class);
+
+        statusString += "\n Avg. total points: ";
+
         statusString += "\n\nOverall:\n";
+
+        statusString += "\n Common Quick Comments: " + "\n"  + frequentRobotCommentStr;
 
 
         return statusString;
@@ -81,7 +110,6 @@ public class TeamReport {
     public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
-
         for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
             commentFrequencies.put(key, 0);
             for (ScoutEntry entry : entries) {
@@ -102,7 +130,7 @@ public class TeamReport {
         }
 
         for (String comment : frequentRobotComment) {
-            frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + ';';
+            frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
         allComments = "";
@@ -130,6 +158,4 @@ public class TeamReport {
     public int getTeamNum() {
         return teamNum;
     }
-
-
 }
