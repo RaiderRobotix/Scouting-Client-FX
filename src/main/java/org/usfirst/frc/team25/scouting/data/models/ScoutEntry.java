@@ -9,12 +9,9 @@ public class ScoutEntry implements Serializable {
     private Autonomous autonomous;
     private TeleOp teleOp;
     private PostMatch postMatch;
-    private transient int sandstormPoints, teleOpPoints, climbPoints, calculatedPointContribution, autoHatches,
-            autoCargo,
-            teleOpHatches, teleOpCargo, totalHatches, totalCargo;
+    private transient int sandstormPoints, calculatedPointContribution, totalHatches, autoHatches, totalCargo;
 
-
-    private transient String autoMode;
+    private transient int teleOpCargo, climbPoints, autoCargo;
 
 
     public PreMatch getPreMatch() {
@@ -34,9 +31,27 @@ public class ScoutEntry implements Serializable {
     }
 
     public void calculateDerivedStats() {
-        //TODO calculate the above
+
+        int teleOpCargo = teleOp.getRocketLevelOneCargo() + teleOp.getRocketLevelTwoCargo()
+                + teleOp.getRocketLevelThreeCargo();
+
+        int teleOpHatches = teleOp.getRocketLevelOneHatches() + teleOp.getRocketLevelTwoHatches()
+                + teleOp.getRocketLevelThreeHatches();
+
+        if (teleOp.getSuccessHabClimbLevel() == 1) {
+            climbPoints = preMatch.getStartingLevel() * 3 + 3;
+        } else if (teleOp.getSuccessHabClimbLevel() == 2) {
+            climbPoints = preMatch.getStartingLevel() * 3 + 6;
+        } else if (teleOp.getSuccessHabClimbLevel() == 3) {
+            climbPoints = preMatch.getStartingLevel() * 3 + 12;
+        }
+
+        int teleOpPoints = teleOpHatches * 2 + teleOpCargo * 3;
+
+        int autoCargo = autonomous.getRocketCargo() + autonomous.getCargoShipCargo();
 
         postMatch.generateQuickCommentStr();
+
 
     }
 
