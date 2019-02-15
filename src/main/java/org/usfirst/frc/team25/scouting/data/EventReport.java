@@ -122,9 +122,9 @@ public class EventReport {
                                     "Climbing");
                         }
 
-                        if (actualAutoRun != entry.getAutonomous().isReachHabLine()) {
+                        if (actualAutoRun != entry.getAutonomous().isCrossHabLine()) {
                             inaccuracies += "auto run, ";
-                            entry.getAutonomous().setReachHabLine(actualAutoRun);
+                            entry.getAutonomous().setCrossHabLine(actualAutoRun);
                         }
 
 
