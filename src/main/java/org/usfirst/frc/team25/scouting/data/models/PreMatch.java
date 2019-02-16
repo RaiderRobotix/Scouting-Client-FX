@@ -7,11 +7,12 @@ package org.usfirst.frc.team25.scouting.data.models;
 public class PreMatch {
 
     private String scoutName;
+    private int matchNum;
     private String scoutPos;
-    private String startingPos;
-    private int matchNum, teamNum;
-    private int startingLevel;
+    private int teamNum;
     private boolean robotNoShow;
+    private int startingLevel;
+    private String startingPos;
     private String startingGamePiece;
 
     public String getScoutName() {
@@ -58,5 +59,3 @@ public class PreMatch {
         return startingGamePiece;
     }
 }
-
-

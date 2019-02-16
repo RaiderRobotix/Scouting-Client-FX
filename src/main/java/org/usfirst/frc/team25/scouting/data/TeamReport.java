@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.usfirst.frc.team25.scouting.data.Statistics.average;
-import static org.usfirst.frc.team25.scouting.data.Statistics.sum;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
@@ -22,11 +21,13 @@ public class TeamReport {
 
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
-    private String teamName = "", frequentRobotCommentStr, allComments;
+    private String teamName, frequentRobotCommentStr, allComments;
 
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
         entries = new ArrayList<>();
+        teamName = "";
+        frequentRobotCommentStr = "";
 
     }
 
@@ -43,42 +44,43 @@ public class TeamReport {
             statusString += " - " + getTeamName();
         }
 
-        statusString += "\n\nAutonomous:\n";
+        statusString += "\n\nSandstorm:";
 
 
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
 
-        statusString += "\nAvg. cargo ship cargo: " + Statistics.round(average(autoList, "cargoShipCargo"), 2);
-        statusString += "\nAvg. cargo ship hatches: " + Statistics.round(average(autoList, "cargoShipHatches"), 2);
-        statusString += "\nAvg. rocket cargo: " + Statistics.round(average(autoList, "rocketCargo"), 2);
-        statusString += "\nAvg. rocket hatches: " + Statistics.round(average(autoList, "rocketHatches"),2);
-        statusString += "\nAvg. cargo dropped: " + Statistics.round(average(autoList, "cargoDropped"), 2);
-        statusString += "\nAvg. hatches dropped: " + Statistics.round(average(autoList, "hatchesDropped"), 2);
 
-        statusString += "\n\nTele-Op:\n";
+        String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo", "rocketCargo",
+                "hatchesDropped", "cargoDropped"};
+
+        for (String metric : autoMetricNames) {
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(autoList, metric), 2);
+        }
+
+
+        statusString += "\n\nTele-Op:";
 
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
 
-        statusString += "\nAvg. cargo ship cargo: " + Statistics.round(average(teleList, "cargoShipCargo"),2);
-        statusString += "\nAvg. cargo ship hatches: " + Statistics.round(average(teleList, "cargoShipHatches"),2);
-        statusString += "\nAvg. rocket level 1 cargo: " +  Statistics.round(average(teleList, "rocketLevelOneCargo"),2);
-        statusString += "\nAvg. rocket level 2 cargo: " +  Statistics.round(average(teleList, "rocketLevelTwoCargo"),2);
-        statusString += "\nAvg. rocket level 3 cargo: " +  Statistics.round(average(teleList, "rocketLevelThreeCargo"),2);
-        statusString += "\nAvg. rocket level 1 hatches: " +  Statistics.round(average(teleList, "rocketLevelOneHatches"),2);
-        statusString += "\nAvg. rocket level 2 hatches: " +  Statistics.round(average(teleList, "rocketLevelTwoHatches"),2);
-        statusString += "\nAvg. rocket level 3 hatches: " +  Statistics.round(average(teleList, "rocketLevelThreeHatches"),2);
-        statusString += "\nAvg. cargo dropped: " +  Statistics.round(average(teleList, "cargoDropped"),2);
-        statusString += "\nAvg. hatches dropped: " +  Statistics.round(average(teleList, "hatchesDropped"),2);
-        
+
+        String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches", "rocketLevelTwoHatches",
+                "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
+                "rocketLevelThreeCargo", "hatchesDropped", "cargoDropped"};
+
+
+        for (String metric : teleMetricNames) {
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(teleList, metric), 2);
+        }
+
+
         statusString += "\n\nEndgame:\n";
 
-        ArrayList<Object> postList = SortersFilters.filterDataObject(entries,PostMatch.class);
+        ArrayList<Object> postList = SortersFilters.filterDataObject(entries, PostMatch.class);
 
-        statusString += "\n Avg. total points: ";
+        statusString += "\n\nOverall:";
+        statusString += "\nAvg. calculated total point contribution: ";
 
-        statusString += "\n\nOverall:\n";
-
-        statusString += "\n Common Quick Comments: " + "\n"  + frequentRobotCommentStr;
+        statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
 
 
         return statusString;
@@ -130,6 +132,7 @@ public class TeamReport {
         }
 
         for (String comment : frequentRobotComment) {
+            System.out.println(comment);
             frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
