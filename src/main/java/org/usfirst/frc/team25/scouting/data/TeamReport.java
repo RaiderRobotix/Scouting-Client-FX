@@ -1,5 +1,6 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import org.usfirst.frc.team25.scouting.data.models.Autonomous;
 import org.usfirst.frc.team25.scouting.data.models.PostMatch;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.usfirst.frc.team25.scouting.data.Statistics.average;
+import static org.usfirst.frc.team25.scouting.data.Statistics.percent;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
@@ -21,13 +23,18 @@ public class TeamReport {
 
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
+    private int noShowCount;
     private String teamName, frequentRobotCommentStr, allComments;
+    ArrayList<ScoutEntry> levelOneStartEntries = new ArrayList<>();
+    ArrayList<ScoutEntry> levelTwoStartEntries = new ArrayList<>();
+
 
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
         entries = new ArrayList<>();
         teamName = "";
         frequentRobotCommentStr = "";
+        noShowCount = 0;
 
     }
 
@@ -50,11 +57,27 @@ public class TeamReport {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
 
 
-        String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo", "rocketCargo",
+        String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo", "rocketCargo",
                 "hatchesDropped", "cargoDropped"};
 
-        for (String metric : autoMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(autoList, metric), 2);
+        for (String metric : autoIntMetricNames) {
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+                    (average(autoList, metric), 3);
+        }
+
+        statusString += "\nPercent HAB line cross" + Statistics.round(percent(autoList, "crossHabLine"), 2);
+
+        if (levelOneStartEntries.size() > 0) {
+            statusString += "\nOverall level one HAB line cross: " + Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,Autonomous.class),
+                    "crossHabLine"), 2) + "%";
+        } else {
+            statusString += "\nOverall level one HAB line cross: 0%";
+        }
+        if (levelTwoStartEntries.size() > 0) {
+            statusString += "\nOverall level two HAB line cross: " + Statistics.round(percent(SortersFilters.filterDataObject(levelTwoStartEntries,
+                    Autonomous.class),"crossHabLine"), 2) + "%";
+        } else {
+            statusString += "\nOverall level two HAB line cross: 0%";
         }
 
 
@@ -69,7 +92,8 @@ public class TeamReport {
 
 
         for (String metric : teleMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(teleList, metric), 2);
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+                    (average(teleList, metric), 2);
         }
 
 
@@ -148,7 +172,8 @@ public class TeamReport {
     }
 
     public void addEntry(ScoutEntry entry) {
-        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment()));
+        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
+                ()));
 
         entries.add(entry);
     }
@@ -160,5 +185,27 @@ public class TeamReport {
 
     public int getTeamNum() {
         return teamNum;
+    }
+
+    public void calculateStats() {
+        int sum = 0, total = 0;
+
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).getPreMatch().getStartingLevel() == 1) {
+                levelOneStartEntries.add(entries.get(i));
+            } else {
+                levelTwoStartEntries.add(entries.get(i));
+            }
+        }
+    }
+
+    public void filterNoShow() {
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).getPreMatch().isRobotNoShow()) {
+                entries.remove(i);
+                i--;
+                noShowCount++;
+            }
+        }
     }
 }

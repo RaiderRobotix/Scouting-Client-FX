@@ -51,8 +51,6 @@ public class EventReport {
 
             teamReports.get(teamNum).addEntry(entry);
         }
-
-
     }
 
     public void fixInaccuraciesTBA() {
@@ -172,8 +170,11 @@ public class EventReport {
 
             }
 
+            report.filterNoShow();
             report.findFrequentComments();
+            report.calculateStats();
         }
+
     }
 
     /**
