@@ -10,9 +10,7 @@ public class ScoutEntry implements Serializable {
     private TeleOp teleOp;
     private PostMatch postMatch;
     private transient int sandstormPoints, teleOpPoints, climbPoints, calculatedPointContribution, autoHatches,
-            autoCargo,
-            teleOpHatches, teleOpCargo, totalHatches, totalCargo;
-
+            autoCargo, teleOpHatches, teleOpCargo, totalHatches, totalCargo;
 
     private transient String autoMode;
 
@@ -38,6 +36,54 @@ public class ScoutEntry implements Serializable {
 
         postMatch.generateQuickCommentStr();
 
+    }
+
+    public Autonomous getSandstorm() {
+        return sandstorm;
+    }
+
+    public int getSandstormPoints() {
+        return sandstormPoints;
+    }
+
+    public int getTeleOpPoints() {
+        return teleOpPoints;
+    }
+
+    public int getClimbPoints() {
+        return climbPoints;
+    }
+
+    public int getCalculatedPointContribution() {
+        return calculatedPointContribution;
+    }
+
+    public int getAutoHatches() {
+        return autoHatches;
+    }
+
+    public int getAutoCargo() {
+        return autoCargo;
+    }
+
+    public int getTeleOpHatches() {
+        return teleOpHatches;
+    }
+
+    public int getTeleOpCargo() {
+        return teleOpCargo;
+    }
+
+    public int getTotalHatches() {
+        return totalHatches;
+    }
+
+    public int getTotalCargo() {
+        return totalCargo;
+    }
+
+    public String getAutoMode() {
+        return autoMode;
     }
 
 

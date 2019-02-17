@@ -1,6 +1,5 @@
 package org.usfirst.frc.team25.scouting.data;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import org.usfirst.frc.team25.scouting.data.models.Autonomous;
 import org.usfirst.frc.team25.scouting.data.models.PostMatch;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
@@ -57,27 +56,37 @@ public class TeamReport {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
 
 
-        String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo", "rocketCargo",
-                "hatchesDropped", "cargoDropped"};
+        String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
+                "rocketCargo"};
 
         for (String metric : autoIntMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (average(autoList, metric), 3);
+                    (average(autoList, metric), 2);
         }
 
-        statusString += "\nPercent HAB line cross" + Statistics.round(percent(autoList, "crossHabLine"), 2);
+        statusString += "\nHAB line cross: " + Statistics.round(percent(autoList, "crossHabLine"), 2) + "% ("
+                + (int) Statistics.sum(autoList, "crossHabLine", true) + "/" + autoList.size() + ")";
+
+        statusString += "\nHAB line lvl 1: ";
 
         if (levelOneStartEntries.size() > 0) {
-            statusString += "\nOverall level one HAB line cross: " + Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,Autonomous.class),
-                    "crossHabLine"), 2) + "%";
+            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,
+                    Autonomous.class), "crossHabLine"), 2) + "% ("
+                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelOneStartEntries,
+                    Autonomous.class), "crossHabLine", true) + "/" + levelOneStartEntries.size() + ")";
         } else {
-            statusString += "\nOverall level one HAB line cross: 0%";
+            statusString += "0%";
         }
+
+        statusString += "\nHAB line lvl 2: ";
+
         if (levelTwoStartEntries.size() > 0) {
-            statusString += "\nOverall level two HAB line cross: " + Statistics.round(percent(SortersFilters.filterDataObject(levelTwoStartEntries,
-                    Autonomous.class),"crossHabLine"), 2) + "%";
+            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelTwoStartEntries,
+                    Autonomous.class), "crossHabLine"), 2) + "% ("
+                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelTwoStartEntries,
+                    Autonomous.class), "crossHabLine", true) + "/" + levelTwoStartEntries.size() + ")";
         } else {
-            statusString += "\nOverall level two HAB line cross: 0%";
+            statusString += "0%";
         }
 
 
@@ -88,7 +97,7 @@ public class TeamReport {
 
         String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches", "rocketLevelTwoHatches",
                 "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
-                "rocketLevelThreeCargo", "hatchesDropped", "cargoDropped"};
+                "rocketLevelThreeCargo"};
 
 
         for (String metric : teleMetricNames) {
@@ -156,7 +165,7 @@ public class TeamReport {
         }
 
         for (String comment : frequentRobotComment) {
-            System.out.println(comment);
+
             frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
@@ -188,7 +197,6 @@ public class TeamReport {
     }
 
     public void calculateStats() {
-        int sum = 0, total = 0;
 
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getPreMatch().getStartingLevel() == 1) {
@@ -197,6 +205,8 @@ public class TeamReport {
                 levelTwoStartEntries.add(entries.get(i));
             }
         }
+
+
     }
 
     public void filterNoShow() {
