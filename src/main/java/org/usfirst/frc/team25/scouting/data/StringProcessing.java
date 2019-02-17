@@ -28,9 +28,17 @@ public class StringProcessing {
      * hatches"
      */
     public static String convertCamelToSentenceCase(String camelCaseString) {
-        //TODO write this
+        String sentenceCaseString = "";
 
-        return camelCaseString;
+        for (int i = 0; i < camelCaseString.length(); i++) {
+            if (Character.isUpperCase(camelCaseString.charAt(i))) {
+                sentenceCaseString += " " + Character.toLowerCase(camelCaseString.charAt(i));
+            } else {
+                sentenceCaseString += camelCaseString.charAt(i);
+            }
+        }
+
+        return sentenceCaseString;
     }
 
 

@@ -44,7 +44,6 @@ class Statistics {
     public static double percent(ArrayList<Object> dataset, String metricName) {
         double percent = 0;
         try{
-            System.out.println(sum(dataset,metricName,true));
             percent = sum(dataset,metricName,true)/ dataset.size() * 100;
         }
         catch (Exception e) {

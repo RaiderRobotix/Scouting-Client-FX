@@ -23,6 +23,17 @@ repositories {
     mavenCentral()
 }
 
+task createJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Raider Robotix Scouting Client',
+                'Implementation-Version': 3.1,
+                'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
+    }
+    baseName = project.name
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'

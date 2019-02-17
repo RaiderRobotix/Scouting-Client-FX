@@ -1,6 +1,5 @@
 package org.usfirst.frc.team25.scouting.data;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import org.usfirst.frc.team25.scouting.data.models.Autonomous;
 import org.usfirst.frc.team25.scouting.data.models.PostMatch;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
@@ -25,8 +24,8 @@ public class TeamReport {
     private final int teamNum;
     private int noShowCount;
     private String teamName, frequentRobotCommentStr, allComments;
-    ArrayList<ScoutEntry> levelOneStartEntries = new ArrayList<>();
-    ArrayList<ScoutEntry> levelTwoStartEntries = new ArrayList<>();
+    ArrayList<ScoutEntry> levelOneStartEntries, levelTwoStartEntries, levelOneClimbEntries, levelTwoClimbEntries,
+            levelThreeClimbEntries;
 
 
     public TeamReport(int teamNum) {
@@ -35,7 +34,11 @@ public class TeamReport {
         teamName = "";
         frequentRobotCommentStr = "";
         noShowCount = 0;
-
+        levelOneStartEntries = new ArrayList<>();
+        levelTwoStartEntries = new ArrayList<>();
+        levelOneClimbEntries = new ArrayList<>();
+        levelTwoClimbEntries = new ArrayList<>();
+        levelThreeClimbEntries = new ArrayList<>();
     }
 
     /**
@@ -57,27 +60,37 @@ public class TeamReport {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
 
 
-        String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo", "rocketCargo",
-                "hatchesDropped", "cargoDropped"};
+        String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
+                "rocketCargo"};
 
         for (String metric : autoIntMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (average(autoList, metric), 3);
+                    (average(autoList, metric), 2);
         }
 
-        statusString += "\nPercent HAB line cross: " + Statistics.round(percent(autoList, "crossHabLine"), 2) + "%";
+        statusString += "\nHAB line cross: " + Statistics.round(percent(autoList, "crossHabLine"), 2) + "% ("
+                + (int) Statistics.sum(autoList, "crossHabLine", true) + "/" + autoList.size() + ")";
+
+        statusString += "\nHAB line lvl 1: ";
 
         if (levelOneStartEntries.size() > 0) {
-            statusString += "\nOverall level one HAB line cross: " + Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,Autonomous.class),
-                    "crossHabLine"), 2) + "%";
+            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,
+                    Autonomous.class), "crossHabLine"), 2) + "% ("
+                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelOneStartEntries,
+                    Autonomous.class), "crossHabLine", true) + "/" + levelOneStartEntries.size() + ")";
         } else {
-            statusString += "\nOverall level one HAB line cross: 0%";
+            statusString += "0%";
         }
+
+        statusString += "\nHAB line lvl 2: ";
+
         if (levelTwoStartEntries.size() > 0) {
-            statusString += "\nOverall level two HAB line cross: " + Statistics.round(percent(SortersFilters.filterDataObject(levelTwoStartEntries,
-                    Autonomous.class),"crossHabLine"), 2) + "%";
+            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelTwoStartEntries,
+                    Autonomous.class), "crossHabLine"), 2) + "% ("
+                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelTwoStartEntries,
+                    Autonomous.class), "crossHabLine", true) + "/" + levelTwoStartEntries.size() + ")";
         } else {
-            statusString += "\nOverall level two HAB line cross: 0%";
+            statusString += "0%";
         }
 
 
@@ -88,7 +101,7 @@ public class TeamReport {
 
         String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches", "rocketLevelTwoHatches",
                 "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
-                "rocketLevelThreeCargo", "hatchesDropped", "cargoDropped"};
+                "rocketLevelThreeCargo"};
 
 
         for (String metric : teleMetricNames) {
@@ -98,6 +111,7 @@ public class TeamReport {
 
 
         statusString += "\n\nEndgame:\n";
+
 
         ArrayList<Object> postList = SortersFilters.filterDataObject(entries, PostMatch.class);
 
@@ -136,7 +150,7 @@ public class TeamReport {
     public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
-        if(entries.size() > 0) {
+        if (entries.size() > 0) {
             for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
                 commentFrequencies.put(key, 0);
                 for (ScoutEntry entry : entries) {
@@ -158,6 +172,7 @@ public class TeamReport {
         }
 
         for (String comment : frequentRobotComment) {
+
             frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
@@ -189,15 +204,25 @@ public class TeamReport {
     }
 
     public void calculateStats() {
-        int sum = 0, total = 0;
 
-        for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getPreMatch().getStartingLevel() == 1) {
-                levelOneStartEntries.add(entries.get(i));
-            } else {
-                levelTwoStartEntries.add(entries.get(i));
+        for (ScoutEntry entry : entries) {
+            if (entry.getPreMatch().getStartingLevel() == 1) {
+                levelOneStartEntries.add(entry);
+            } else if (entry.getPreMatch().getStartingLevel() == 2) {
+                levelTwoStartEntries.add(entry);
             }
+
+            if (entry.getTeleOp().getAttemptHabClimbLevel() == 1) {
+                levelOneClimbEntries.add(entry);
+            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 2) {
+                levelTwoClimbEntries.add(entry);
+            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 3) {
+                levelThreeClimbEntries.add(entry);
+            }
+
         }
+
+
     }
 
     public void filterNoShow() {
