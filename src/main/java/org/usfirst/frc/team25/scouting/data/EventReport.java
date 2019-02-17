@@ -3,7 +3,7 @@ package org.usfirst.frc.team25.scouting.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thebluealliance.api.v3.models.Match;
-import com.thebluealliance.api.v3.models.MatchScoreBreakdown2018Alliance;
+import com.thebluealliance.api.v3.models.MatchScoreBreakdown2019Allliance;
 import org.usfirst.frc.team25.scouting.data.models.*;
 
 import java.io.File;
@@ -53,10 +53,10 @@ public class EventReport {
         }
     }
 
-    public void fixInaccuraciesTBA() {
+    public boolean fixInaccuraciesTBA() {
 
         try {
-            BlueAlliance.downloadEventMatchData(event, directory);
+            BlueAlliance.downloadQualificationMatchData(event, directory);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,12 +75,14 @@ public class EventReport {
                                     entry.getPreMatch().getScoutName() + ": ";
                     String inaccuracies = "";
                     Match match = matchData.get(entry.getPreMatch().getMatchNum() - 1);
-                    MatchScoreBreakdown2018Alliance sb;
+                    MatchScoreBreakdown2019Allliance sb;
                     boolean correctTeamRed = entry.getPreMatch().getScoutPos().contains("Red") && match.getRedAlliance()
-                            .getTeamKeys()[Integer.parseInt(entry.getPreMatch().getScoutPos().split(" ")[1]) - 1].equals("frc" + entry.getPreMatch().getTeamNum());
+                            .getTeamKeys()[Integer.parseInt(entry.getPreMatch().getScoutPos().split(" ")[1]) - 1]
+                            .equals("frc" + entry.getPreMatch().getTeamNum());
                     boolean correctTeamBlue =
                             entry.getPreMatch().getScoutPos().contains("Blue") && match.getBlueAlliance()
-                                    .getTeamKeys()[Integer.parseInt(entry.getPreMatch().getScoutPos().split(" ")[1]) - 1].equals("frc" + entry.getPreMatch().getTeamNum());
+                                    .getTeamKeys()[Integer.parseInt(entry.getPreMatch().getScoutPos().split(" ")[1])
+                                    - 1].equals("frc" + entry.getPreMatch().getTeamNum());
                     if (correctTeamBlue || correctTeamRed) {
 
                         if (entry.getPreMatch().getScoutPos().contains("Red")) {
@@ -90,63 +92,64 @@ public class EventReport {
                         }
 
 
-                        boolean actualAutoRun = false;
-                        boolean actualClimb = false;
-                        boolean actualLevitate = false;
-                        boolean actualPark = false;
-                        boolean partnersClimb = false;
+                        boolean actualCrossHabLine = false;
+                        int actualEndHabLevel = 0, actualStartHabLevel = 0;
+
 
 
                         if (entry.getPreMatch().getScoutPos().contains("1")) {
-                            actualAutoRun = sb.getAutoRobot1().equals("AutoRun");
-                            actualClimb = sb.getEndgameRobot1().equals("Climbing");
-                            actualLevitate = sb.getEndgameRobot1().equals("Levitate");
-                            actualPark = sb.getEndgameRobot1().equals("Parking");
-                            partnersClimb = sb.getEndgameRobot2().equals("Climbing") && sb.getEndgameRobot3().equals(
-                                    "Climbing");
+                            actualCrossHabLine = sb.getHabLineRobot1().equals("CrossedHabLineInSandstorm");
+                            for (int i = 1; i <= 3; i++) {
+                                if (sb.getEndgameRobot1().contains(Integer.toString(i))) {
+                                    actualEndHabLevel = i;
+                                }
+                                if (sb.getPreMatchLevelRobot1().contains(Integer.toString(i))) {
+                                    actualStartHabLevel = i;
+                                }
+                            }
                         } else if (entry.getPreMatch().getScoutPos().contains("2")) {
-                            actualAutoRun = sb.getAutoRobot2().equals("AutoRun");
-                            actualClimb = sb.getEndgameRobot2().equals("Climbing");
-                            actualLevitate = sb.getEndgameRobot2().equals("Levitate");
-                            actualPark = sb.getEndgameRobot2().equals("Parking");
-                            partnersClimb = sb.getEndgameRobot1().equals("Climbing") && sb.getEndgameRobot3().equals(
-                                    "Climbing");
+                            actualCrossHabLine = sb.getHabLineRobot2().equals("CrossedHabLineInSandstorm");
+                            for (int i = 1; i <= 3; i++) {
+                                if (sb.getEndgameRobot2().contains(Integer.toString(i))) {
+                                    actualEndHabLevel = i;
+                                }
+                                if (sb.getPreMatchLevelRobot2().contains(Integer.toString(i))) {
+                                    actualStartHabLevel = i;
+                                }
+                            }
                         } else if (entry.getPreMatch().getScoutPos().contains("3")) {
-                            actualAutoRun = sb.getAutoRobot3().equals("AutoRun");
-                            actualClimb = sb.getEndgameRobot3().equals("Climbing");
-                            actualLevitate = sb.getEndgameRobot3().equals("Levitate");
-                            actualPark = sb.getEndgameRobot3().equals("Parking");
-                            partnersClimb = sb.getEndgameRobot2().equals("Climbing") && sb.getEndgameRobot1().equals(
-                                    "Climbing");
+                            actualCrossHabLine = sb.getHabLineRobot3().equals("CrossedHabLineInSandstorm");
+                            for (int i = 0; i <= 3; i++) {
+                                if (sb.getEndgameRobot3().contains(Integer.toString(i))) {
+                                    actualEndHabLevel = i;
+                                }
+                                if (sb.getPreMatchLevelRobot3().contains(Integer.toString(i))) {
+                                    actualStartHabLevel = i;
+                                }
+                            }
                         }
 
-                        if (actualAutoRun != entry.getAutonomous().isCrossHabLine()) {
-                            inaccuracies += "auto run, ";
-                            entry.getAutonomous().setCrossHabLine(actualAutoRun);
+                        if (actualCrossHabLine != entry.getAutonomous().isCrossHabLine()) {
+                            inaccuracies += "auto cross hab line, ";
+                            entry.getAutonomous().setCrossHabLine(actualCrossHabLine);
                         }
-
-
-                        if (actualLevitate && partnersClimb && !entry.getPostMatch().robotQuickCommentSelections.get(
-                                "Climb/park unneeded (levitate used and others climbed)")) {
-                            entry.getPostMatch().robotQuickCommentSelections.put("Climb/park unneeded (levitate used " +
-                                    "and others climbed)", true);
-                            inaccuracies += "climb/park unneeded, ";
-                        }
-
 
                         if (!inaccuracies.isEmpty()) {
                             inaccuracyList += prefix + inaccuracies + "\n";
                         }
                     }
+
+
                 } catch (ArrayIndexOutOfBoundsException e) {
 
                 }
-
             }
+            FileManager.outputFile(directory.getAbsolutePath() + "/Inaccuracies - " + event, "txt",
+                    inaccuracyList);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        return false;
     }
 
     public boolean isTeamPlaying(int teamNum) {
@@ -213,7 +216,8 @@ public class EventReport {
 
                     for (Method m : dataObject.getClass().getMethods()) {
 
-                        if (m.getName().substring(shiftIndex).toLowerCase().equals(metric.getName().toLowerCase()) && m.getParameterTypes().length == 0) {
+                        if (m.getName().substring(shiftIndex).toLowerCase().equals(metric.getName().toLowerCase()) &&
+                                m.getParameterTypes().length == 0) {
                             try {
                                 metricValue = m.invoke(dataObject);
 
@@ -277,7 +281,6 @@ public class EventReport {
 
         return header.toString();
     }
-
 
 
     /**
@@ -350,6 +353,22 @@ public class EventReport {
 
     public AllianceReport getAllianceReport(int teamOne, int teamTwo, int teamThree) {
         return new AllianceReport(teamReports.get(teamOne), teamReports.get(teamTwo), teamReports.get(teamThree));
+    }
+
+    public ScoutEntry[] findPartnerEntries(int teamNum, int matchNum) {
+        ScoutEntry partnerTeams[] = new ScoutEntry[2];
+        int numberFound = 0;
+        for (int i = 0; i < scoutEntries.size(); i++) {
+            if (scoutEntries.get(i).getPreMatch().getMatchNum() == matchNum && scoutEntries.get(i).getPreMatch()
+                    .getScoutPos().contains("red")) {
+                partnerTeams[numberFound] = scoutEntries.get(i);
+                numberFound++;
+                if (numberFound == 2) {
+                    return partnerTeams;
+                }
+            }
+        }
+        return partnerTeams;
     }
 
 }

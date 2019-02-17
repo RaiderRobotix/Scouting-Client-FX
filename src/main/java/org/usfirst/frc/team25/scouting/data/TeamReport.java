@@ -150,11 +150,13 @@ public class TeamReport {
     public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
-        for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-            commentFrequencies.put(key, 0);
-            for (ScoutEntry entry : entries) {
-                if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
-                    commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+        if (entries.size() > 0) {
+            for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+                commentFrequencies.put(key, 0);
+                for (ScoutEntry entry : entries) {
+                    if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
+                        commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+                    }
                 }
             }
         }
