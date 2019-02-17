@@ -65,7 +65,7 @@ public class TeamReport {
                     (average(autoList, metric), 3);
         }
 
-        statusString += "\nPercent HAB line cross" + Statistics.round(percent(autoList, "crossHabLine"), 2);
+        statusString += "\nPercent HAB line cross: " + Statistics.round(percent(autoList, "crossHabLine"), 2) + "%";
 
         if (levelOneStartEntries.size() > 0) {
             statusString += "\nOverall level one HAB line cross: " + Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,Autonomous.class),
@@ -136,11 +136,13 @@ public class TeamReport {
     public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
-        for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-            commentFrequencies.put(key, 0);
-            for (ScoutEntry entry : entries) {
-                if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
-                    commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+        if(entries.size() > 0) {
+            for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+                commentFrequencies.put(key, 0);
+                for (ScoutEntry entry : entries) {
+                    if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
+                        commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+                    }
                 }
             }
         }
@@ -156,7 +158,6 @@ public class TeamReport {
         }
 
         for (String comment : frequentRobotComment) {
-            System.out.println(comment);
             frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
