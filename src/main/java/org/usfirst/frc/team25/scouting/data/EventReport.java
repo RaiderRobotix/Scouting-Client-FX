@@ -204,7 +204,7 @@ public class EventReport {
 
             StringBuilder entryContents = new StringBuilder();
 
-            Object[] dataObjects = {entry.getPreMatch(), entry.getAutonomous(), entry.getTeleOp(),
+            Object[] dataObjects = {entry.getPreMatch(), entry, entry.getAutonomous(), entry.getTeleOp(),
                     entry.getPostMatch()};
 
 
@@ -224,7 +224,7 @@ public class EventReport {
                     }
 
                     //We'll output the quick comment HashMap separately
-                    if (metric.getType() == HashMap.class) {
+                    if (metric.getType() != boolean.class && metric.getType() != int.class && metric.getType() != String.class) {
                         continue;
                     }
 
@@ -274,18 +274,18 @@ public class EventReport {
     private String generateSpreadsheetHeader() {
         StringBuilder header = new StringBuilder();
 
-        String[] shortNames = {"Pre", "Auto", "Tele", "Post"};
-        Class[] dataModels = {PreMatch.class, Autonomous.class, TeleOp.class, PostMatch.class};
+        String[] shortNames = {"Pre", "Overall", "Auto", "Tele", "Post"};
+        Class[] dataModels = {PreMatch.class, ScoutEntry.class, Autonomous.class, TeleOp.class, PostMatch.class};
 
         for (int i = 0; i < shortNames.length; i++) {
             Field[] fields = dataModels[i].getDeclaredFields();
 
             for (Field metric : fields) {
-                if (metric.getType() == HashMap.class) {
+                if (metric.getType() != int.class && metric.getType() != boolean.class && metric.getType() != String.class) {
                     continue;
                 }
 
-                if (i == 1 || i == 2) {
+                if (i == 2 || i == 3) {
                     header.append(shortNames[i] + " - ");
                 }
                 header.append(StringProcessing.convertCamelToSentenceCase(metric.getName()) + ",");

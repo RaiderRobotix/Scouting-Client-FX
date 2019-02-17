@@ -10,43 +10,20 @@ public class ScoutEntry implements Serializable {
     private TeleOp teleOp;
     private PostMatch postMatch;
 
-    //Sandstorm Variables
-    private transient int sandstormCargo, sandstormHatches;
-
-    //Tele-Op Variables
-    private transient int teleOpCargo, teleOpHatches, teleOpRocketHatches, teleOpRocketCargo;
-
-    // Overall Variables
-    private transient int totalHatches, totalCargo, totalCargoDropped, totalHatchesDropped, totalCycles,
-            calculatedTeleOpPoints, calculatedSandstormPoints, calculatedPointContribution, calculatedClimbPoints;
-
-    public Autonomous getSandstorm() {
-        return sandstorm;
-    }
-
-    public int getSandstormCargo() {
-        return sandstormCargo;
-    }
-
-    public int getSandstormHatches() {
-        return sandstormHatches;
-    }
-
-    public int getTeleOpCargo() {
-        return teleOpCargo;
-    }
-
-    public int getTeleOpHatches() {
-        return teleOpHatches;
-    }
-
-    public int getTeleOpRocketHatches() {
-        return teleOpRocketHatches;
-    }
-
-    public int getTeleOpRocketCargo() {
-        return teleOpRocketCargo;
-    }
+    private transient int totalHatches;
+    private transient int totalCargo;
+    private transient int totalCargoDropped;
+    private transient int totalHatchesDropped;
+    private transient int totalCycles;
+    private transient int calculatedTeleOpPoints;
+    private transient int calculatedSandstormPoints;
+    private transient int calculatedPointContribution;
+    private transient int calculatedClimbPoints;
+    private transient int teleOpCargo;
+    private transient int teleOpHatches;
+    private transient int teleOpRocketHatches;
+    private transient int teleOpRocketCargo;
+    private transient int sandstormCargo;
 
     public int getTotalHatches() {
         return totalHatches;
@@ -82,6 +59,32 @@ public class ScoutEntry implements Serializable {
 
     public int getCalculatedClimbPoints() {
         return calculatedClimbPoints;
+    }
+
+    private transient int sandstormHatches;
+
+    public int getTeleOpCargo() {
+        return teleOpCargo;
+    }
+
+    public int getTeleOpHatches() {
+        return teleOpHatches;
+    }
+
+    public int getTeleOpRocketHatches() {
+        return teleOpRocketHatches;
+    }
+
+    public int getTeleOpRocketCargo() {
+        return teleOpRocketCargo;
+    }
+
+    public int getSandstormCargo() {
+        return sandstormCargo;
+    }
+
+    public int getSandstormHatches() {
+        return sandstormHatches;
     }
 
     public PreMatch getPreMatch() {
