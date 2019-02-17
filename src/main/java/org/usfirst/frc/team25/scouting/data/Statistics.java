@@ -10,26 +10,6 @@ import java.util.ArrayList;
  */
 class Statistics {
 
-    public static double percentAtLeastOne(double p1, double p2, double p3) {
-        return 100 - percentNone(p1, p2, p3);
-    }
-
-    public static double percentNone(double p1, double p2, double p3) {
-        return 100 * (1 - p1) * (1 - p2) * (1 - p3);
-    }
-
-    public static double percentAtLeastTwo(double p1, double p2, double p3) {
-        return 100 - percentNone(p1, p2, p3) - percentExactlyOne(p1, p2, p3);
-    }
-
-    public static double percentExactlyOne(double p1, double p2, double p3) {
-        return 100 * (p1 * (1 - p2) * (1 - p3) + p2 * (1 - p1) * (1 - p3) + p3 * (1 - p1) * (1 - p3));
-    }
-
-    public static double percentAll(double p1, double p2, double p3) {
-        return 100 * p1 * p2 * p3;
-    }
-
 
     public static double round(double value, int places) {
         if (places < 0) {

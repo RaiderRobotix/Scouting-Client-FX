@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.usfirst.frc.team25.scouting.data.Statistics.average;
-import static org.usfirst.frc.team25.scouting.data.Statistics.percent;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
@@ -23,9 +22,15 @@ public class TeamReport {
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
     private int noShowCount;
+    private final String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
+            "rocketCargo"};
+    private final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
+            "rocketLevelTwoHatches",
+            "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
+            "rocketLevelThreeCargo"};
     private String teamName, frequentRobotCommentStr, allComments;
-    ArrayList<ScoutEntry> levelOneStartEntries, levelTwoStartEntries, levelOneClimbEntries, levelTwoClimbEntries,
-            levelThreeClimbEntries;
+    private HashMap<String, Double> averages, standardDeviations;
+    private HashMap<String, Integer> counts;
 
 
     public TeamReport(int teamNum) {
@@ -34,11 +39,10 @@ public class TeamReport {
         teamName = "";
         frequentRobotCommentStr = "";
         noShowCount = 0;
-        levelOneStartEntries = new ArrayList<>();
-        levelTwoStartEntries = new ArrayList<>();
-        levelOneClimbEntries = new ArrayList<>();
-        levelTwoClimbEntries = new ArrayList<>();
-        levelThreeClimbEntries = new ArrayList<>();
+        averages = new HashMap<>();
+        standardDeviations = new HashMap<>();
+        counts = new HashMap<>();
+
     }
 
     /**
@@ -47,7 +51,7 @@ public class TeamReport {
      * @return A formatted string with relevant aggregate team stats
      */
     public String getQuickStatus() {
-        //TODO write this
+
         String statusString = "Team " + getTeamNum();
 
         if (!getTeamName().isEmpty()) {
@@ -56,39 +60,30 @@ public class TeamReport {
 
         statusString += "\n\nSandstorm:";
 
-
-        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
-
-
-        String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
-                "rocketCargo"};
-
         for (String metric : autoIntMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (average(autoList, metric), 2);
+                    (averages.get(metric), 2);
         }
 
-        statusString += "\nHAB line cross: " + Statistics.round(percent(autoList, "crossHabLine"), 2) + "% ("
-                + (int) Statistics.sum(autoList, "crossHabLine", true) + "/" + autoList.size() + ")";
+        statusString += "\nHAB line cross: " + Statistics.round(counts.get("totalCross") / (double) entries.size() * 100, 2) + "% ("
+                + counts.get("totalCross") + "/" + entries.size() + ")";
 
         statusString += "\nHAB line lvl 1: ";
 
-        if (levelOneStartEntries.size() > 0) {
-            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,
-                    Autonomous.class), "crossHabLine"), 2) + "% ("
-                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelOneStartEntries,
-                    Autonomous.class), "crossHabLine", true) + "/" + levelOneStartEntries.size() + ")";
+        if (counts.get("levelOneStart") > 0) {
+            statusString += Statistics.round(counts.get("levelOneCross") / (double) counts.get("levelOneStart") * 100
+                    , 2) + "% ("
+                    + counts.get("levelOneCross") + "/" + counts.get("levelOneStart") + ")";
         } else {
             statusString += "0%";
         }
 
         statusString += "\nHAB line lvl 2: ";
 
-        if (levelTwoStartEntries.size() > 0) {
-            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelTwoStartEntries,
-                    Autonomous.class), "crossHabLine"), 2) + "% ("
-                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelTwoStartEntries,
-                    Autonomous.class), "crossHabLine", true) + "/" + levelTwoStartEntries.size() + ")";
+        if (counts.get("levelTwoStart") > 0) {
+            statusString += Statistics.round(counts.get("levelTwoCross") / (double) counts.get("levelTwoStart") * 100
+                    , 2) + "% ("
+                    + counts.get("levelTwoCross") + "/" + counts.get("levelTwoStart") + ")";
         } else {
             statusString += "0%";
         }
@@ -97,11 +92,6 @@ public class TeamReport {
         statusString += "\n\nTele-Op:";
 
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
-
-
-        String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches", "rocketLevelTwoHatches",
-                "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
-                "rocketLevelThreeCargo"};
 
 
         for (String metric : teleMetricNames) {
@@ -205,24 +195,62 @@ public class TeamReport {
 
     public void calculateStats() {
 
+        String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
+
+        String[] iterativeMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
+
+        for (String prefix : numberStringNames) {
+            for (String suffix : iterativeMetricSuffixes) {
+                counts.put("level" + prefix + suffix, 0);
+            }
+        }
+
         for (ScoutEntry entry : entries) {
-            if (entry.getPreMatch().getStartingLevel() == 1) {
-                levelOneStartEntries.add(entry);
-            } else if (entry.getPreMatch().getStartingLevel() == 2) {
-                levelTwoStartEntries.add(entry);
+
+            incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Start");
+            if (entry.getAutonomous().isCrossHabLine()) {
+                incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
+                incrementCount("totalCross");
             }
 
-            if (entry.getTeleOp().getAttemptHabClimbLevel() == 1) {
-                levelOneClimbEntries.add(entry);
-            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 2) {
-                levelTwoClimbEntries.add(entry);
-            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 3) {
-                levelThreeClimbEntries.add(entry);
+            if (entry.getTeleOp().isAttemptHabClimb()) {
+                incrementCount("level" + numberStringNames[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
+                        "ClimbAttempt");
+
+                incrementCount("totalClimbAttempt");
+            }
+
+            if (entry.getTeleOp().isSuccessHabClimb()) {
+                incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                        "ClimbSuccess");
+                if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
+                    incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                            "ClimbAttempt");
+                }
+
+                incrementCount("totalClimbSuccess");
             }
 
         }
 
 
+        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+
+
+        for (
+                String metric : autoIntMetricNames) {
+            averages.put(metric, average(autoList, metric));
+        }
+
+
+    }
+
+    private void incrementCount(String metricName) {
+        if (counts.containsKey(metricName)) {
+            counts.put(metricName, counts.get(metricName) + 1);
+        } else {
+            counts.put(metricName, 1);
+        }
     }
 
     public void filterNoShow() {
