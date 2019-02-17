@@ -10,7 +10,7 @@ public class ScoutEntry implements Serializable {
     private TeleOp teleOp;
     private PostMatch postMatch;
 
-    private transient int teleOpCargo, climbPoints, autoCargo, sandstormPoints, teleOpHatches, totalHatches,
+    private transient int teleOpCargo, climbPoints, autoCargo, autoPoints, teleOpHatches, totalHatches,
             totalCargo, autoHatches, totalPoints;
 
 
@@ -52,13 +52,13 @@ public class ScoutEntry implements Serializable {
         autoCargo = sandstorm.getRocketCargo()
                 + sandstorm.getCargoShipCargo();
 
-        sandstormPoints = sandstorm.getCargoShipCargo() * 3
+        autoPoints = sandstorm.getCargoShipCargo() * 3
                 + sandstorm.getCargoShipHatches() * 2
                 + sandstorm.getRocketCargo() * 3
                 + sandstorm.getRocketHatches() * 2;
 
         if (sandstorm.isOpponentCargoShipLineFoul()) {
-            sandstormPoints = -3;
+            autoPoints = -3;
         }
 
         totalHatches = sandstorm.getRocketHatches()
