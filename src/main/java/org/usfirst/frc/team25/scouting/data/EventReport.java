@@ -70,11 +70,16 @@ public class EventReport {
 
             for (ScoutEntry entry : scoutEntries) {
                 try {
+
+                    //Prefix for the inaccuracy list
                     String prefix =
                             "Q" + entry.getPreMatch().getMatchNum() + "-" + entry.getPreMatch().getScoutPos() + "-" +
                                     entry.getPreMatch().getScoutName() + ": ";
+
                     String inaccuracies = "";
+
                     Match match = matchData.get(entry.getPreMatch().getMatchNum() - 1);
+
                     MatchScoreBreakdown2019Allliance sb;
                     boolean correctTeamRed = entry.getPreMatch().getScoutPos().contains("Red") && match.getRedAlliance()
                             .getTeamKeys()[Integer.parseInt(entry.getPreMatch().getScoutPos().split(" ")[1]) - 1]
@@ -141,11 +146,15 @@ public class EventReport {
 
 
                 } catch (ArrayIndexOutOfBoundsException e) {
-
+                    e.printStackTrace();
                 }
             }
-            FileManager.outputFile(directory.getAbsolutePath() + "/Inaccuracies - " + event, "txt",
-                    inaccuracyList);
+
+            if (!inaccuracyList.isEmpty()) {
+                FileManager.outputFile(directory.getAbsolutePath() + "/Inaccuracies - " + event, "txt",
+                        inaccuracyList);
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,14 +197,18 @@ public class EventReport {
     public boolean generateRawSpreadsheet(File outputDirectory) {
 
         StringBuilder fileContents = new StringBuilder(generateSpreadsheetHeader() + "\n");
+        StringBuilder noShowFileContents = new StringBuilder(fileContents);
 
         for (ScoutEntry entry : scoutEntries) {
+
+            StringBuilder entryContents = new StringBuilder();
 
             Object[] dataObjects = {entry.getPreMatch(), entry.getAutonomous(), entry.getTeleOp(),
                     entry.getPostMatch()};
 
 
             for (Object dataObject : dataObjects) {
+
                 // returns all members including private members but not inherited members.
                 Field[] fields = dataObject.getClass().getDeclaredFields();
 
@@ -227,21 +240,31 @@ public class EventReport {
                             break;
                         }
                     }
-                    fileContents.append(metricValue).append(",");
+                    entryContents.append(metricValue).append(",");
                 }
 
             }
 
             for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-                fileContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(",");
+                entryContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(",");
             }
 
-            fileContents.append('\n');
+            entryContents.append('\n');
+
+            fileContents.append(entryContents);
+
+            if (!entry.getPreMatch().isRobotNoShow()) {
+                noShowFileContents.append(entryContents);
+            }
+
+
         }
 
         try {
             FileManager.outputFile(outputDirectory.getAbsolutePath() + "/Data - All - " + event, "csv",
                     fileContents.toString());
+            FileManager.outputFile(outputDirectory.getAbsolutePath() + "/Data - No Show Removed - " + event, "csv",
+                    noShowFileContents.toString());
         } catch (FileNotFoundException e) {
 
             e.printStackTrace();

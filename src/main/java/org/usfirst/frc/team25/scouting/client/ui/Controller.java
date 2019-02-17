@@ -64,6 +64,7 @@ public class Controller {
                 generateFilesButton.setDisable(false);
                 downloadDataButton.setDisable(false);
                 displayReportButton.setDisable(false);
+
             }
         });
 
@@ -92,8 +93,11 @@ public class Controller {
 
             if (fixErrors.isSelected()) {
                 eventReport.generateInaccuracyList(currentDataDirectory);
-                eventReport.fixInaccuraciesTBA();
-                status += "\nInaccuracies fixed and inaccuracy list generated";
+                if (eventReport.fixInaccuraciesTBA()) {
+                    status += "\nInaccuracies fixed and inaccuracy list generated";
+                } else {
+                    status += "\nNo inaccuracies found or Internet unavailable";
+                }
             }
 
             if (combineJson.isSelected() && eventReport.generateCombineJson(currentDataDirectory)) {
