@@ -64,6 +64,7 @@ public class Controller {
                 generateFilesButton.setDisable(false);
                 downloadDataButton.setDisable(false);
                 displayReportButton.setDisable(false);
+
             }
         });
 
@@ -90,6 +91,15 @@ public class Controller {
                 status += "\nBackup JSON files created";
             }
 
+            if (fixErrors.isSelected()) {
+                eventReport.generateInaccuracyList(currentDataDirectory);
+                if (eventReport.fixInaccuraciesTBA()) {
+                    status += "\nInaccuracies fixed and inaccuracy list generated";
+                } else {
+                    status += "\nNo inaccuracies found or Internet unavailable";
+                }
+            }
+
             if (combineJson.isSelected() && eventReport.generateCombineJson(currentDataDirectory)) {
                 status += "\nCombined data JSON file generated";
 
@@ -98,6 +108,7 @@ public class Controller {
                 }
 
             }
+
 
             if (generateCsv.isSelected()) {
                 if (eventReport.generateRawSpreadsheet(currentDataDirectory)) {
@@ -117,11 +128,6 @@ public class Controller {
                 status += "\nFuture match predictions generated";
             }
 
-            if (fixErrors.isSelected()) {
-                eventReport.generateInaccuracyList(currentDataDirectory);
-                eventReport.fixInaccuraciesTBA();
-                status += "\nInaccuracies fixed and inaccuracy list generated";
-            }
 
             if (status.isEmpty()) {
                 addStatus("Please select data processing options!");

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: TBA-APIv3-Java-Library">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/TBA-APIv3-Java-Library.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

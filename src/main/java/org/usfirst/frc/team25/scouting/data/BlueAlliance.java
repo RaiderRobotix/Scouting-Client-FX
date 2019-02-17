@@ -206,7 +206,7 @@ public class BlueAlliance {
 
     }
 
-    public static boolean downloadEventMatchData(String eventCode, File outputDirectory) throws IOException {
+    public static boolean downloadQualificationMatchData(String eventCode, File outputDirectory) throws IOException {
         ArrayList<Match> matches =
                 SortersFilters.sortByMatchNum(SortersFilters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))));
 

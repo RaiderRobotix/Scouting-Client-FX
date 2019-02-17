@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.usfirst.frc.team25.scouting.data.Statistics.average;
+import static org.usfirst.frc.team25.scouting.data.Statistics.percent;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
@@ -21,14 +22,23 @@ public class TeamReport {
 
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
+    private int noShowCount;
     private String teamName, frequentRobotCommentStr, allComments;
+    ArrayList<ScoutEntry> levelOneStartEntries, levelTwoStartEntries, levelOneClimbEntries, levelTwoClimbEntries,
+            levelThreeClimbEntries;
+
 
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
         entries = new ArrayList<>();
         teamName = "";
         frequentRobotCommentStr = "";
-
+        noShowCount = 0;
+        levelOneStartEntries = new ArrayList<>();
+        levelTwoStartEntries = new ArrayList<>();
+        levelOneClimbEntries = new ArrayList<>();
+        levelTwoClimbEntries = new ArrayList<>();
+        levelThreeClimbEntries = new ArrayList<>();
     }
 
     /**
@@ -50,11 +60,37 @@ public class TeamReport {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
 
 
-        String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo", "rocketCargo",
-                "hatchesDropped", "cargoDropped"};
+        String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
+                "rocketCargo"};
 
-        for (String metric : autoMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(autoList, metric), 2);
+        for (String metric : autoIntMetricNames) {
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+                    (average(autoList, metric), 2);
+        }
+
+        statusString += "\nHAB line cross: " + Statistics.round(percent(autoList, "crossHabLine"), 2) + "% ("
+                + (int) Statistics.sum(autoList, "crossHabLine", true) + "/" + autoList.size() + ")";
+
+        statusString += "\nHAB line lvl 1: ";
+
+        if (levelOneStartEntries.size() > 0) {
+            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelOneStartEntries,
+                    Autonomous.class), "crossHabLine"), 2) + "% ("
+                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelOneStartEntries,
+                    Autonomous.class), "crossHabLine", true) + "/" + levelOneStartEntries.size() + ")";
+        } else {
+            statusString += "0%";
+        }
+
+        statusString += "\nHAB line lvl 2: ";
+
+        if (levelTwoStartEntries.size() > 0) {
+            statusString += Statistics.round(percent(SortersFilters.filterDataObject(levelTwoStartEntries,
+                    Autonomous.class), "crossHabLine"), 2) + "% ("
+                    + (int) Statistics.sum(SortersFilters.filterDataObject(levelTwoStartEntries,
+                    Autonomous.class), "crossHabLine", true) + "/" + levelTwoStartEntries.size() + ")";
+        } else {
+            statusString += "0%";
         }
 
 
@@ -65,15 +101,17 @@ public class TeamReport {
 
         String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches", "rocketLevelTwoHatches",
                 "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
-                "rocketLevelThreeCargo", "hatchesDropped", "cargoDropped"};
+                "rocketLevelThreeCargo"};
 
 
         for (String metric : teleMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(teleList, metric), 2);
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+                    (average(teleList, metric), 2);
         }
 
 
         statusString += "\n\nEndgame:\n";
+
 
         ArrayList<Object> postList = SortersFilters.filterDataObject(entries, PostMatch.class);
 
@@ -112,11 +150,13 @@ public class TeamReport {
     public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
-        for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-            commentFrequencies.put(key, 0);
-            for (ScoutEntry entry : entries) {
-                if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
-                    commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+        if (entries.size() > 0) {
+            for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+                commentFrequencies.put(key, 0);
+                for (ScoutEntry entry : entries) {
+                    if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
+                        commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+                    }
                 }
             }
         }
@@ -132,7 +172,7 @@ public class TeamReport {
         }
 
         for (String comment : frequentRobotComment) {
-            System.out.println(comment);
+
             frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
@@ -148,7 +188,8 @@ public class TeamReport {
     }
 
     public void addEntry(ScoutEntry entry) {
-        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment()));
+        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
+                ()));
 
         entries.add(entry);
     }
@@ -160,5 +201,37 @@ public class TeamReport {
 
     public int getTeamNum() {
         return teamNum;
+    }
+
+    public void calculateStats() {
+
+        for (ScoutEntry entry : entries) {
+            if (entry.getPreMatch().getStartingLevel() == 1) {
+                levelOneStartEntries.add(entry);
+            } else if (entry.getPreMatch().getStartingLevel() == 2) {
+                levelTwoStartEntries.add(entry);
+            }
+
+            if (entry.getTeleOp().getAttemptHabClimbLevel() == 1) {
+                levelOneClimbEntries.add(entry);
+            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 2) {
+                levelTwoClimbEntries.add(entry);
+            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 3) {
+                levelThreeClimbEntries.add(entry);
+            }
+
+        }
+
+
+    }
+
+    public void filterNoShow() {
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).getPreMatch().isRobotNoShow()) {
+                entries.remove(i);
+                i--;
+                noShowCount++;
+            }
+        }
     }
 }
