@@ -24,8 +24,8 @@ public class TeamReport {
     private final int teamNum;
     private int noShowCount;
     private String teamName, frequentRobotCommentStr, allComments;
-    ArrayList<ScoutEntry> levelOneStartEntries = new ArrayList<>();
-    ArrayList<ScoutEntry> levelTwoStartEntries = new ArrayList<>();
+    ArrayList<ScoutEntry> levelOneStartEntries, levelTwoStartEntries, levelOneClimbEntries, levelTwoClimbEntries,
+            levelThreeClimbEntries;
 
 
     public TeamReport(int teamNum) {
@@ -34,7 +34,11 @@ public class TeamReport {
         teamName = "";
         frequentRobotCommentStr = "";
         noShowCount = 0;
-
+        levelOneStartEntries = new ArrayList<>();
+        levelTwoStartEntries = new ArrayList<>();
+        levelOneClimbEntries = new ArrayList<>();
+        levelTwoClimbEntries = new ArrayList<>();
+        levelThreeClimbEntries = new ArrayList<>();
     }
 
     /**
@@ -107,6 +111,7 @@ public class TeamReport {
 
 
         statusString += "\n\nEndgame:\n";
+
 
         ArrayList<Object> postList = SortersFilters.filterDataObject(entries, PostMatch.class);
 
@@ -198,12 +203,21 @@ public class TeamReport {
 
     public void calculateStats() {
 
-        for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getPreMatch().getStartingLevel() == 1) {
-                levelOneStartEntries.add(entries.get(i));
-            } else {
-                levelTwoStartEntries.add(entries.get(i));
+        for (ScoutEntry entry : entries) {
+            if (entry.getPreMatch().getStartingLevel() == 1) {
+                levelOneStartEntries.add(entry);
+            } else if (entry.getPreMatch().getStartingLevel() == 2) {
+                levelTwoStartEntries.add(entry);
             }
+
+            if (entry.getTeleOp().getAttemptHabClimbLevel() == 1) {
+                levelOneClimbEntries.add(entry);
+            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 2) {
+                levelTwoClimbEntries.add(entry);
+            } else if (entry.getTeleOp().getAttemptHabClimbLevel() == 3) {
+                levelThreeClimbEntries.add(entry);
+            }
+
         }
 
 

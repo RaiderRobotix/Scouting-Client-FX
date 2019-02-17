@@ -90,6 +90,12 @@ public class Controller {
                 status += "\nBackup JSON files created";
             }
 
+            if (fixErrors.isSelected()) {
+                eventReport.generateInaccuracyList(currentDataDirectory);
+                eventReport.fixInaccuraciesTBA();
+                status += "\nInaccuracies fixed and inaccuracy list generated";
+            }
+
             if (combineJson.isSelected() && eventReport.generateCombineJson(currentDataDirectory)) {
                 status += "\nCombined data JSON file generated";
 
@@ -98,6 +104,7 @@ public class Controller {
                 }
 
             }
+
 
             if (generateCsv.isSelected()) {
                 if (eventReport.generateRawSpreadsheet(currentDataDirectory)) {
@@ -117,11 +124,6 @@ public class Controller {
                 status += "\nFuture match predictions generated";
             }
 
-            if (fixErrors.isSelected()) {
-                eventReport.generateInaccuracyList(currentDataDirectory);
-                eventReport.fixInaccuraciesTBA();
-                status += "\nInaccuracies fixed and inaccuracy list generated";
-            }
 
             if (status.isEmpty()) {
                 addStatus("Please select data processing options!");
