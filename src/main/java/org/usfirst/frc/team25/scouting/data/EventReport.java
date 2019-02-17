@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,18 +38,6 @@ public class EventReport {
         this.event = event;
         this.directory = directory;
 
-        for (ScoutEntry entry : scoutEntries) {
-
-            entry.calculateDerivedStats();
-
-            int teamNum = entry.getPreMatch().getTeamNum();
-
-            if (!teamReports.containsKey(teamNum)) {
-                teamReports.put(teamNum, new TeamReport(teamNum));
-            }
-
-            teamReports.get(teamNum).addEntry(entry);
-        }
     }
 
     public boolean fixInaccuraciesTBA() {
@@ -99,7 +86,6 @@ public class EventReport {
 
                         boolean actualCrossHabLine = false;
                         int actualEndHabLevel = 0, actualStartHabLevel = 0;
-
 
 
                         if (entry.getPreMatch().getScoutPos().contains("1")) {
@@ -171,7 +157,21 @@ public class EventReport {
     }
 
 
-    public void processTeamReports() {
+    public void processEntries() {
+
+        for (ScoutEntry entry : scoutEntries) {
+
+            entry.calculateDerivedStats();
+
+            int teamNum = entry.getPreMatch().getTeamNum();
+
+            if (!teamReports.containsKey(teamNum)) {
+                teamReports.put(teamNum, new TeamReport(teamNum));
+            }
+
+            teamReports.get(teamNum).addEntry(entry);
+        }
+
 
         for (Integer key : teamReports.keySet()) {
 
@@ -186,6 +186,7 @@ public class EventReport {
             report.findFrequentComments();
             report.calculateStats();
         }
+
 
     }
 
@@ -227,19 +228,13 @@ public class EventReport {
                         continue;
                     }
 
-                    for (Method m : dataObject.getClass().getMethods()) {
-
-                        if (m.getName().substring(shiftIndex).toLowerCase().equals(metric.getName().toLowerCase()) &&
-                                m.getParameterTypes().length == 0) {
-                            try {
-                                metricValue = m.invoke(dataObject);
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        }
+                    try {
+                        metricValue =
+                                Statistics.getCorrectMethod(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
                     entryContents.append(metricValue).append(",");
                 }
 
@@ -379,7 +374,7 @@ public class EventReport {
     }
 
     public ScoutEntry[] findPartnerEntries(int teamNum, int matchNum) {
-        ScoutEntry partnerTeams[] = new ScoutEntry[2];
+        ScoutEntry[] partnerTeams = new ScoutEntry[2];
         int numberFound = 0;
         for (int i = 0; i < scoutEntries.size(); i++) {
             if (scoutEntries.get(i).getPreMatch().getMatchNum() == matchNum && scoutEntries.get(i).getPreMatch()
@@ -393,5 +388,6 @@ public class EventReport {
         }
         return partnerTeams;
     }
+
 
 }

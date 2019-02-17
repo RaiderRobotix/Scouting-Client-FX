@@ -67,14 +67,14 @@ class Statistics {
 
         try {
             if (isBoolean) {
-                Method correctMethod = getCorrectMethod((Class) dataset.get(0).getClass(), metricName, 2);
+                Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName, 2);
                 if (correctMethod != null) {
                     for (Object dataObject : dataset) {
                         sumSquareDev += Math.pow(((boolean)correctMethod.invoke(dataObject) ? 1.0 : 0.0) - average, 2);
                     }
                 }
             } else {
-                Method correctMethod = getCorrectMethod((Class) dataset.get(0).getClass(), metricName, 3);
+                Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName, 3);
                 if (correctMethod != null) {
                     for (Object dataObject : dataset) {
                         sumSquareDev += Math.pow((double) correctMethod.invoke(dataObject) - average, 2);
@@ -134,11 +134,11 @@ class Statistics {
 
     }
 
-    private static Method getCorrectMethod(Class dataObjectClass, String metricName, int shiftIndex) {
+    public static Method getCorrectMethod(Class dataObjectClass, String metricName, int shiftIndex) {
         Method correctGetter = null;
 
         for (Method m : dataObjectClass.getMethods()) {
-            if (m.getName().substring(shiftIndex).toLowerCase().equals(metricName.toLowerCase()) && m.getParameterTypes().length == 0) {
+            if (m.getName().substring(shiftIndex).equalsIgnoreCase(metricName) && m.getParameterTypes().length == 0) {
                 correctGetter = m;
                 break;
             }

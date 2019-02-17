@@ -223,7 +223,7 @@ public class Controller {
             eventReport.setTeamNameList(teamNameList);
         }
 
-        eventReport.processTeamReports();
+        eventReport.processEntries();
     }
 
     /**
