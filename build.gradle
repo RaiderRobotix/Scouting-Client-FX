@@ -26,7 +26,7 @@ repositories {
 task createJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Raider Robotix Scouting Client',
-                'Implementation-Version': 3.1,
+                'Implementation-Version': 3.12,
                 'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
     }
     baseName = project.name
@@ -47,7 +47,7 @@ jfx {
     mainClass = 'org.usfirst.frc.team25.scouting.client.ui.Main'
     vendor = 'Raider Robotix'
     jfxMainAppJarName = "raider-deep-space-client-v3.XX.jar"
-    nativeReleaseVersion = "v3.01"
+    nativeReleaseVersion = "v3.12"
     appName="Raider Robotix Scouting Client"
 }
 
