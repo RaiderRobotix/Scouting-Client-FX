@@ -237,8 +237,7 @@ public class TeamReport {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
 
 
-        for (
-                String metric : autoIntMetricNames) {
+        for (String metric : autoIntMetricNames) {
             averages.put(metric, average(autoList, metric));
         }
 
