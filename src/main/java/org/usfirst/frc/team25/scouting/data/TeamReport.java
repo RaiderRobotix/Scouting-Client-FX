@@ -33,6 +33,7 @@ public class TeamReport {
     private HashMap<String, Integer> counts;
 
 
+
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
         entries = new ArrayList<>();
@@ -260,5 +261,17 @@ public class TeamReport {
                 noShowCount++;
             }
         }
+    }
+
+    public HashMap<String, Double> getAverages() {
+        return averages;
+    }
+
+    public HashMap<String, Double> getStandardDeviations() {
+        return standardDeviations;
+    }
+
+    public HashMap<String, Integer> getCounts() {
+        return counts;
     }
 }

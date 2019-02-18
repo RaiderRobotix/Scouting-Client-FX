@@ -10,98 +10,24 @@ public class ScoutEntry implements Serializable {
     private TeleOp teleOp;
     private PostMatch postMatch;
 
-    private transient int totalHatches;
-    private transient int totalCargo;
-    private transient int totalCargoDropped;
-    private transient int totalHatchesDropped;
-    private transient int totalCycles;
-    private transient int calculatedTeleOpPoints;
-    private transient int calculatedSandstormPoints;
-    private transient int calculatedPointContribution;
-    private transient int calculatedClimbPoints;
-    private transient int teleOpCargo;
-    private transient int teleOpHatches;
-    private transient int teleOpRocketHatches;
-    private transient int teleOpRocketCargo;
+    private transient int sandstormHatches;
     private transient int sandstormCargo;
 
-    public int getTotalHatches() {
-        return totalHatches;
-    }
+    private transient int teleOpHatches;
+    private transient int teleOpRocketHatches;
+    private transient int teleOpCargo;
+    private transient int teleOpRocketCargo;
 
-    public int getTotalCargo() {
-        return totalCargo;
-    }
+    private transient int totalHatches;
+    private transient int totalCargo;
+    private transient int totalHatchesDropped;
+    private transient int totalCargoDropped;
+    private transient int totalCycles;
 
-    public int getTotalCargoDropped() {
-        return totalCargoDropped;
-    }
-
-    public int getTotalHatchesDropped() {
-        return totalHatchesDropped;
-    }
-
-    public int getTotalCycles() {
-        return totalCycles;
-    }
-
-    public int getCalculatedTeleOpPoints() {
-        return calculatedTeleOpPoints;
-    }
-
-    public int getCalculatedSandstormPoints() {
-        return calculatedSandstormPoints;
-    }
-
-    public int getCalculatedPointContribution() {
-        return calculatedPointContribution;
-    }
-
-    public int getCalculatedClimbPoints() {
-        return calculatedClimbPoints;
-    }
-
-    private transient int sandstormHatches;
-
-    public int getTeleOpCargo() {
-        return teleOpCargo;
-    }
-
-    public int getTeleOpHatches() {
-        return teleOpHatches;
-    }
-
-    public int getTeleOpRocketHatches() {
-        return teleOpRocketHatches;
-    }
-
-    public int getTeleOpRocketCargo() {
-        return teleOpRocketCargo;
-    }
-
-    public int getSandstormCargo() {
-        return sandstormCargo;
-    }
-
-    public int getSandstormHatches() {
-        return sandstormHatches;
-    }
-
-    public PreMatch getPreMatch() {
-        return preMatch;
-    }
-
-    public Autonomous getAutonomous() {
-        return sandstorm;
-    }
-
-    public TeleOp getTeleOp() {
-        return teleOp;
-    }
-
-    public PostMatch getPostMatch() {
-        return postMatch;
-    }
+    private transient int calculatedSandstormPoints;
+    private transient int calculatedTeleOpPoints;
+    private transient int calculatedClimbPoints;
+    private transient int calculatedPointContribution;
 
 
     public void calculateDerivedStats() {
@@ -161,4 +87,79 @@ public class ScoutEntry implements Serializable {
 
     }
 
+    public PreMatch getPreMatch() {
+        return preMatch;
+    }
+
+    public Autonomous getAutonomous() {
+        return sandstorm;
+    }
+
+    public TeleOp getTeleOp() {
+        return teleOp;
+    }
+
+    public PostMatch getPostMatch() {
+        return postMatch;
+    }
+
+    public int getSandstormHatches() {
+        return sandstormHatches;
+    }
+
+    public int getSandstormCargo() {
+        return sandstormCargo;
+    }
+
+    public int getTeleOpHatches() {
+        return teleOpHatches;
+    }
+
+    public int getTeleOpRocketHatches() {
+        return teleOpRocketHatches;
+    }
+
+    public int getTeleOpCargo() {
+        return teleOpCargo;
+    }
+
+    public int getTeleOpRocketCargo() {
+        return teleOpRocketCargo;
+    }
+
+    public int getTotalHatches() {
+        return totalHatches;
+    }
+
+    public int getTotalCargo() {
+        return totalCargo;
+    }
+
+    public int getTotalHatchesDropped() {
+        return totalHatchesDropped;
+    }
+
+    public int getTotalCargoDropped() {
+        return totalCargoDropped;
+    }
+
+    public int getTotalCycles() {
+        return totalCycles;
+    }
+
+    public int getCalculatedSandstormPoints() {
+        return calculatedSandstormPoints;
+    }
+
+    public int getCalculatedTeleOpPoints() {
+        return calculatedTeleOpPoints;
+    }
+
+    public int getCalculatedClimbPoints() {
+        return calculatedClimbPoints;
+    }
+
+    public int getCalculatedPointContribution() {
+        return calculatedPointContribution;
+    }
 }
