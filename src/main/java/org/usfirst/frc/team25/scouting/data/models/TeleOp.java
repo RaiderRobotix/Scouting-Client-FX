@@ -29,6 +29,82 @@ public class TeleOp {
     private int partnerClimbAssistStartLevel;
     private int partnerClimbAssistEndLevel;
 
+    public void setCargoShipHatches(int cargoShipHatches) {
+        this.cargoShipHatches = cargoShipHatches;
+    }
+
+    public void setRocketLevelOneHatches(int rocketLevelOneHatches) {
+        this.rocketLevelOneHatches = rocketLevelOneHatches;
+    }
+
+    public void setRocketLevelTwoHatches(int rocketLevelTwoHatches) {
+        this.rocketLevelTwoHatches = rocketLevelTwoHatches;
+    }
+
+    public void setRocketLevelThreeHatches(int rocketLevelThreeHatches) {
+        this.rocketLevelThreeHatches = rocketLevelThreeHatches;
+    }
+
+    public void setCargoShipCargo(int cargoShipCargo) {
+        this.cargoShipCargo = cargoShipCargo;
+    }
+
+    public void setRocketLevelOneCargo(int rocketLevelOneCargo) {
+        this.rocketLevelOneCargo = rocketLevelOneCargo;
+    }
+
+    public void setRocketLevelTwoCargo(int rocketLevelTwoCargo) {
+        this.rocketLevelTwoCargo = rocketLevelTwoCargo;
+    }
+
+    public void setRocketLevelThreeCargo(int rocketLevelThreeCargo) {
+        this.rocketLevelThreeCargo = rocketLevelThreeCargo;
+    }
+
+    public void setHatchesDropped(int hatchesDropped) {
+        this.hatchesDropped = hatchesDropped;
+    }
+
+    public void setCargoDropped(int cargoDropped) {
+        this.cargoDropped = cargoDropped;
+    }
+
+    public void setAttemptHabClimb(boolean attemptHabClimb) {
+        this.attemptHabClimb = attemptHabClimb;
+    }
+
+    public void setAttemptHabClimbLevel(int attemptHabClimbLevel) {
+        this.attemptHabClimbLevel = attemptHabClimbLevel;
+    }
+
+    public void setSuccessHabClimb(boolean successHabClimb) {
+        this.successHabClimb = successHabClimb;
+    }
+
+    public void setSuccessHabClimbLevel(int successHabClimbLevel) {
+        this.successHabClimbLevel = successHabClimbLevel;
+    }
+
+    public void setClimbAssistedByPartner(boolean climbAssistedByPartner) {
+        this.climbAssistedByPartner = climbAssistedByPartner;
+    }
+
+    public void setAssistingClimbTeamNum(int assistingClimbTeamNum) {
+        this.assistingClimbTeamNum = assistingClimbTeamNum;
+    }
+
+    public void setNumPartnerClimbAssists(int numPartnerClimbAssists) {
+        this.numPartnerClimbAssists = numPartnerClimbAssists;
+    }
+
+    public void setPartnerClimbAssistStartLevel(int partnerClimbAssistStartLevel) {
+        this.partnerClimbAssistStartLevel = partnerClimbAssistStartLevel;
+    }
+
+    public void setPartnerClimbAssistEndLevel(int partnerClimbAssistEndLevel) {
+        this.partnerClimbAssistEndLevel = partnerClimbAssistEndLevel;
+    }
+
     public TeleOp(int cargoShipHatches, int rocketLevelOneHatches, int rocketLevelTwoHatches,
                   int rocketLevelThreeHatches, int cargoShipCargo, int rocketLevelOneCargo,
                   int rocketLevelTwoCargo, int rocketLevelThreeCargo, int hatchesDropped,

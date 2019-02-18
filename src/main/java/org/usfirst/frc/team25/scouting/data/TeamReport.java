@@ -21,13 +21,27 @@ public class TeamReport {
 
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
+    private int noShowCount;
+    private final String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
+            "rocketCargo"};
+    private final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
+            "rocketLevelTwoHatches",
+            "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
+            "rocketLevelThreeCargo"};
     private String teamName, frequentRobotCommentStr, allComments;
+    private HashMap<String, Double> averages, standardDeviations;
+    private HashMap<String, Integer> counts;
+
 
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
         entries = new ArrayList<>();
         teamName = "";
         frequentRobotCommentStr = "";
+        noShowCount = 0;
+        averages = new HashMap<>();
+        standardDeviations = new HashMap<>();
+        counts = new HashMap<>();
 
     }
 
@@ -37,7 +51,7 @@ public class TeamReport {
      * @return A formatted string with relevant aggregate team stats
      */
     public String getQuickStatus() {
-        //TODO write this
+
         String statusString = "Team " + getTeamNum();
 
         if (!getTeamName().isEmpty()) {
@@ -46,15 +60,32 @@ public class TeamReport {
 
         statusString += "\n\nSandstorm:";
 
+        for (String metric : autoIntMetricNames) {
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+                    (averages.get(metric), 2);
+        }
 
-        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+        statusString += "\nHAB line cross: " + Statistics.round(counts.get("totalCross") / (double) entries.size() * 100, 2) + "% ("
+                + counts.get("totalCross") + "/" + entries.size() + ")";
 
+        statusString += "\nHAB line lvl 1: ";
 
-        String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo", "rocketCargo",
-                "hatchesDropped", "cargoDropped"};
+        if (counts.get("levelOneStart") > 0) {
+            statusString += Statistics.round(counts.get("levelOneCross") / (double) counts.get("levelOneStart") * 100
+                    , 2) + "% ("
+                    + counts.get("levelOneCross") + "/" + counts.get("levelOneStart") + ")";
+        } else {
+            statusString += "0%";
+        }
 
-        for (String metric : autoMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(autoList, metric), 2);
+        statusString += "\nHAB line lvl 2: ";
+
+        if (counts.get("levelTwoStart") > 0) {
+            statusString += Statistics.round(counts.get("levelTwoCross") / (double) counts.get("levelTwoStart") * 100
+                    , 2) + "% ("
+                    + counts.get("levelTwoCross") + "/" + counts.get("levelTwoStart") + ")";
+        } else {
+            statusString += "0%";
         }
 
 
@@ -63,17 +94,14 @@ public class TeamReport {
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
 
 
-        String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches", "rocketLevelTwoHatches",
-                "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
-                "rocketLevelThreeCargo", "hatchesDropped", "cargoDropped"};
-
-
         for (String metric : teleMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round(average(teleList, metric), 2);
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+                    (average(teleList, metric), 2);
         }
 
 
         statusString += "\n\nEndgame:\n";
+
 
         ArrayList<Object> postList = SortersFilters.filterDataObject(entries, PostMatch.class);
 
@@ -112,11 +140,13 @@ public class TeamReport {
     public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
-        for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-            commentFrequencies.put(key, 0);
-            for (ScoutEntry entry : entries) {
-                if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
-                    commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+        if (entries.size() > 0) {
+            for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+                commentFrequencies.put(key, 0);
+                for (ScoutEntry entry : entries) {
+                    if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
+                        commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+                    }
                 }
             }
         }
@@ -132,7 +162,7 @@ public class TeamReport {
         }
 
         for (String comment : frequentRobotComment) {
-            System.out.println(comment);
+
             frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
@@ -148,7 +178,8 @@ public class TeamReport {
     }
 
     public void addEntry(ScoutEntry entry) {
-        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment()));
+        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
+                ()));
 
         entries.add(entry);
     }
@@ -160,5 +191,75 @@ public class TeamReport {
 
     public int getTeamNum() {
         return teamNum;
+    }
+
+    public void calculateStats() {
+
+        String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
+
+        String[] iterativeMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
+
+        for (String prefix : numberStringNames) {
+            for (String suffix : iterativeMetricSuffixes) {
+                counts.put("level" + prefix + suffix, 0);
+            }
+        }
+
+        for (ScoutEntry entry : entries) {
+
+            incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Start");
+            if (entry.getAutonomous().isCrossHabLine()) {
+                incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
+                incrementCount("totalCross");
+            }
+
+            if (entry.getTeleOp().isAttemptHabClimb()) {
+                incrementCount("level" + numberStringNames[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
+                        "ClimbAttempt");
+
+                incrementCount("totalClimbAttempt");
+            }
+
+            if (entry.getTeleOp().isSuccessHabClimb()) {
+                incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                        "ClimbSuccess");
+                if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
+                    incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                            "ClimbAttempt");
+                }
+
+                incrementCount("totalClimbSuccess");
+            }
+
+        }
+
+
+        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+
+
+        for (
+                String metric : autoIntMetricNames) {
+            averages.put(metric, average(autoList, metric));
+        }
+
+
+    }
+
+    private void incrementCount(String metricName) {
+        if (counts.containsKey(metricName)) {
+            counts.put(metricName, counts.get(metricName) + 1);
+        } else {
+            counts.put(metricName, 1);
+        }
+    }
+
+    public void filterNoShow() {
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).getPreMatch().isRobotNoShow()) {
+                entries.remove(i);
+                i--;
+                noShowCount++;
+            }
+        }
     }
 }

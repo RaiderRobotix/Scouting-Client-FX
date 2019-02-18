@@ -10,26 +10,6 @@ import java.util.ArrayList;
  */
 class Statistics {
 
-    public static double percentAtLeastOne(double p1, double p2, double p3) {
-        return 100 - percentNone(p1, p2, p3);
-    }
-
-    public static double percentNone(double p1, double p2, double p3) {
-        return 100 * (1 - p1) * (1 - p2) * (1 - p3);
-    }
-
-    public static double percentAtLeastTwo(double p1, double p2, double p3) {
-        return 100 - percentNone(p1, p2, p3) - percentExactlyOne(p1, p2, p3);
-    }
-
-    public static double percentExactlyOne(double p1, double p2, double p3) {
-        return 100 * (p1 * (1 - p2) * (1 - p3) + p2 * (1 - p1) * (1 - p3) + p3 * (1 - p1) * (1 - p3));
-    }
-
-    public static double percentAll(double p1, double p2, double p3) {
-        return 100 * p1 * p2 * p3;
-    }
-
 
     public static double round(double value, int places) {
         if (places < 0) {
@@ -41,6 +21,19 @@ class Statistics {
         return bd.doubleValue();
     }
 
+    public static double percent(ArrayList<Object> dataset, String metricName) {
+        double percent = 0;
+        try{
+            percent = sum(dataset,metricName,true)/ dataset.size() * 100;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return percent;
+
+    }
+
 
     /**
      * Calculates the uncorrected standard deviation of an event
@@ -48,18 +41,27 @@ class Statistics {
      * @param dataset Array with data points
      * @return Uncorrected standard deviation
      */
-    public static double standardDeviation(ArrayList<Object> dataset, String metricName) {
+    public static double standardDeviation(ArrayList<Object> dataset, String metricName, boolean isBoolean) {
         double average = average(dataset, metricName);
         double sumSquareDev = 0;
 
         try {
-            Method correctMethod = getCorrectMethod((Class) dataset.get(0).getClass(), metricName);
-            if (correctMethod != null) {
-                for (Object dataObject : dataset) {
-                    sumSquareDev += Math.pow((double) correctMethod.invoke(dataObject) - average, 2);
+            if (isBoolean) {
+                Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName, 2);
+                if (correctMethod != null) {
+                    for (Object dataObject : dataset) {
+                        sumSquareDev += Math.pow(((boolean)correctMethod.invoke(dataObject) ? 1.0 : 0.0) - average, 2);
+                    }
+                }
+            } else {
+                Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName, 3);
+                if (correctMethod != null) {
+                    for (Object dataObject : dataset) {
+                        sumSquareDev += Math.pow((double) correctMethod.invoke(dataObject) - average, 2);
+                    }
                 }
             }
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -76,7 +78,7 @@ class Statistics {
         if (dataset.size() == 0) {
             return 0;
         }
-        return sum(dataset, metricName) / dataset.size();
+        return sum(dataset, metricName, false) / dataset.size();
     }
 
     /**
@@ -85,15 +87,23 @@ class Statistics {
      * @param dataset Array of numbers to be summed
      * @return Sum of the elements in <code>dataset</code>
      */
-    public static double sum(ArrayList<Object> dataset, String metricName) {
+    public static double sum(ArrayList<Object> dataset, String metricName,boolean isBooleanMetric) {
         double sum = 0;
-
-
         try {
-            Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName);
-            if (correctMethod != null) {
-                for (Object dataObject : dataset) {
-                    sum += 1.0 * (Integer) correctMethod.invoke(dataObject);
+            if(isBooleanMetric){
+                Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName,2);
+                if (correctMethod != null) {
+                    for (Object dataObject : dataset) {
+                        sum += (boolean)(correctMethod.invoke(dataObject)) ? 1 : 0;
+                    }
+                }
+            }
+            else{
+                Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName,3);
+                if (correctMethod != null) {
+                    for (Object dataObject : dataset) {
+                        sum += 1.0 * (Integer) correctMethod.invoke(dataObject);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -104,11 +114,11 @@ class Statistics {
 
     }
 
-    private static Method getCorrectMethod(Class dataObjectClass, String metricName) {
+    public static Method getCorrectMethod(Class dataObjectClass, String metricName, int shiftIndex) {
         Method correctGetter = null;
 
         for (Method m : dataObjectClass.getMethods()) {
-            if (m.getName().substring(3).toLowerCase().equals(metricName.toLowerCase()) && m.getParameterTypes().length == 0) {
+            if (m.getName().substring(shiftIndex).equalsIgnoreCase(metricName) && m.getParameterTypes().length == 0) {
                 correctGetter = m;
                 break;
             }
