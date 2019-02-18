@@ -24,11 +24,22 @@ repositories {
 }
 
 
+task createJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Raider Robotix Scouting',
+                'Implementation-Version': 'v3.01',
+                'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'com.google.code.gson:gson:2.7'
     compile files('libs/TBA-APIv3-Java-Library.jar')
-    compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
+    compile files('libs/commons-io-2.6.jar')
 }
 
 jfx {
@@ -36,7 +47,13 @@ jfx {
     vendor = 'Raider Robotix'
     jfxMainAppJarName = "raider-deep-space-client-v3.XX.jar"
     nativeReleaseVersion = "v3.01"
-    appName="raider-client"
+    appName="Raider Robotix Scouting Client"
+}
+
+jar{
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
