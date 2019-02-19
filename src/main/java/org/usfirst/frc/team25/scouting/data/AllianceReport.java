@@ -1,5 +1,7 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import java.util.HashMap;
+
 /**
  * Class for alliance-based calculations and stats
  * Not used during the 2018 season
@@ -7,22 +9,27 @@ package org.usfirst.frc.team25.scouting.data;
 public class AllianceReport {
 
     private TeamReport[] teamReports;
+    private final String[] expectedValueMetrics = new String[]{
+            "totalHatches", "totalCargo", "totalCycles", "totalHatchesDropped", "teleOpHatches", "teleOpCargo"
+    };
 
-    //Add more here
-    private double expectedScore, expectedAutoPoints, expectedClimbPoints, expectedTeleOpPoints, expectedBonusRp;
+
+    private HashMap<String, Double> expectedValues;
 
     public AllianceReport(TeamReport teamOne, TeamReport teamTwo, TeamReport teamThree) {
 
         this.teamReports = new TeamReport[]{teamOne, teamTwo, teamThree};
+
+        expectedValues = new HashMap<>();
     }
 
 
     public void calculateStats() {
-        //Calculate declared variables here
+
     }
 
     public String getQuickAllianceReport() {
-        //TODO write this
+
         return "";
     }
 }

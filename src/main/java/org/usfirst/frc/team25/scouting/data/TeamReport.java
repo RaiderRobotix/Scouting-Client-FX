@@ -28,9 +28,12 @@ public class TeamReport {
             "rocketLevelTwoHatches",
             "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
             "rocketLevelThreeCargo"};
+    private final String[] overallMetricNames = new String[]{"calculatedPointContribution", "calculatedSandstormPoints",
+            "calculatedTeleOpPoints"};
     private String teamName, frequentRobotCommentStr, allComments;
     private HashMap<String, Double> averages, standardDeviations;
     private HashMap<String, Integer> counts;
+
 
 
     public TeamReport(int teamNum) {
@@ -91,22 +94,55 @@ public class TeamReport {
 
         statusString += "\n\nTele-Op:";
 
-        ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
-
-
         for (String metric : teleMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (average(teleList, metric), 2);
+                    (averages.get(metric), 2);
         }
 
 
         statusString += "\n\nEndgame:\n";
 
-
+        if (counts.get("totalClimbAttempt") > 0) {
+            statusString += "\ntotalClimbPercentages:" + Statistics.round(counts.get("totalClimbAttempt") / (double)
+                            counts.get("totalClimbSuccess") * 100
+                    , 2) + "% ("
+                    + counts.get("totalClimbAttempt") + "/" + counts.get("totalClimbSuccess") + ")";
+        } else {
+            statusString += "\nTotal Climb Percent: 0%";
+        }
+        if (counts.get("levelOneClimbAttempt") > 0) {
+            statusString += "\nLevelOneClimbPercent" + Statistics.round(counts.get("levelOneClimbAttempt") / (double)
+                            counts.get("levelOneClimbSuccess") * 100
+                    , 2) + "% ("
+                    + counts.get("levelOneClimbAttempt") + "/" + counts.get("levelOneClimbSuccess") + ")";
+        } else {
+            statusString += "\nLevel One Climb Percent: 0%";
+        }
+        if (counts.get("levelTwoClimbAttempt") > 0) {
+            statusString += "\nLevelTwoClimbPercent" + Statistics.round(counts.get("levelTwoClimbAttempt") / (double)
+                            counts.get("levelTwoClimbSuccess") * 100
+                    , 2) + "% ("
+                    + counts.get("levelTwoClimbAttempt") + "/" + counts.get("levelTwoClimbSuccess") + ")";
+        } else {
+            statusString += "\nLevel Two Climb Percent: 0%";
+        }
+        if (counts.get("levelThreeClimbAttempt") > 0) {
+            statusString += "\nlevelThreeClimbPercent" + Statistics.round(counts.get("levelThreeClimbAttempt") /
+                            (double) counts.get("levelThreeClimbSuccess") * 100
+                    , 2) + "% ("
+                    + counts.get("levelThreeClimbAttempt") + "/" + counts.get("levelThreeClimbSuccess") + ")";
+        } else {
+            statusString += "\nLevel Three Climb Percent: 0%";
+        }
+        //System.out.println("Hello, World!");- HI Spencer-Karan
         ArrayList<Object> postList = SortersFilters.filterDataObject(entries, PostMatch.class);
 
-        statusString += "\n\nOverall:";
-        statusString += "\nAvg. calculated total point contribution: ";
+        statusString += "\n\nOverall:\n";
+
+        for (String metric : overallMetricNames) {
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+                    (averages.get(metric), 2);
+        }
 
         statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
 
@@ -235,10 +271,21 @@ public class TeamReport {
 
 
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+        ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
+        ArrayList<Object> overallList = new ArrayList();
 
+        for (ScoutEntry entry : entries) {
+            overallList.add(entry);
+        }
 
         for (String metric : autoIntMetricNames) {
             averages.put(metric, average(autoList, metric));
+        }
+        for (String metric : teleMetricNames) {
+            averages.put(metric, average(teleList, metric));
+        }
+        for (String metric : overallMetricNames) {
+            averages.put(metric, average(overallList, metric));
         }
 
 
@@ -260,5 +307,17 @@ public class TeamReport {
                 noShowCount++;
             }
         }
+    }
+
+    public HashMap<String, Double> getAverages() {
+        return averages;
+    }
+
+    public HashMap<String, Double> getStandardDeviations() {
+        return standardDeviations;
+    }
+
+    public HashMap<String, Integer> getCounts() {
+        return counts;
     }
 }
