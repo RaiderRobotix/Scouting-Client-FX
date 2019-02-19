@@ -96,7 +96,7 @@ public class EventReport {
                             }
 
                             if (entry.getTeleOp().getNumPartnerClimbAssists() > 0) {
-                                ScoutEntry partnerTeams[] = findPartnerEntries(entry);
+                                ScoutEntry[] partnerTeams = findPartnerEntries(entry);
                                 int maxActualHabClimbLevel = 0;
                                 for (int i = 0; i < 2; i++) {
                                     if (findActualEndHabLevel(partnerTeams[i], sb) > maxActualHabClimbLevel) {
@@ -117,7 +117,7 @@ public class EventReport {
                             if (entry.getTeleOp().getSuccessHabClimbLevel() < findActualEndHabLevel(entry, sb)) {
                                 inaccuracies += "success climb level ";
                                 for (int i = 0; i < 2; i++) {
-                                    ScoutEntry partners[] = findPartnerEntries(entry);
+                                    ScoutEntry[] partners = findPartnerEntries(entry);
                                     if (partners[i].getTeleOp().getPartnerClimbAssistEndLevel() != findActualEndHabLevel
                                             (entry, sb)) {
                                         if (partners[i].getTeleOp().getPartnerClimbAssistEndLevel() < 3) {
@@ -171,7 +171,7 @@ public class EventReport {
 
 
     public ScoutEntry[] findPartnerEntries(ScoutEntry entry) {
-        ScoutEntry partnerTeams[] = new ScoutEntry[2];
+        ScoutEntry[] partnerTeams = new ScoutEntry[2];
         int numberFound = 0;
         for (ScoutEntry searchEntry : scoutEntries) {
             if ((searchEntry.getPreMatch().getMatchNum() == entry.getPreMatch().getMatchNum() && searchEntry
@@ -231,11 +231,9 @@ public class EventReport {
         } else if (teamNum.getPreMatch().getScoutPos().contains("2") && (sb.getPreMatchLevelRobot2().contains("None")
                 || sb.getPreMatchLevelRobot2().contains("Unknown"))) {
             return true;
-        } else if (teamNum.getPreMatch().getScoutPos().contains("3") && (sb.getPreMatchLevelRobot3().contains("None")
-                || sb.getPreMatchLevelRobot3().contains("Unknown"))) {
-            return true;
         } else {
-            return false;
+            return teamNum.getPreMatch().getScoutPos().contains("3") && (sb.getPreMatchLevelRobot3().contains("None")
+                    || sb.getPreMatchLevelRobot3().contains("Unknown"));
         }
     }
 
@@ -246,10 +244,8 @@ public class EventReport {
         if(entry.getPreMatch().getScoutPos().contains("2") && sb.getHabLineRobot2().equals("CrossedHabLineInSandstorm")){
             return true;
         }
-        if(entry.getPreMatch().getScoutPos().contains("3") && sb.getHabLineRobot3().equals("CrossedHabLineInSandstorm")){
-            return true;
-        }
-        return false;
+        return entry.getPreMatch().getScoutPos().contains("3") && sb.getHabLineRobot3().equals(
+                "CrossedHabLineInSandstorm");
 
     }
 
@@ -469,7 +465,16 @@ public class EventReport {
 
     public void generateMatchPredictions(File outputDirectory) {
         //TODO write this
+        int greatestMatchNum = 0;
+        for (ScoutEntry entry : scoutEntries) {
+            if (entry.getPreMatch().getMatchNum() > greatestMatchNum) {
+                greatestMatchNum = entry.getPreMatch().getMatchNum();
+            }
+        }
+        FileManager.getMatchList(outputDirectory);
+        System.out.println();
     }
+
 
     public TeamReport getTeamReport(int teamNum) {
         return teamReports.get(teamNum);
