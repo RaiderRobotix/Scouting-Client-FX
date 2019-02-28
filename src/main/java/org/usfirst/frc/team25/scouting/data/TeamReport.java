@@ -1,7 +1,6 @@
 package org.usfirst.frc.team25.scouting.data;
 
 import org.usfirst.frc.team25.scouting.data.models.Autonomous;
-import org.usfirst.frc.team25.scouting.data.models.PostMatch;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 import org.usfirst.frc.team25.scouting.data.models.TeleOp;
 
@@ -13,27 +12,24 @@ import static org.usfirst.frc.team25.scouting.data.Statistics.average;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
- * Not used during the 2018 season
- *
- * @author sng
  */
 public class TeamReport {
 
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
+
     private int noShowCount;
     private final String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
             "rocketCargo"};
-    private final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
-            "rocketLevelTwoHatches",
-            "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo", "rocketLevelTwoCargo",
-            "rocketLevelThreeCargo"};
+    public static String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
     private final String[] overallMetricNames = new String[]{"calculatedPointContribution", "calculatedSandstormPoints",
             "calculatedTeleOpPoints"};
     private String teamName, frequentRobotCommentStr, allComments;
     private HashMap<String, Double> averages, standardDeviations;
     private HashMap<String, Integer> counts;
-
+    private final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
+            "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
+            "rocketLevelTwoCargo", "rocketLevelThreeCargo"};
 
 
     public TeamReport(int teamNum) {
@@ -65,7 +61,7 @@ public class TeamReport {
 
         for (String metric : autoIntMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (averages.get(metric), 2);
+                    (averages.get("auto" + metric), 2);
         }
 
         statusString += "\nHAB line cross: " + Statistics.round(counts.get("totalCross") / (double) entries.size() * 100, 2) + "% ("
@@ -96,58 +92,45 @@ public class TeamReport {
 
         for (String metric : teleMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (averages.get(metric), 2);
+                    (averages.get("tele" + metric), 2);
         }
 
 
-        statusString += "\n\nEndgame:\n";
+        statusString += "\n\nEndgame:";
 
-        if (counts.get("totalClimbAttempt") > 0) {
-            statusString += "\ntotalClimbPercentages:" + Statistics.round(counts.get("totalClimbAttempt") / (double)
-                            counts.get("totalClimbSuccess") * 100
-                    , 2) + "% ("
-                    + counts.get("totalClimbAttempt") + "/" + counts.get("totalClimbSuccess") + ")";
-        } else {
-            statusString += "\nTotal Climb Percent: 0%";
-        }
-        if (counts.get("levelOneClimbAttempt") > 0) {
-            statusString += "\nLevelOneClimbPercent" + Statistics.round(counts.get("levelOneClimbAttempt") / (double)
-                            counts.get("levelOneClimbSuccess") * 100
-                    , 2) + "% ("
-                    + counts.get("levelOneClimbAttempt") + "/" + counts.get("levelOneClimbSuccess") + ")";
-        } else {
-            statusString += "\nLevel One Climb Percent: 0%";
-        }
-        if (counts.get("levelTwoClimbAttempt") > 0) {
-            statusString += "\nLevelTwoClimbPercent" + Statistics.round(counts.get("levelTwoClimbAttempt") / (double)
-                            counts.get("levelTwoClimbSuccess") * 100
-                    , 2) + "% ("
-                    + counts.get("levelTwoClimbAttempt") + "/" + counts.get("levelTwoClimbSuccess") + ")";
-        } else {
-            statusString += "\nLevel Two Climb Percent: 0%";
-        }
-        if (counts.get("levelThreeClimbAttempt") > 0) {
-            statusString += "\nlevelThreeClimbPercent" + Statistics.round(counts.get("levelThreeClimbAttempt") /
-                            (double) counts.get("levelThreeClimbSuccess") * 100
-                    , 2) + "% ("
-                    + counts.get("levelThreeClimbAttempt") + "/" + counts.get("levelThreeClimbSuccess") + ")";
-        } else {
-            statusString += "\nLevel Three Climb Percent: 0%";
-        }
-        //System.out.println("Hello, World!");- HI Spencer-Karan
-        ArrayList<Object> postList = SortersFilters.filterDataObject(entries, PostMatch.class);
+        for (int i = 0; i < 4; i++) {
+            String prefix, displayString;
 
-        statusString += "\n\nOverall:\n";
+            if (i == 3) {
+                prefix = "totalClimb";
+                displayString = "Total climb success: ";
+            } else {
+                prefix = "level" + numberStringNames[i] + "Climb";
+                displayString = "Lvl " + (i + 1) + " climb success: ";
+            }
+
+            if (counts.get(prefix + "Attempt") > 0) {
+                statusString += "\n" + displayString + Statistics.round(counts.get(prefix + "Success") / (double)
+                        counts.get(prefix + "Attempt") * 100, 0) + "% ("
+                        + counts.get(prefix + "Success") + "/" + counts.get(prefix + "Attempt") + ")";
+            } else {
+                statusString += "\n" + displayString + "0% (0/0)";
+            }
+        }
+
+        statusString += "\n\nOverall:";
 
         for (String metric : overallMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (averages.get(metric), 2);
+                    (averages.get("overall" + metric), 2);
         }
+
 
         statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
 
 
         return statusString;
+
     }
 
     public String getTeamName() {
@@ -231,8 +214,6 @@ public class TeamReport {
 
     public void calculateStats() {
 
-        String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
-
         String[] iterativeMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
 
         for (String prefix : numberStringNames) {
@@ -259,6 +240,7 @@ public class TeamReport {
             if (entry.getTeleOp().isSuccessHabClimb()) {
                 incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                         "ClimbSuccess");
+                
                 if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
                     incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                             "ClimbAttempt");
@@ -272,20 +254,20 @@ public class TeamReport {
 
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
-        ArrayList<Object> overallList = new ArrayList();
+        ArrayList<Object> overallList = new ArrayList<>();
 
         for (ScoutEntry entry : entries) {
             overallList.add(entry);
         }
 
         for (String metric : autoIntMetricNames) {
-            averages.put(metric, average(autoList, metric));
+            averages.put("auto" + metric, average(autoList, metric));
         }
         for (String metric : teleMetricNames) {
-            averages.put(metric, average(teleList, metric));
+            averages.put("tele" + metric, average(teleList, metric));
         }
         for (String metric : overallMetricNames) {
-            averages.put(metric, average(overallList, metric));
+            averages.put("overall" + metric, average(overallList, metric));
         }
 
 

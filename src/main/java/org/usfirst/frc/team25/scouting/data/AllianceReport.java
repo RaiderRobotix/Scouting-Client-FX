@@ -12,9 +12,7 @@ public class AllianceReport {
     private final String[] expectedValueMetrics = new String[]{
             "totalHatches", "totalCargo", "totalCycles", "totalHatchesDropped", "teleOpHatches", "teleOpCargo"
     };
-    private double expectedTeleOpPoints, expectedSandstormPoints, expectedEndgamePoints, expectedTotalPoints,
-            expectedBonusRankingPoints;
-
+    private HashMap<String, Double> predictedValues;
 
     private HashMap<String, Double> expectedValues;
 
@@ -54,20 +52,34 @@ public class AllianceReport {
         calculateExpectedTeleOpPoints();
         calculateExpectedEndgamePoints();
 
-        expectedTotalPoints = expectedEndgamePoints + expectedSandstormPoints + expectedTeleOpPoints;
+        predictedValues.put("totalPoints", predictedValues.get("endgamePoints") + predictedValues.get(
+                "sandstormPoints") + predictedValues.get("teleOpPoints"));
 
 
     }
 
     private void calculateExpectedTeleOpPoints() {
-        expectedTeleOpPoints = 0;
+        double expectedTeleOpPoints = 0;
+
+        String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
+
+        for (int i = 2; i >= 0; i--) {
+            double expectedHatchValue = 0;
+
+            for (TeamReport teamReport : teamReports) {
+                expectedHatchValue += teamReport.getAverages().get("");
+            }
+
+        }
+
+
     }
 
     private void calculateExpectedEndgamePoints() {
-        expectedEndgamePoints = 0;
+        double expectedEndgamePoints = 0;
     }
 
     private void calculateExpectedSandsttormPoints() {
-        expectedSandstormPoints = 0;
+        double expectedSandstormPoints = 0;
     }
 }

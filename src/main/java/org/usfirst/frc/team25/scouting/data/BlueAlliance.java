@@ -7,7 +7,6 @@ import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.Team;
 import org.apache.commons.io.IOUtils;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,6 +29,7 @@ public class BlueAlliance {
 
         String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"), "utf-8");
         TBA = new TBA(apiKey);
+
     }
 
     /**
