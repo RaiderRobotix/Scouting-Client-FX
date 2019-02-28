@@ -19,17 +19,18 @@ public class TeamReport {
     private final int teamNum;
 
     private int noShowCount;
-    private final String[] autoIntMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
+    public static final String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
             "rocketCargo"};
+    public static final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
+            "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
+            "rocketLevelTwoCargo", "rocketLevelThreeCargo"};
     public static String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
-    private final String[] overallMetricNames = new String[]{"calculatedPointContribution", "calculatedSandstormPoints",
+    public static final String[] overallMetricNames = new String[]{"calculatedPointContribution", "calculatedSandstormPoints",
             "calculatedTeleOpPoints"};
     private String teamName, frequentRobotCommentStr, allComments;
     private HashMap<String, Double> averages, standardDeviations;
     private HashMap<String, Integer> counts;
-    private final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
-            "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
-            "rocketLevelTwoCargo", "rocketLevelThreeCargo"};
+
 
 
     public TeamReport(int teamNum) {
@@ -59,7 +60,7 @@ public class TeamReport {
 
         statusString += "\n\nSandstorm:";
 
-        for (String metric : autoIntMetricNames) {
+        for (String metric : autoMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
                     (averages.get("auto" + metric), 2);
         }
@@ -122,7 +123,7 @@ public class TeamReport {
 
         for (String metric : overallMetricNames) {
             statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
-                    (averages.get("overall" + metric), 2);
+                    (averages.get(metric), 2);
         }
 
 
@@ -240,7 +241,7 @@ public class TeamReport {
             if (entry.getTeleOp().isSuccessHabClimb()) {
                 incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                         "ClimbSuccess");
-                
+
                 if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
                     incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                             "ClimbAttempt");
@@ -260,14 +261,14 @@ public class TeamReport {
             overallList.add(entry);
         }
 
-        for (String metric : autoIntMetricNames) {
+        for (String metric : autoMetricNames) {
             averages.put("auto" + metric, average(autoList, metric));
         }
         for (String metric : teleMetricNames) {
             averages.put("tele" + metric, average(teleList, metric));
         }
         for (String metric : overallMetricNames) {
-            averages.put("overall" + metric, average(overallList, metric));
+            averages.put(metric, average(overallList, metric));
         }
 
 

@@ -10,7 +10,7 @@ public class AllianceReport {
 
     private TeamReport[] teamReports;
     private final String[] expectedValueMetrics = new String[]{
-            "totalHatches", "totalCargo", "totalCycles", "totalHatchesDropped", "teleOpHatches", "teleOpCargo"
+            "totalHatches", "totalCargo", "totalCycles", "totalHatchesDropped", "teleOpHatches", "teleOpCargo", "telerocketLevelOneCargo"
     };
     private HashMap<String, Double> predictedValues;
 
@@ -40,17 +40,25 @@ public class AllianceReport {
 
     public void calculateStats() {
 
-        for (String metric : expectedValueMetrics) {
-            double value = 0;
-            for (TeamReport report : teamReports) {
-                value += report.getAverages().get(metric);
+        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
+                TeamReport.overallMetricNames};
+
+        String[] prefixes = new String[]{"auto", "tele", ""};
+
+        for (int i = 0; i < metricSets.length; i++) {
+            for (String metric : metricSets[i]) {
+                double value = 0;
+                for (TeamReport report : teamReports) {
+                    value += report.getAverages().get(prefixes[i] + metric);
+                }
+                expectedValues.put(metric, value);
             }
-            expectedValues.put(metric, value);
         }
 
-        calculateExpectedSandsttormPoints();
-        calculateExpectedTeleOpPoints();
-        calculateExpectedEndgamePoints();
+
+        calculatePredictedSandsttormPoints();
+        calculatePredictedTeleOpPoints();
+        calculatePredictedEndgamePoints();
 
         predictedValues.put("totalPoints", predictedValues.get("endgamePoints") + predictedValues.get(
                 "sandstormPoints") + predictedValues.get("teleOpPoints"));
@@ -58,7 +66,7 @@ public class AllianceReport {
 
     }
 
-    private void calculateExpectedTeleOpPoints() {
+    private void calculatePredictedTeleOpPoints() {
         double expectedTeleOpPoints = 0;
 
         String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
@@ -75,11 +83,11 @@ public class AllianceReport {
 
     }
 
-    private void calculateExpectedEndgamePoints() {
+    private void calculatePredictedEndgamePoints() {
         double expectedEndgamePoints = 0;
     }
 
-    private void calculateExpectedSandsttormPoints() {
+    private void calculatePredictedSandsttormPoints() {
         double expectedSandstormPoints = 0;
     }
 }
