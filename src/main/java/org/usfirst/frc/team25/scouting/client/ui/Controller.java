@@ -226,6 +226,7 @@ public class Controller {
         eventReport.processEntries();
     }
 
+
     /**
      * Adds a status display to the user-facing text box, with a separator between statuses
      *

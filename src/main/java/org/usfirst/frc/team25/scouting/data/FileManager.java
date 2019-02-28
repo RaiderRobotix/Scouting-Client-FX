@@ -142,6 +142,23 @@ public class FileManager {
         return null;
     }
 
+    public static File getMatchList(File directory) {
+
+        for (File file : FileManager.getFilesFromDirectory(directory)) {
+            String fileName = file.getName();
+            try {
+                if (fileName.split(FILE_EXTENSION_REGEX)[1].equals("csv") && fileName.contains("Match")) {
+                    return file;
+                }
+            } catch (Exception e) {
+
+            }
+
+        }
+
+        return null;
+    }
+
     public static boolean deleteIndividualDataFiles(File directory) {
         for (File file : getDataFiles(directory)) {
             if (!file.getName().contains("All")) {
