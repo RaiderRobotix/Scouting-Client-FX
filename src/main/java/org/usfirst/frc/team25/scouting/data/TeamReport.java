@@ -255,11 +255,8 @@ public class TeamReport {
 
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
-        ArrayList<Object> overallList = new ArrayList<>();
-
-        for (ScoutEntry entry : entries) {
-            overallList.add(entry);
-        }
+        ArrayList<Object> overallList = new ArrayList<>(entries);
+        
 
         for (String metric : autoMetricNames) {
             averages.put("auto" + metric, average(autoList, metric));
