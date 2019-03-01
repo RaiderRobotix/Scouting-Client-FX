@@ -18,19 +18,18 @@ public class TeamReport {
     private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
 
-    private int noShowCount;
     public static final String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
             "rocketCargo"};
     public static final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
             "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
             "rocketLevelTwoCargo", "rocketLevelThreeCargo"};
     public static String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
-    public static final String[] overallMetricNames = new String[]{"calculatedPointContribution", "calculatedSandstormPoints",
+    public static final String[] overallMetricNames = new String[]{"calculatedPointContribution",
+            "calculatedSandstormPoints",
             "calculatedTeleOpPoints"};
     private String teamName, frequentRobotCommentStr, allComments;
-    private HashMap<String, Double> averages, standardDeviations;
+    private HashMap<String, Double> averages, standardDeviations, attemptSuccessRates;
     private HashMap<String, Integer> counts;
-
 
 
     public TeamReport(int teamNum) {
@@ -38,10 +37,11 @@ public class TeamReport {
         entries = new ArrayList<>();
         teamName = "";
         frequentRobotCommentStr = "";
-        noShowCount = 0;
+
         averages = new HashMap<>();
         standardDeviations = new HashMap<>();
         counts = new HashMap<>();
+        attemptSuccessRates = new HashMap<>();
 
     }
 
@@ -215,7 +215,31 @@ public class TeamReport {
 
     public void calculateStats() {
 
-        String[] iterativeMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
+        calculateCounts();
+        calculateAverages();
+        calculateAttemptSuccessRates();
+
+    }
+
+    private void calculateAttemptSuccessRates() {
+        for (int i = 0; i < 2; i++) {
+
+        }
+
+        for (int i = 0; i < 3; i++) {
+
+        }
+        
+        attemptSuccessRates.put("levelOneCross", (double) counts.get("levelOneCross") / counts.get("levelOneStart"));
+        attemptSuccessRates.put("levelTwoCross", (double) counts.get("levelTwoCross") / counts.get("levelTwoStart"));
+        attemptSuccessRates.put("levelOneClimb", (double) counts.get("levelOneClimbSuccess") / counts.get(
+                "levelOneClimbAttempt"));
+        attemptSuccessRates.put("levelTwoClimb", (double) counts.get("levelOneClimbSuccess") / counts.get(
+                "levelOneClimbAttempt"));
+    }
+
+    private void calculateCounts() {
+        final String[] iterativeMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
 
         for (String prefix : numberStringNames) {
             for (String suffix : iterativeMetricSuffixes) {
@@ -251,12 +275,12 @@ public class TeamReport {
             }
 
         }
+    }
 
-
+    private void calculateAverages() {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
         ArrayList<Object> overallList = new ArrayList<>(entries);
-        
 
         for (String metric : autoMetricNames) {
             averages.put("auto" + metric, average(autoList, metric));
@@ -267,8 +291,6 @@ public class TeamReport {
         for (String metric : overallMetricNames) {
             averages.put(metric, average(overallList, metric));
         }
-
-
     }
 
     private void incrementCount(String metricName) {
@@ -280,11 +302,12 @@ public class TeamReport {
     }
 
     public void filterNoShow() {
+        counts.put("noShow", 0);
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getPreMatch().isRobotNoShow()) {
                 entries.remove(i);
                 i--;
-                noShowCount++;
+                incrementCount("noShow");
             }
         }
     }

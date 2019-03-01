@@ -9,6 +9,7 @@ import java.util.HashMap;
 public class AllianceReport {
 
     private TeamReport[] teamReports;
+    private int[] bestStartingLevels;
 
     private HashMap<String, Double> predictedValues;
 
@@ -20,6 +21,7 @@ public class AllianceReport {
 
         expectedValues = new HashMap<>();
         predictedValues = new HashMap<>();
+        bestStartingLevels = new int[3];
     }
 
     public String getQuickAllianceReport() {
@@ -75,25 +77,36 @@ public class AllianceReport {
 
         double excessHatches = 0, excessCargo = 0, totalHatches = 0, totalCargo = 0;
 
-        //TODO incorporate auto hatches into calculation, allow swap between lvl 1 and cargo ship hatches/cargo
         for (int i = 2; i >= 0; i--) {
-            if (excessHatches + expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Hatches") > 4) {
-                excessHatches += expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] +
-                        "Hatches") - 4;
-                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] +
-                        "Hatches", 4.0);
-                totalHatches += 4.0;
+            double cap = 4.0;
+
+            if (i == 0) {
+                // Allow cargo ship hatches to be interchangeable with lvl 1 hatches
+                excessHatches += expectedValues.get("telecargoShipHatches");
+
+                // Decrease cap due to rocket hatches placed
+                cap -= predictedValues.get("autoRocketHatches");
+            }
+
+            if (excessHatches + expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Hatches") > cap) {
+
+                // Cap is reached, place max remaining into the level
+
+                excessHatches += expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Hatches") - cap;
+                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] + "Hatches", cap);
+                totalHatches += cap;
             } else {
-                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] +
-                                "Hatches",
+
+                // Place everything into the level
+                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] + "Hatches",
                         expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Hatches") + excessHatches);
                 totalHatches += expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Hatches") + excessHatches;
                 excessHatches = 0;
             }
         }
 
-        double cargoShipHatches = Math.min(expectedValues.get("telecargoShipHatches") + excessHatches,
-                8 - predictedValues.get("autoCargoShipHatches"));
+        double cargoShipHatches = Math.min(excessHatches, 8 - predictedValues.get("autoCargoShipHatches"));
+
         totalHatches += cargoShipHatches;
 
         predictedValues.put("teleCargoShipHatches", cargoShipHatches);
@@ -102,23 +115,32 @@ public class AllianceReport {
 
         for (int i = 2; i >= 0; i--) {
             double cap = predictedValues.get("teleRocketLevel" + TeamReport.numberStringNames[i] + "Hatches");
+
+            if (i == 0) {
+                // Allow cargo ship cargo to be interchangeable with lvl 1 cargo
+                excessCargo += expectedValues.get("telecargoShipCargo");
+
+                // Decrease cap due to rocket hatches placed
+                cap -= predictedValues.get("autoRocketCargo");
+            }
+
             if (excessCargo + expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Cargo") > cap) {
-                excessCargo += expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] +
-                        "Cargo") - cap;
-                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] +
-                        "Cargo", cap);
+
+                excessCargo += expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Cargo") - cap;
+                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] + "Cargo", cap);
+
                 totalCargo += cap;
             } else {
-                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] +
-                                "Cargo",
+
+                predictedValues.put("teleRocketLevel" + TeamReport.numberStringNames[i] + "Cargo",
                         expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Cargo") + excessCargo);
                 totalCargo += expectedValues.get("telerocketLevel" + TeamReport.numberStringNames[i] + "Cargo") + excessCargo;
                 excessCargo = 0;
             }
         }
 
-        double cargoShipCargo = Math.min(Math.min(expectedValues.get("telecargoShipCargo"), 8 - predictedValues.get(
-                "autoCargoShipCargo")), predictedValues.get("teleCargoShipHatches"));
+        double cargoShipCargo = Math.min(Math.min(excessCargo, 8 - predictedValues.get("autoCargoShipCargo")),
+                predictedValues.get("teleCargoShipHatches"));
 
         totalCargo += cargoShipCargo;
 
@@ -139,6 +161,32 @@ public class AllianceReport {
 
     private void calculatePredictedSandstormPoints() {
         double expectedSandstormPoints = 0;
+
+        double bestCrossingScore = 0.0;
+
+
+        final int[][] levelCombinations = new int[][]{{2, 2, 1}, {2, 1, 2}, {1, 2, 2}, {1, 1, 2}, {1, 2, 1}, {1, 1, 1}};
+
+        // Iterate through all starting combinations
+        for (int[] levelCombo : levelCombinations) {
+            double crossingScore = 0.0;
+            for (int i = 0; i < levelCombo.length; i++) {
+                if (levelCombo[i] == 1) {
+                    crossingScore += 3.0 *
+                            (double) teamReports[i].getCounts().get("levelOneCross") / teamReports[i].getCounts().get("levelOneStart");
+                } else {
+                    crossingScore += 6.0 *
+                            (double) teamReports[i].getCounts().get("levelTwoCross") / teamReports[i].getCounts().get("levelTwoStart");
+                }
+            }
+
+            if (crossingScore >= bestCrossingScore) {
+                bestCrossingScore = crossingScore;
+                bestStartingLevels = levelCombo;
+            }
+        }
+
+
         predictedValues.put("autoCargoShipCargo", 0.0);
         predictedValues.put("autoCargoShipHatches", 0.0);
 
