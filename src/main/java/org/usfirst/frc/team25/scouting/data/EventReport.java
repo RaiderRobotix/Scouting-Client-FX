@@ -284,9 +284,7 @@ public class EventReport {
 
             }
 
-            report.filterNoShow();
-            report.findFrequentComments();
-            report.calculateStats();
+            report.processReport();
         }
 
 
@@ -332,7 +330,7 @@ public class EventReport {
 
                     try {
                         metricValue =
-                                Statistics.getCorrectMethod(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
+                                Stats.getCorrectMethod(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

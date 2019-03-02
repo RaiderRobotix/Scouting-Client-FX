@@ -41,6 +41,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile files('libs/TBA-APIv3-Java-Library.jar')
     compile files('libs/commons-io-2.6.jar')
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6'
+
 }
 
 jfx {

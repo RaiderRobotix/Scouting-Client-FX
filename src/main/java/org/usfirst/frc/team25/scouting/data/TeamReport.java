@@ -8,29 +8,29 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.usfirst.frc.team25.scouting.data.Statistics.average;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
  */
 public class TeamReport {
 
-    private final transient ArrayList<ScoutEntry> entries;
+    private transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
 
-    private int noShowCount;
     public static final String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
             "rocketCargo"};
     public static final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
             "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
             "rocketLevelTwoCargo", "rocketLevelThreeCargo"};
-    public static String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
-    public static final String[] overallMetricNames = new String[]{"calculatedPointContribution", "calculatedSandstormPoints",
+    public static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
+    public static final String[] overallMetricNames = new String[]{"calculatedPointContribution",
+            "calculatedSandstormPoints",
             "calculatedTeleOpPoints"};
     private String teamName, frequentRobotCommentStr, allComments;
-    private HashMap<String, Double> averages, standardDeviations;
+    private HashMap<String, Double> averages, standardDeviations, attemptSuccessRates;
     private HashMap<String, Integer> counts;
-
+    private HashMap<String, Boolean> abilities;
+    private ArrayList<String> frequentComments;
 
 
     public TeamReport(int teamNum) {
@@ -38,10 +38,13 @@ public class TeamReport {
         entries = new ArrayList<>();
         teamName = "";
         frequentRobotCommentStr = "";
-        noShowCount = 0;
+
         averages = new HashMap<>();
         standardDeviations = new HashMap<>();
         counts = new HashMap<>();
+        attemptSuccessRates = new HashMap<>();
+        abilities = new HashMap<>();
+        frequentComments = new ArrayList<>();
 
     }
 
@@ -61,74 +64,54 @@ public class TeamReport {
         statusString += "\n\nSandstorm:";
 
         for (String metric : autoMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
                     (averages.get("auto" + metric), 2);
         }
 
-        statusString += "\nHAB line cross: " + Statistics.round(counts.get("totalCross") / (double) entries.size() * 100, 2) + "% ("
+        statusString += "\nHAB line cross: " + Stats.round(attemptSuccessRates.get("totalCross") * 100, 2) + "% ("
                 + counts.get("totalCross") + "/" + entries.size() + ")";
 
-        statusString += "\nHAB line lvl 1: ";
-
-        if (counts.get("levelOneStart") > 0) {
-            statusString += Statistics.round(counts.get("levelOneCross") / (double) counts.get("levelOneStart") * 100
-                    , 2) + "% ("
-                    + counts.get("levelOneCross") + "/" + counts.get("levelOneStart") + ")";
-        } else {
-            statusString += "0%";
+        for (int i = 0; i < 2; i++) {
+            statusString += "\nHAB lvl " + (i + 1) + " cross: ";
+            statusString += Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Cross") * 100, 2) + "% " +
+                    "(" + counts.get(levelPrefixes[i] + "Cross") + "/" + counts.get(levelPrefixes[i] + "Start") + ")";
         }
-
-        statusString += "\nHAB line lvl 2: ";
-
-        if (counts.get("levelTwoStart") > 0) {
-            statusString += Statistics.round(counts.get("levelTwoCross") / (double) counts.get("levelTwoStart") * 100
-                    , 2) + "% ("
-                    + counts.get("levelTwoCross") + "/" + counts.get("levelTwoStart") + ")";
-        } else {
-            statusString += "0%";
-        }
-
 
         statusString += "\n\nTele-Op:";
 
         for (String metric : teleMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
                     (averages.get("tele" + metric), 2);
         }
-
 
         statusString += "\n\nEndgame:";
 
         for (int i = 0; i < 4; i++) {
-            String prefix, displayString;
 
             if (i == 3) {
-                prefix = "totalClimb";
-                displayString = "Total climb success: ";
+                statusString += "\nTotal climb success: ";
             } else {
-                prefix = "level" + numberStringNames[i] + "Climb";
-                displayString = "Lvl " + (i + 1) + " climb success: ";
+                statusString += "\nLvl " + (i + 1) + " climb success: ";
             }
+            statusString += Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Climb") * 100, 0) + "% " +
+                    "(" + counts.get(levelPrefixes[i] + "ClimbSuccess") + "/" + counts.get(levelPrefixes[i] +
+                    "ClimbAttempt") + ")";
 
-            if (counts.get(prefix + "Attempt") > 0) {
-                statusString += "\n" + displayString + Statistics.round(counts.get(prefix + "Success") / (double)
-                        counts.get(prefix + "Attempt") * 100, 0) + "% ("
-                        + counts.get(prefix + "Success") + "/" + counts.get(prefix + "Attempt") + ")";
-            } else {
-                statusString += "\n" + displayString + "0% (0/0)";
-            }
         }
 
         statusString += "\n\nOverall:";
 
         for (String metric : overallMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
                     (averages.get(metric), 2);
         }
 
-
-        statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
-
+        if (!frequentRobotCommentStr.isEmpty()) {
+            statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
+        }
+        if (!allComments.isEmpty()) {
+            statusString += "\nAll comments:\n" + allComments;
+        }
 
         return statusString;
 
@@ -157,6 +140,33 @@ public class TeamReport {
         }
     }
 
+    public void processReport() {
+        filterNoShow();
+        findFrequentComments();
+        calculateStats();
+        findAbilities();
+    }
+
+    public void addEntry(ScoutEntry entry) {
+        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
+                ()));
+
+        entries.add(entry);
+    }
+
+    public ArrayList<ScoutEntry> getEntries() {
+        return this.entries;
+    }
+
+    public void setEntries(ArrayList<ScoutEntry> entries) {
+        this.entries = entries;
+    }
+
+
+    public int getTeamNum() {
+        return teamNum;
+    }
+
     public void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
@@ -171,17 +181,16 @@ public class TeamReport {
             }
         }
 
-        ArrayList<String> frequentRobotComment = new ArrayList<>();
 
         for (String key : commentFrequencies.keySet()) {
 
             // Feel free to change this ratio
             if (commentFrequencies.get(key) >= entries.size() / 4.0) {
-                frequentRobotComment.add(key);
+                frequentComments.add(key);
             }
         }
 
-        for (String comment : frequentRobotComment) {
+        for (String comment : frequentComments) {
 
             frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
@@ -194,84 +203,186 @@ public class TeamReport {
 
         }
 
-
-    }
-
-    public void addEntry(ScoutEntry entry) {
-        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
-                ()));
-
-        entries.add(entry);
-    }
-
-    public ArrayList<ScoutEntry> getEntries() {
-        return this.entries;
-    }
-
-
-    public int getTeamNum() {
-        return teamNum;
     }
 
     public void calculateStats() {
 
-        String[] iterativeMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
+        calculateCounts();
+        calculateAverages();
+        calculateStandardDeviations();
+        calculateAttemptSuccessRates();
 
-        for (String prefix : numberStringNames) {
-            for (String suffix : iterativeMetricSuffixes) {
-                counts.put("level" + prefix + suffix, 0);
+
+    }
+
+    private void findAbilities() {
+        abilities.put("cargoFloorIntake", frequentComments.contains("Cargo floor intake"));
+        abilities.put("hatchPanelFloorIntake", frequentComments.contains("Hatch panel floor intake"));
+
+        abilities.put("frontCargoShipHatchSandstorm", false);
+        abilities.put("sideCargoShipHatchSandstorm", false);
+        abilities.put("rocketHatchSandstorm", false);
+        abilities.put("cargoShipCargoSandstorm", false);
+        abilities.put("rocketCargoSandstorm", false);
+
+        for (ScoutEntry entry : entries) {
+            if (entry.getAutonomous().isFrontCargoShipHatchCapable()) {
+                abilities.put("frontCargoShipHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().isSideCargoShipHatchCapable()) {
+                abilities.put("sideCargoShipHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().getRocketHatches() >= 1) {
+                abilities.put("rocketHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().getCargoShipCargo() >= 1) {
+                abilities.put("cargoShipCargoSandstorm", true);
+            }
+            if (entry.getAutonomous().getRocketCargo() >= 1) {
+                abilities.put("rocketCargoSandstorm", true);
+            }
+        }
+    }
+
+    private void calculateAttemptSuccessRates() {
+
+        for (int i = 0; i < 4; i++) {
+            if (i != 2) {
+                double crossRate = 0.0;
+
+                if (i == 3 && entries.size() != 0) {
+                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / entries.size();
+                } else if (counts.get(levelPrefixes[i] + "Start") != 0) {
+                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / counts.get(levelPrefixes[i] +
+                            "Start");
+                }
+
+                attemptSuccessRates.put(levelPrefixes[i] + "Cross", crossRate);
+            }
+
+            double climbRate = 0.0;
+
+            if (counts.get(levelPrefixes[i] + "ClimbAttempt") != 0) {
+                climbRate = (double) counts.get(levelPrefixes[i] + "ClimbSuccess") / counts.get(levelPrefixes[i] +
+                        "ClimbAttempt");
+            }
+
+            attemptSuccessRates.put(levelPrefixes[i] + "Climb", climbRate);
+        }
+
+        for (String prefix : new String[]{"cargo", "hatch"}) {
+
+            double placeRate = 0.0;
+
+            if (counts.get(prefix + "Start") != 0) {
+                placeRate = (double) counts.get(prefix + "AutoSuccess") / counts.get(prefix + "Start");
+            }
+
+            attemptSuccessRates.put(prefix + "AutoSuccess", placeRate);
+        }
+    }
+
+    private void calculateCounts() {
+        final String[] levelMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
+
+        for (String prefix : levelPrefixes) {
+            for (String suffix : levelMetricSuffixes) {
+                counts.put(prefix + suffix, 0);
+            }
+        }
+
+        for (String prefix : new String[]{"cargo", "hatch"}) {
+            for (String suffix : new String[]{"Start", "AutoSuccess"}) {
+                counts.put(prefix + suffix, 0);
             }
         }
 
         for (ScoutEntry entry : entries) {
 
-            incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Start");
+            incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Start");
+
+            if (entry.getPreMatch().getStartingGamePiece().equals("Cargo")) {
+                incrementCount("cargoStart");
+            }
+
+            if (entry.getPreMatch().getStartingGamePiece().equals("Hatch panel")) {
+                incrementCount("hatchStart");
+            }
+
+            if (entry.getSandstormHatches() >= 1) {
+                incrementCount("hatchAutoSuccess");
+            }
+
+            if (entry.getSandstormCargo() >= 1) {
+                incrementCount("cargoAutoSuccess");
+            }
+
             if (entry.getAutonomous().isCrossHabLine()) {
-                incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
+                incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
                 incrementCount("totalCross");
             }
 
             if (entry.getTeleOp().isAttemptHabClimb()) {
-                incrementCount("level" + numberStringNames[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
+                incrementCount(levelPrefixes[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
                         "ClimbAttempt");
 
                 incrementCount("totalClimbAttempt");
             }
 
             if (entry.getTeleOp().isSuccessHabClimb()) {
-                incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                         "ClimbSuccess");
 
                 if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
-                    incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                    incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                             "ClimbAttempt");
                 }
 
                 incrementCount("totalClimbSuccess");
             }
 
+
         }
+    }
 
-
+    private void calculateAverages() {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
-        ArrayList<Object> overallList = new ArrayList<>();
-
-        for (ScoutEntry entry : entries) {
-            overallList.add(entry);
-        }
+        ArrayList<Object> overallList = new ArrayList<>(entries);
 
         for (String metric : autoMetricNames) {
-            averages.put("auto" + metric, average(autoList, metric));
+            double[] values = Stats.getDoubleArray(autoList, metric, int.class);
+            averages.put("auto" + metric, Stats.average(values));
         }
         for (String metric : teleMetricNames) {
-            averages.put("tele" + metric, average(teleList, metric));
+            double[] values = Stats.getDoubleArray(teleList, metric, int.class);
+            averages.put("tele" + metric, Stats.average(values));
         }
         for (String metric : overallMetricNames) {
-            averages.put(metric, average(overallList, metric));
+            double[] values = Stats.getDoubleArray(overallList, metric, int.class);
+            averages.put(metric, Stats.average(values));
         }
 
 
+    }
+
+    private void calculateStandardDeviations() {
+        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+        ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
+        ArrayList<Object> overallList = new ArrayList<>(entries);
+
+        for (String metric : autoMetricNames) {
+            double[] values = Stats.getDoubleArray(autoList, metric, int.class);
+            standardDeviations.put("auto" + metric, Stats.standardDeviation(values));
+        }
+        for (String metric : teleMetricNames) {
+            double[] values = Stats.getDoubleArray(teleList, metric, int.class);
+            standardDeviations.put("tele" + metric, Stats.standardDeviation(values));
+        }
+        for (String metric : overallMetricNames) {
+            double[] values = Stats.getDoubleArray(overallList, metric, int.class);
+            standardDeviations.put(metric, Stats.standardDeviation(values));
+        }
     }
 
     private void incrementCount(String metricName) {
@@ -283,11 +394,12 @@ public class TeamReport {
     }
 
     public void filterNoShow() {
+        counts.put("noShow", 0);
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getPreMatch().isRobotNoShow()) {
                 entries.remove(i);
                 i--;
-                noShowCount++;
+                incrementCount("noShow");
             }
         }
     }
@@ -302,5 +414,13 @@ public class TeamReport {
 
     public HashMap<String, Integer> getCounts() {
         return counts;
+    }
+
+    public void generateMonteCarloAverages() {
+
+    }
+
+    public HashMap<String, Double> getAttemptSuccessRates() {
+        return attemptSuccessRates;
     }
 }
