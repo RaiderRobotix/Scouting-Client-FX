@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class TeamReport {
 
-    private final transient ArrayList<ScoutEntry> entries;
+    private transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
 
     public static final String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
@@ -112,7 +112,7 @@ public class TeamReport {
         if (!allComments.isEmpty()) {
             statusString += "\nAll comments:\n" + allComments;
         }
-        
+
         return statusString;
 
     }
@@ -156,6 +156,10 @@ public class TeamReport {
 
     public ArrayList<ScoutEntry> getEntries() {
         return this.entries;
+    }
+
+    public void setEntries(ArrayList<ScoutEntry> entries) {
+        this.entries = entries;
     }
 
 
@@ -358,6 +362,8 @@ public class TeamReport {
             double[] values = Stats.getDoubleArray(overallList, metric, int.class);
             averages.put(metric, Stats.average(values));
         }
+
+
     }
 
     private void calculateStandardDeviations() {
@@ -408,5 +414,13 @@ public class TeamReport {
 
     public HashMap<String, Integer> getCounts() {
         return counts;
+    }
+
+    public void generateMonteCarloAverages() {
+
+    }
+
+    public HashMap<String, Double> getAttemptSuccessRates() {
+        return attemptSuccessRates;
     }
 }

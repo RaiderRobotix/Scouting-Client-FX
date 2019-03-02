@@ -1,10 +1,13 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import org.apache.commons.math3.distribution.TDistribution;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Random;
 
 class Stats {
 
@@ -115,6 +118,24 @@ class Stats {
         }
 
         return correctGetter;
+    }
+
+    public static double randomNormalValue(double[] dataset) {
+        return randomNormalValue(average(dataset), standardDeviation(dataset));
+    }
+
+    public static double randomNormalValue(double mean, double standardDeviation) {
+        Random r = new Random();
+        return Math.max(r.nextGaussian() * standardDeviation + mean, 0);
+    }
+
+    public static double randomTValue(double[] dataset) {
+        TDistribution tDistribution = new TDistribution(dataset.length - 1);
+        return Math.max(tDistribution.sample() * standardError(dataset) + average(dataset), 0);
+    }
+
+    public static double standardError(double[] dataset) {
+        return standardDeviation(dataset) / Math.sqrt(dataset.length);
     }
 
 }

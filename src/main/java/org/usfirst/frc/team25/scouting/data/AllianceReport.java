@@ -1,5 +1,8 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import com.thebluealliance.api.v3.models.Team;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,10 +15,13 @@ public class AllianceReport {
     private int[] bestStartingLevels;
     final String[] numStrNames = new String[]{"One", "Two", "Three", "total"};
     private final double NULL_HATCH_CONFIDENCE = 0.9;
+    private final double MONTE_CARLO_ITERATIONS = 1000;
 
     private HashMap<String, Double> predictedValues;
 
     private HashMap<String, Double> expectedValues;
+
+    private HashMap<String, Double> standardDeviations;
 
     public AllianceReport(TeamReport teamOne, TeamReport teamTwo, TeamReport teamThree) {
 
@@ -82,6 +88,26 @@ public class AllianceReport {
         }
 
     }
+
+    public void calculateExpectedValues(HashMap<String, Double>[] testSets) {
+        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
+                TeamReport.overallMetricNames};
+
+        String[] prefixes = new String[]{"auto", "tele", ""};
+
+        for (int i = 0; i < metricSets.length; i++) {
+            for (String metric : metricSets[i]) {
+                double value = 0;
+                for (HashMap<String, Double> testSet : testSets) {
+                    value += testSet.get(prefixes[i] + metric);
+                }
+                expectedValues.put(prefixes[i] + metric, value);
+            }
+        }
+
+    }
+
+
 
     private double calculatePredictedTeleOpPoints() {
 
@@ -189,6 +215,7 @@ public class AllianceReport {
     }
 
     private double calculatePredictedSandstormPoints() {
+
         double expectedSandstormPoints = 0;
 
         double bestCrossingScore = 0.0;
@@ -202,11 +229,9 @@ public class AllianceReport {
             double crossingScore = 0.0;
             for (int i = 0; i < levelCombo.length; i++) {
                 if (levelCombo[i] == 1) {
-                    crossingScore += 3.0 *
-                            (double) teamReports[i].getCounts().get("levelOneCross") / teamReports[i].getCounts().get("levelOneStart");
+                    crossingScore += 3.0 * teamReports[i].getAttemptSuccessRates().get("levelOneCross");
                 } else {
-                    crossingScore += 6.0 *
-                            (double) teamReports[i].getCounts().get("levelTwoCross") / teamReports[i].getCounts().get("levelTwoStart");
+                    crossingScore += 6.0 * teamReports[i].getAttemptSuccessRates().get("levelTwoCross");
                 }
             }
 
@@ -221,8 +246,22 @@ public class AllianceReport {
         predictedValues.put("autoRocketHatches", 0.0);
         predictedValues.put("autoRocketCargo", 0.0);
 
-        predictedValues.put("sandstormPoints", 0.0);
+        predictedValues.put("sandstormPoints", expectedSandstormPoints);
 
         return expectedSandstormPoints;
+    }
+
+    private void calculateMonteCarloStandardDeviations() {
+
+        for (int i = 0; i < MONTE_CARLO_ITERATIONS; i++) {
+            ArrayList<HashMap<String, Double>> sampleMatchValues = new ArrayList<>();
+
+            for (TeamReport sample : teamReports) {
+                sample.generateMonteCarloAverages();
+            }
+
+        }
+
+
     }
 }
