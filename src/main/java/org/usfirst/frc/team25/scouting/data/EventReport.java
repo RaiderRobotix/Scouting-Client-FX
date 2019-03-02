@@ -284,9 +284,7 @@ public class EventReport {
 
             }
 
-            report.filterNoShow();
-            report.findFrequentComments();
-            report.calculateStats();
+            report.processReport();
         }
 
 

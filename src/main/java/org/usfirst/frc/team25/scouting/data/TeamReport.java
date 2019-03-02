@@ -29,6 +29,8 @@ public class TeamReport {
     private String teamName, frequentRobotCommentStr, allComments;
     private HashMap<String, Double> averages, standardDeviations, attemptSuccessRates;
     private HashMap<String, Integer> counts;
+    private HashMap<String, Boolean> abilities;
+    private ArrayList<String> frequentComments;
 
 
     public TeamReport(int teamNum) {
@@ -41,6 +43,8 @@ public class TeamReport {
         standardDeviations = new HashMap<>();
         counts = new HashMap<>();
         attemptSuccessRates = new HashMap<>();
+        abilities = new HashMap<>();
+        frequentComments = new ArrayList<>();
 
     }
 
@@ -102,10 +106,13 @@ public class TeamReport {
                     (averages.get(metric), 2);
         }
 
-
-        statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
-
-
+        if (!frequentRobotCommentStr.isEmpty()) {
+            statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
+        }
+        if (!allComments.isEmpty()) {
+            statusString += "\nAll comments:\n" + allComments;
+        }
+        
         return statusString;
 
     }
@@ -133,43 +140,11 @@ public class TeamReport {
         }
     }
 
-    public void findFrequentComments() {
-
-        HashMap<String, Integer> commentFrequencies = new HashMap<>();
-        if (entries.size() > 0) {
-            for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-                commentFrequencies.put(key, 0);
-                for (ScoutEntry entry : entries) {
-                    if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
-                        commentFrequencies.put(key, 1 + commentFrequencies.get(key));
-                    }
-                }
-            }
-        }
-
-        ArrayList<String> frequentRobotComment = new ArrayList<>();
-
-        for (String key : commentFrequencies.keySet()) {
-
-            // Feel free to change this ratio
-            if (commentFrequencies.get(key) >= entries.size() / 4.0) {
-                frequentRobotComment.add(key);
-            }
-        }
-
-        for (String comment : frequentRobotComment) {
-
-            frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
-        }
-
-        allComments = "";
-        for (ScoutEntry entry : entries) {
-            if (!entry.getPostMatch().getRobotComment().equals("")) {
-                allComments += entry.getPostMatch().getRobotComment() + "; ";
-            }
-
-        }
-
+    public void processReport() {
+        filterNoShow();
+        findFrequentComments();
+        calculateStats();
+        findAbilities();
     }
 
     public void addEntry(ScoutEntry entry) {
@@ -188,6 +163,44 @@ public class TeamReport {
         return teamNum;
     }
 
+    public void findFrequentComments() {
+
+        HashMap<String, Integer> commentFrequencies = new HashMap<>();
+        if (entries.size() > 0) {
+            for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+                commentFrequencies.put(key, 0);
+                for (ScoutEntry entry : entries) {
+                    if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
+                        commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+                    }
+                }
+            }
+        }
+
+
+        for (String key : commentFrequencies.keySet()) {
+
+            // Feel free to change this ratio
+            if (commentFrequencies.get(key) >= entries.size() / 4.0) {
+                frequentComments.add(key);
+            }
+        }
+
+        for (String comment : frequentComments) {
+
+            frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
+        }
+
+        allComments = "";
+        for (ScoutEntry entry : entries) {
+            if (!entry.getPostMatch().getRobotComment().equals("")) {
+                allComments += entry.getPostMatch().getRobotComment() + "; ";
+            }
+
+        }
+
+    }
+
     public void calculateStats() {
 
         calculateCounts();
@@ -195,6 +208,36 @@ public class TeamReport {
         calculateStandardDeviations();
         calculateAttemptSuccessRates();
 
+
+    }
+
+    private void findAbilities() {
+        abilities.put("cargoFloorIntake", frequentComments.contains("Cargo floor intake"));
+        abilities.put("hatchPanelFloorIntake", frequentComments.contains("Hatch panel floor intake"));
+
+        abilities.put("frontCargoShipHatchSandstorm", false);
+        abilities.put("sideCargoShipHatchSandstorm", false);
+        abilities.put("rocketHatchSandstorm", false);
+        abilities.put("cargoShipCargoSandstorm", false);
+        abilities.put("rocketCargoSandstorm", false);
+
+        for (ScoutEntry entry : entries) {
+            if (entry.getAutonomous().isFrontCargoShipHatchCapable()) {
+                abilities.put("frontCargoShipHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().isSideCargoShipHatchCapable()) {
+                abilities.put("sideCargoShipHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().getRocketHatches() >= 1) {
+                abilities.put("rocketHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().getCargoShipCargo() >= 1) {
+                abilities.put("cargoShipCargoSandstorm", true);
+            }
+            if (entry.getAutonomous().getRocketCargo() >= 1) {
+                abilities.put("rocketCargoSandstorm", true);
+            }
+        }
     }
 
     private void calculateAttemptSuccessRates() {
