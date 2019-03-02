@@ -471,8 +471,17 @@ public class EventReport {
                 greatestMatchNum = entry.getPreMatch().getMatchNum();
             }
         }
-        FileManager.getMatchList(outputDirectory);
-        System.out.println();
+        File matchList = FileManager.getMatchList(outputDirectory);
+        try {
+            String[] matchListArray = matchList.getName().split(",");
+            for (String matchNums : matchListArray) {
+                if (Integer.parseInt(matchNums) >= greatestMatchNum) {
+
+                }
+            }
+        } catch (Exception e) {
+
+        }
     }
 
 
