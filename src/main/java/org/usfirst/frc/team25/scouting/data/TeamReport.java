@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.usfirst.frc.team25.scouting.data.Statistics.average;
 
 /**
  * Object model containing individual reports of teams in events and methods to process data
@@ -23,7 +22,7 @@ public class TeamReport {
     public static final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
             "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
             "rocketLevelTwoCargo", "rocketLevelThreeCargo"};
-    public static String[] numberStringNames = new String[]{"One", "Two", "Three", "total"};
+    public static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
     public static final String[] overallMetricNames = new String[]{"calculatedPointContribution",
             "calculatedSandstormPoints",
             "calculatedTeleOpPoints"};
@@ -61,68 +60,45 @@ public class TeamReport {
         statusString += "\n\nSandstorm:";
 
         for (String metric : autoMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
                     (averages.get("auto" + metric), 2);
         }
 
-        statusString += "\nHAB line cross: " + Statistics.round(counts.get("totalCross") / (double) entries.size() * 100, 2) + "% ("
+        statusString += "\nHAB line cross: " + Stats.round(attemptSuccessRates.get("totalCross") * 100, 2) + "% ("
                 + counts.get("totalCross") + "/" + entries.size() + ")";
 
-        statusString += "\nHAB line lvl 1: ";
-
-        if (counts.get("levelOneStart") > 0) {
-            statusString += Statistics.round(counts.get("levelOneCross") / (double) counts.get("levelOneStart") * 100
-                    , 2) + "% ("
-                    + counts.get("levelOneCross") + "/" + counts.get("levelOneStart") + ")";
-        } else {
-            statusString += "0%";
+        for (int i = 0; i < 2; i++) {
+            statusString += "\nHAB lvl " + (i + 1) + " cross: ";
+            statusString += Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Cross") * 100, 2) + "% " +
+                    "(" + counts.get(levelPrefixes[i] + "Cross") + "/" + counts.get(levelPrefixes[i] + "Start") + ")";
         }
-
-        statusString += "\nHAB line lvl 2: ";
-
-        if (counts.get("levelTwoStart") > 0) {
-            statusString += Statistics.round(counts.get("levelTwoCross") / (double) counts.get("levelTwoStart") * 100
-                    , 2) + "% ("
-                    + counts.get("levelTwoCross") + "/" + counts.get("levelTwoStart") + ")";
-        } else {
-            statusString += "0%";
-        }
-
 
         statusString += "\n\nTele-Op:";
 
         for (String metric : teleMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
                     (averages.get("tele" + metric), 2);
         }
-
 
         statusString += "\n\nEndgame:";
 
         for (int i = 0; i < 4; i++) {
-            String prefix, displayString;
 
             if (i == 3) {
-                prefix = "totalClimb";
-                displayString = "Total climb success: ";
+                statusString += "\nTotal climb success: ";
             } else {
-                prefix = "level" + numberStringNames[i] + "Climb";
-                displayString = "Lvl " + (i + 1) + " climb success: ";
+                statusString += "\nLvl " + (i + 1) + " climb success: ";
             }
+            statusString += Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Climb") * 100, 0) + "% " +
+                    "(" + counts.get(levelPrefixes[i] + "ClimbSuccess") + "/" + counts.get(levelPrefixes[i] +
+                    "ClimbAttempt") + ")";
 
-            if (counts.get(prefix + "Attempt") > 0) {
-                statusString += "\n" + displayString + Statistics.round(counts.get(prefix + "Success") / (double)
-                        counts.get(prefix + "Attempt") * 100, 0) + "% ("
-                        + counts.get(prefix + "Success") + "/" + counts.get(prefix + "Attempt") + ")";
-            } else {
-                statusString += "\n" + displayString + "0% (0/0)";
-            }
         }
 
         statusString += "\n\nOverall:";
 
         for (String metric : overallMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Statistics.round
+            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
                     (averages.get(metric), 2);
         }
 
@@ -194,7 +170,6 @@ public class TeamReport {
 
         }
 
-
     }
 
     public void addEntry(ScoutEntry entry) {
@@ -217,62 +192,108 @@ public class TeamReport {
 
         calculateCounts();
         calculateAverages();
+        calculateStandardDeviations();
         calculateAttemptSuccessRates();
 
     }
 
     private void calculateAttemptSuccessRates() {
-        for (int i = 0; i < 2; i++) {
 
+        for (int i = 0; i < 4; i++) {
+            if (i != 2) {
+                double crossRate = 0.0;
+
+                if (i == 3 && entries.size() != 0) {
+                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / entries.size();
+                } else if (counts.get(levelPrefixes[i] + "Start") != 0) {
+                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / counts.get(levelPrefixes[i] +
+                            "Start");
+                }
+
+                attemptSuccessRates.put(levelPrefixes[i] + "Cross", crossRate);
+            }
+
+            double climbRate = 0.0;
+
+            if (counts.get(levelPrefixes[i] + "ClimbAttempt") != 0) {
+                climbRate = (double) counts.get(levelPrefixes[i] + "ClimbSuccess") / counts.get(levelPrefixes[i] +
+                        "ClimbAttempt");
+            }
+
+            attemptSuccessRates.put(levelPrefixes[i] + "Climb", climbRate);
         }
 
-        for (int i = 0; i < 3; i++) {
+        for (String prefix : new String[]{"cargo", "hatch"}) {
 
+            double placeRate = 0.0;
+
+            if (counts.get(prefix + "Start") != 0) {
+                placeRate = (double) counts.get(prefix + "AutoSuccess") / counts.get(prefix + "Start");
+            }
+
+            attemptSuccessRates.put(prefix + "AutoSuccess", placeRate);
         }
-        
-        attemptSuccessRates.put("levelOneCross", (double) counts.get("levelOneCross") / counts.get("levelOneStart"));
-        attemptSuccessRates.put("levelTwoCross", (double) counts.get("levelTwoCross") / counts.get("levelTwoStart"));
-        attemptSuccessRates.put("levelOneClimb", (double) counts.get("levelOneClimbSuccess") / counts.get(
-                "levelOneClimbAttempt"));
-        attemptSuccessRates.put("levelTwoClimb", (double) counts.get("levelOneClimbSuccess") / counts.get(
-                "levelOneClimbAttempt"));
     }
 
     private void calculateCounts() {
-        final String[] iterativeMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
+        final String[] levelMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
 
-        for (String prefix : numberStringNames) {
-            for (String suffix : iterativeMetricSuffixes) {
-                counts.put("level" + prefix + suffix, 0);
+        for (String prefix : levelPrefixes) {
+            for (String suffix : levelMetricSuffixes) {
+                counts.put(prefix + suffix, 0);
+            }
+        }
+
+        for (String prefix : new String[]{"cargo", "hatch"}) {
+            for (String suffix : new String[]{"Start", "AutoSuccess"}) {
+                counts.put(prefix + suffix, 0);
             }
         }
 
         for (ScoutEntry entry : entries) {
 
-            incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Start");
+            incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Start");
+
+            if (entry.getPreMatch().getStartingGamePiece().equals("Cargo")) {
+                incrementCount("cargoStart");
+            }
+
+            if (entry.getPreMatch().getStartingGamePiece().equals("Hatch panel")) {
+                incrementCount("hatchStart");
+            }
+
+            if (entry.getSandstormHatches() >= 1) {
+                incrementCount("hatchAutoSuccess");
+            }
+
+            if (entry.getSandstormCargo() >= 1) {
+                incrementCount("cargoAutoSuccess");
+            }
+
             if (entry.getAutonomous().isCrossHabLine()) {
-                incrementCount("level" + numberStringNames[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
+                incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
                 incrementCount("totalCross");
             }
 
             if (entry.getTeleOp().isAttemptHabClimb()) {
-                incrementCount("level" + numberStringNames[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
+                incrementCount(levelPrefixes[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
                         "ClimbAttempt");
 
                 incrementCount("totalClimbAttempt");
             }
 
             if (entry.getTeleOp().isSuccessHabClimb()) {
-                incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                         "ClimbSuccess");
 
                 if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
-                    incrementCount("level" + numberStringNames[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+                    incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
                             "ClimbAttempt");
                 }
 
                 incrementCount("totalClimbSuccess");
             }
+
 
         }
     }
@@ -283,13 +304,35 @@ public class TeamReport {
         ArrayList<Object> overallList = new ArrayList<>(entries);
 
         for (String metric : autoMetricNames) {
-            averages.put("auto" + metric, average(autoList, metric));
+            double[] values = Stats.getDoubleArray(autoList, metric, int.class);
+            averages.put("auto" + metric, Stats.average(values));
         }
         for (String metric : teleMetricNames) {
-            averages.put("tele" + metric, average(teleList, metric));
+            double[] values = Stats.getDoubleArray(teleList, metric, int.class);
+            averages.put("tele" + metric, Stats.average(values));
         }
         for (String metric : overallMetricNames) {
-            averages.put(metric, average(overallList, metric));
+            double[] values = Stats.getDoubleArray(overallList, metric, int.class);
+            averages.put(metric, Stats.average(values));
+        }
+    }
+
+    private void calculateStandardDeviations() {
+        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+        ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
+        ArrayList<Object> overallList = new ArrayList<>(entries);
+
+        for (String metric : autoMetricNames) {
+            double[] values = Stats.getDoubleArray(autoList, metric, int.class);
+            standardDeviations.put("auto" + metric, Stats.standardDeviation(values));
+        }
+        for (String metric : teleMetricNames) {
+            double[] values = Stats.getDoubleArray(teleList, metric, int.class);
+            standardDeviations.put("tele" + metric, Stats.standardDeviation(values));
+        }
+        for (String metric : overallMetricNames) {
+            double[] values = Stats.getDoubleArray(overallList, metric, int.class);
+            standardDeviations.put(metric, Stats.standardDeviation(values));
         }
     }
 
