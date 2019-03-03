@@ -48,10 +48,17 @@ public class EventReport {
 
     }
 
+    /**
+     * Fixes errors made in scouting entries based on match details from The Blue Alliance
+     * For the 2019 season, this fixes HAB line crossings, starting levels, partner climbs assisted, and HAB climbs
+     * Generates a list of inaccuracies, along with scout names, team numbers and match numbers
+     *
+     * @return <code>true</code> if inaccuracies are found, false otherwise
+     */
     public boolean fixInaccuraciesTBA() {
 
         try {
-            // Downloads the most recent
+            // Downloads the most recent match breakdowns
             BlueAlliance.downloadQualificationMatchData(event, directory);
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,8 +214,11 @@ public class EventReport {
                     e.printStackTrace();
                 }
             }
-            FileManager.outputFile(directory.getAbsolutePath() + "/Inaccuracies - " + event, "txt",
-                    inaccuracyList);
+            if (!inaccuracyList.isEmpty()) {
+                FileManager.outputFile(directory.getAbsolutePath() + "/Inaccuracies - " + event, "txt",
+                        inaccuracyList);
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -216,6 +226,11 @@ public class EventReport {
     }
 
 
+    /**
+     * Finds the scouting entries of alliance partners alongside the current team
+     * @param entry Scouting entry of the team in the match to be queried
+     * @return <code>ScoutEntry</code> array of the two partner scout entries
+     */
     public ScoutEntry[] findPartnerEntries(ScoutEntry entry) {
         ScoutEntry[] partnerTeams = new ScoutEntry[2];
         int numberFound = 0;
@@ -536,25 +551,25 @@ public class EventReport {
                     if (tempSplitElement[i].equals("25")) {
                         AllianceReport futureMatchPredictions1 =
                                 new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
-                                teamReports.get(Integer.parseInt(tempSplitElement[2])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[2])),
                                         teamReports.get(Integer.parseInt(tempSplitElement[3])));
                         futureMatchPredictions1.getQuickAllianceReport();
 
                         AllianceReport futureMatchPredictions2 =
                                 new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
-                                teamReports.get(Integer.parseInt(tempSplitElement[2])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[2])),
                                         teamReports.get(Integer.parseInt(tempSplitElement[3])));
                         futureMatchPredictions2.getQuickAllianceReport();
                     } else {
                         AllianceReport futureMatchPredictions1 =
                                 new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[4])),
-                                teamReports.get(Integer.parseInt(tempSplitElement[5])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[5])),
                                         teamReports.get(Integer.parseInt(tempSplitElement[6])));
                         futureMatchPredictions1.getQuickAllianceReport();
 
                         AllianceReport futureMatchPrediction2 =
                                 new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
-                                teamReports.get(Integer.parseInt(tempSplitElement[2])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[2])),
                                         teamReports.get(Integer.parseInt(tempSplitElement[3])));
                         futureMatchPrediction2.getQuickAllianceReport();
                     }

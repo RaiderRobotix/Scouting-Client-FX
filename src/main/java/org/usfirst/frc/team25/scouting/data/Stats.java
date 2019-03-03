@@ -23,6 +23,12 @@ class Stats {
     }
 
 
+    /**
+     * Calculates the standard deviations of sets of data from independent events
+     *
+     * @param datasets An array of <code>double</code> arrays that contain sample data points of a metric
+     * @return The standard deviation of the data
+     */
     public static double standardDeviation(double[][] datasets) {
         double totalVariance = 0.0;
 

@@ -140,6 +140,10 @@ public class TeamReport {
         }
     }
 
+    /**
+     * Processes the scout entries within the team report by filtering out no shows, calculating stats, and finding
+     * abilities
+     */
     public void processReport() {
         filterNoShow();
         findFrequentComments();
@@ -147,11 +151,19 @@ public class TeamReport {
         findAbilities();
     }
 
-    public void addEntry(ScoutEntry entry) {
-        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
-                ()));
+    /**
+     * Calculates the counts, averages, standard deviations, and attempt-success rates of data in stored scouting
+     * entries, provided that data exists
+     */
+    public void calculateStats() {
 
-        entries.add(entry);
+        if (entries.size() > 0) {
+            calculateCounts();
+            calculateAverages();
+            calculateStandardDeviations();
+            calculateAttemptSuccessRates();
+        }
+
     }
 
     public ArrayList<ScoutEntry> getEntries() {
@@ -205,46 +217,10 @@ public class TeamReport {
 
     }
 
-    public void calculateStats() {
-
-        if (entries.size() > 0) {
-            calculateCounts();
-            calculateAverages();
-            calculateStandardDeviations();
-            calculateAttemptSuccessRates();
-        }
-
-    }
-
-    private void findAbilities() {
-        abilities.put("cargoFloorIntake", frequentComments.contains("Cargo floor intake"));
-        abilities.put("hatchPanelFloorIntake", frequentComments.contains("Hatch panel floor intake"));
-
-        abilities.put("frontCargoShipHatchSandstorm", false);
-        abilities.put("sideCargoShipHatchSandstorm", false);
-        abilities.put("rocketHatchSandstorm", false);
-        abilities.put("cargoShipCargoSandstorm", false);
-        abilities.put("rocketCargoSandstorm", false);
-
-        for (ScoutEntry entry : entries) {
-            if (entry.getAutonomous().isFrontCargoShipHatchCapable()) {
-                abilities.put("frontCargoShipHatchSandstorm", true);
-            }
-            if (entry.getAutonomous().isSideCargoShipHatchCapable()) {
-                abilities.put("sideCargoShipHatchSandstorm", true);
-            }
-            if (entry.getAutonomous().getRocketHatches() >= 1) {
-                abilities.put("rocketHatchSandstorm", true);
-            }
-            if (entry.getAutonomous().getCargoShipCargo() >= 1) {
-                abilities.put("cargoShipCargoSandstorm", true);
-            }
-            if (entry.getAutonomous().getRocketCargo() >= 1) {
-                abilities.put("rocketCargoSandstorm", true);
-            }
-        }
-    }
-
+    /**
+     * Calculates the attempt-success rates of HAB climb, sandstorm bonus, and/or sandstorm game piece placing for a
+     * team
+     */
     private void calculateAttemptSuccessRates() {
 
         for (int i = 0; i < 4; i++) {
@@ -283,6 +259,9 @@ public class TeamReport {
         }
     }
 
+    /**
+     * Calculates the number of times a team starts/crosses a particular level of the HAB and climb attempts/successes
+     */
     private void calculateCounts() {
         final String[] levelMetricSuffixes = new String[]{"Start", "Cross", "ClimbAttempt", "ClimbSuccess"};
 
@@ -346,6 +325,9 @@ public class TeamReport {
         }
     }
 
+    /**
+     * Calculates the averages of metrics specified in <code>autoMetricNames</code> and  <code>teleMetricNames</code>
+     */
     private void calculateAverages() {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
@@ -367,6 +349,10 @@ public class TeamReport {
 
     }
 
+    /**
+     * Calculates the sample standard of metrics specified in <code>autoMetricNames</code> and
+     * <code>teleMetricNames</code>
+     */
     private void calculateStandardDeviations() {
         ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
         ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
@@ -388,14 +374,41 @@ public class TeamReport {
 
     }
 
-    private void incrementCount(String metricName) {
-        if (counts.containsKey(metricName)) {
-            counts.put(metricName, counts.get(metricName) + 1);
-        } else {
-            counts.put(metricName, 1);
+    /**
+     * Determines if teams are capable of intaking game pieces from the floor and their potential sandstorm modes
+     */
+    private void findAbilities() {
+        abilities.put("cargoFloorIntake", frequentComments.contains("Cargo floor intake"));
+        abilities.put("hatchPanelFloorIntake", frequentComments.contains("Hatch panel floor intake"));
+
+        abilities.put("frontCargoShipHatchSandstorm", false);
+        abilities.put("sideCargoShipHatchSandstorm", false);
+        abilities.put("rocketHatchSandstorm", false);
+        abilities.put("cargoShipCargoSandstorm", false);
+        abilities.put("rocketCargoSandstorm", false);
+
+        for (ScoutEntry entry : entries) {
+            if (entry.getAutonomous().isFrontCargoShipHatchCapable()) {
+                abilities.put("frontCargoShipHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().isSideCargoShipHatchCapable()) {
+                abilities.put("sideCargoShipHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().getRocketHatches() >= 1) {
+                abilities.put("rocketHatchSandstorm", true);
+            }
+            if (entry.getAutonomous().getCargoShipCargo() >= 1) {
+                abilities.put("cargoShipCargoSandstorm", true);
+            }
+            if (entry.getAutonomous().getRocketCargo() >= 1) {
+                abilities.put("rocketCargoSandstorm", true);
+            }
         }
     }
 
+    /**
+     * Removes scouting entries where the robot did not show up and increments the "no show" count
+     */
     public void filterNoShow() {
         counts.put("noShow", 0);
         for (int i = 0; i < entries.size(); i++) {
@@ -405,6 +418,26 @@ public class TeamReport {
                 incrementCount("noShow");
             }
         }
+    }
+
+    private void incrementCount(String metricName) {
+        if (counts.containsKey(metricName)) {
+            counts.put(metricName, counts.get(metricName) + 1);
+        } else {
+            counts.put(metricName, 1);
+        }
+    }
+
+    /**
+     * Adds entries to the scouting entry list of this team
+     *
+     * @param entry <code>ScoutEntry</code> to be added to tis team report
+     */
+    public void addEntry(ScoutEntry entry) {
+        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
+                ()));
+
+        entries.add(entry);
     }
 
     public HashMap<String, Double> getAverages() {
