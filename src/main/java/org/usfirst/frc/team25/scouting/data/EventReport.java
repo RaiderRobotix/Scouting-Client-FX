@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -470,11 +471,47 @@ public class EventReport {
             }
         }
         File matchList = FileManager.getMatchList(outputDirectory);
+        String[] blocksOfStringMatchesArray = {};
+        List<String> futureMatchesBlockList = new ArrayList<String>();
         try {
-            String[] matchListArray = matchList.getName().split(",");
-            for (String matchNums : matchListArray) {
-                if (Integer.parseInt(matchNums) >= greatestMatchNum) {
+            String matchesString = FileManager.getFileString(matchList);
+            blocksOfStringMatchesArray = matchesString.split("\n");
+            for (String element : blocksOfStringMatchesArray) {
+                String[] tempArray = element.split(",");
+                for (String tempElement : tempArray) {
+                    if (tempElement.equals("25") && Integer.parseInt(tempArray[0]) > greatestMatchNum) {
+                        futureMatchesBlockList.add(element);
+                    }
+                }
+            }
+            for (String element : futureMatchesBlockList) {
+                String[] tempSplitElement = element.split(",");
+                for (int i = 1; i < 4; i++) {
+                    if (tempSplitElement[i].equals("25")) {
+                        AllianceReport futureMatchPredictions1 =
+                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
+                                teamReports.get(Integer.parseInt(tempSplitElement[2])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[3])));
+                        futureMatchPredictions1.getQuickAllianceReport();
 
+                        AllianceReport futureMatchPredictions2 =
+                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
+                                teamReports.get(Integer.parseInt(tempSplitElement[2])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[3])));
+                        futureMatchPredictions2.getQuickAllianceReport();
+                    } else {
+                        AllianceReport futureMatchPredictions1 =
+                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[4])),
+                                teamReports.get(Integer.parseInt(tempSplitElement[5])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[6])));
+                        futureMatchPredictions1.getQuickAllianceReport();
+
+                        AllianceReport futureMatchPrediction2 =
+                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
+                                teamReports.get(Integer.parseInt(tempSplitElement[2])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[3])));
+                        futureMatchPrediction2.getQuickAllianceReport();
+                    }
                 }
             }
         } catch (Exception e) {
