@@ -1,7 +1,5 @@
 package org.usfirst.frc.team25.scouting.data;
 
-import com.thebluealliance.api.v3.models.Team;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -106,7 +104,6 @@ public class AllianceReport {
         }
 
     }
-
 
 
     private double calculatePredictedTeleOpPoints() {
@@ -241,6 +238,10 @@ public class AllianceReport {
             }
         }
 
+        expectedSandstormPoints += bestCrossingScore;
+
+
+
         predictedValues.put("autoCargoShipCargo", 0.0);
         predictedValues.put("autoCargoShipHatches", 0.0);
         predictedValues.put("autoRocketHatches", 0.0);
@@ -258,10 +259,38 @@ public class AllianceReport {
 
             for (TeamReport sample : teamReports) {
                 sample.generateMonteCarloAverages();
+
             }
 
         }
 
+        standardDeviations.put("predictedPoints", 0.0);
 
+
+    }
+
+    public double calculatePredictedRp(AllianceReport opposingAlliance) {
+
+        return calculateHabDockChance() + calculateRocketRpChance() + 2 * calculateWinChance(opposingAlliance);
+    }
+
+    public double calculateWinChance(AllianceReport opposingAlliance) {
+        return 1.0;
+    }
+
+    public double calculateRocketRpChance() {
+        double rocketRpChance = 1.0;
+
+        predictedValues.put("rocketRpChance", rocketRpChance);
+
+        return rocketRpChance;
+    }
+
+    public double calculateHabDockChance() {
+        double habDockChance = 1.0;
+
+        predictedValues.put("habDockChance", habDockChance);
+
+        return habDockChance;
     }
 }

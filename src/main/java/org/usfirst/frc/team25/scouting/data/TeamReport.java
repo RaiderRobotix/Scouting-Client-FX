@@ -207,11 +207,12 @@ public class TeamReport {
 
     public void calculateStats() {
 
-        calculateCounts();
-        calculateAverages();
-        calculateStandardDeviations();
-        calculateAttemptSuccessRates();
-
+        if (entries.size() > 0) {
+            calculateCounts();
+            calculateAverages();
+            calculateStandardDeviations();
+            calculateAttemptSuccessRates();
+        }
 
     }
 
@@ -383,6 +384,8 @@ public class TeamReport {
             double[] values = Stats.getDoubleArray(overallList, metric, int.class);
             standardDeviations.put(metric, Stats.standardDeviation(values));
         }
+
+
     }
 
     private void incrementCount(String metricName) {
