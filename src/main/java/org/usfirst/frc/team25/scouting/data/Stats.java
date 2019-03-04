@@ -144,5 +144,13 @@ class Stats {
         return standardDeviation(dataset) / Math.sqrt(dataset.length);
     }
 
+    public static double standardDeviation(int attempts, int successes) {
+        if (attempts < 2) {
+            return 0.0;
+        }
+
+        return Math.sqrt(((double) successes * (attempts - successes)) / (attempts * (attempts - 1)));
+    }
+
 }
  

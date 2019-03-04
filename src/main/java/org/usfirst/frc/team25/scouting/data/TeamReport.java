@@ -21,7 +21,7 @@ public class TeamReport {
             "rocketCargo"};
     public static final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
             "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
-            "rocketLevelTwoCargo", "rocketLevelThreeCargo"};
+            "rocketLevelTwoCargo", "rocketLevelThreeCargo", "numPartnerClimbAssists"};
     public static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
     public static final String[] overallMetricNames = new String[]{"calculatedPointContribution",
             "calculatedSandstormPoints",
@@ -227,13 +227,18 @@ public class TeamReport {
             if (i != 2) {
                 double crossRate = 0.0;
 
+                int attempts = 0;
+
                 if (i == 3 && entries.size() != 0) {
-                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / entries.size();
+                    attempts = entries.size();
+                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / attempts;
                 } else if (counts.get(levelPrefixes[i] + "Start") != 0) {
-                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / counts.get(levelPrefixes[i] +
-                            "Start");
+                    attempts = counts.get(levelPrefixes[i] + "Start");
+                    crossRate = (double) counts.get(levelPrefixes[i] + "Cross") / attempts;
                 }
 
+                standardDeviations.put(levelPrefixes[i] + "Cross", Stats.standardDeviation(attempts,
+                        counts.get(levelPrefixes[i] + "Cross")));
                 attemptSuccessRates.put(levelPrefixes[i] + "Cross", crossRate);
             }
 
@@ -244,6 +249,8 @@ public class TeamReport {
                         "ClimbAttempt");
             }
 
+            standardDeviations.put(levelPrefixes[i] + "Climb", Stats.standardDeviation(counts.get(levelPrefixes[i] +
+                    "ClimbAttempt"), counts.get(levelPrefixes[i] + "ClimbSuccess")));
             attemptSuccessRates.put(levelPrefixes[i] + "Climb", climbRate);
         }
 
@@ -255,6 +262,8 @@ public class TeamReport {
                 placeRate = (double) counts.get(prefix + "AutoSuccess") / counts.get(prefix + "Start");
             }
 
+            standardDeviations.put(prefix + "AutoSuccess", Stats.standardDeviation(counts.get(prefix + "Start"),
+                    counts.get(prefix + "AutoSuccess")));
             attemptSuccessRates.put(prefix + "AutoSuccess", placeRate);
         }
     }
@@ -374,6 +383,10 @@ public class TeamReport {
 
     }
 
+    public HashMap<String, Boolean> getAbilities() {
+        return abilities;
+    }
+
     /**
      * Determines if teams are capable of intaking game pieces from the floor and their potential sandstorm modes
      */
@@ -386,6 +399,10 @@ public class TeamReport {
         abilities.put("rocketHatchSandstorm", false);
         abilities.put("cargoShipCargoSandstorm", false);
         abilities.put("rocketCargoSandstorm", false);
+        abilities.put("singleBuddyClimb", false);
+        abilities.put("doubleBuddyClimb", false);
+        abilities.put("levelTwoBuddyClimb", false);
+        abilities.put("levelThreeBuddyClimb", false);
 
         for (ScoutEntry entry : entries) {
             if (entry.getAutonomous().isFrontCargoShipHatchCapable()) {
@@ -402,6 +419,18 @@ public class TeamReport {
             }
             if (entry.getAutonomous().getRocketCargo() >= 1) {
                 abilities.put("rocketCargoSandstorm", true);
+            }
+            if (entry.getTeleOp().getNumPartnerClimbAssists() == 1) {
+                abilities.put("singleBuddyClimb", true);
+            }
+            if (entry.getTeleOp().getNumPartnerClimbAssists() == 2) {
+                abilities.put("doubleBuddyClimb", true);
+            }
+            if (entry.getTeleOp().getPartnerClimbAssistEndLevel() == 2) {
+                abilities.put("levelTwoBuddyClimb", true);
+            }
+            if (entry.getTeleOp().getPartnerClimbAssistEndLevel() == 3) {
+                abilities.put("levelThreeBuddyClimb", true);
             }
         }
     }
@@ -458,5 +487,22 @@ public class TeamReport {
 
     public HashMap<String, Double> getAttemptSuccessRates() {
         return attemptSuccessRates;
+    }
+
+    public int findBestClimbLevel() {
+        int bestLevel = 0;
+        double bestClimbPoints = 0.0;
+
+        final int[] climbPointValues = new int[]{3, 6, 12};
+
+        for (int i = 0; i < 3; i++) {
+            double potentialPoints = attemptSuccessRates.get(levelPrefixes[i] + "Climb") * climbPointValues[i];
+            if (potentialPoints >= bestClimbPoints) {
+                bestClimbPoints = potentialPoints;
+                bestLevel = i + 1;
+            }
+        }
+
+        return bestLevel;
     }
 }

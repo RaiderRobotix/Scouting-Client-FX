@@ -11,6 +11,8 @@ public class AllianceReport {
 
     private TeamReport[] teamReports;
     private int[] bestStartingLevels;
+    private String bestSandstormGamePieceCombo;
+    private int[] bestClimbLevels;
     final String[] numStrNames = new String[]{"One", "Two", "Three", "total"};
     private final double NULL_HATCH_CONFIDENCE = 0.9;
     private final double MONTE_CARLO_ITERATIONS = 1000;
@@ -59,15 +61,10 @@ public class AllianceReport {
         double endgamePoints = calculatePredictedEndgamePoints();
         calculateOptimalNullHatchPanels(NULL_HATCH_CONFIDENCE);
 
-        predictedValues.put("totalPoints", sandstormPoints + teleOpPoints + sandstormPoints);
+        predictedValues.put("totalPoints", sandstormPoints + teleOpPoints + endgamePoints);
 
     }
 
-    private void calculateOptimalNullHatchPanels(double confidenceLevel) {
-        predictedValues.put("optimalNullHatches",
-                Math.max(Math.min(8 - predictedValues.get("autoCargoShipHatches") - predictedValues.get(
-                        "teleCargoShipHatches"), 6), 0));
-    }
 
     private void calculateExpectedValues() {
         String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
@@ -87,22 +84,150 @@ public class AllianceReport {
 
     }
 
-    public void calculateExpectedValues(HashMap<String, Double>[] testSets) {
-        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
-                TeamReport.overallMetricNames};
+    private double calculatePredictedSandstormPoints() {
 
-        String[] prefixes = new String[]{"auto", "tele", ""};
+        double expectedSandstormPoints = 0;
 
-        for (int i = 0; i < metricSets.length; i++) {
-            for (String metric : metricSets[i]) {
-                double value = 0;
-                for (HashMap<String, Double> testSet : testSets) {
-                    value += testSet.get(prefixes[i] + metric);
+        double bestCrossingScore = 0.0;
+
+
+        final int[][] levelCombinations = new int[][]{{2, 2, 1}, {2, 1, 2}, {1, 2, 2}, {1, 1, 2},
+                {1, 2, 1}, {1, 1, 1}};
+
+        // Iterate through all starting combinations
+        for (int[] levelCombo : levelCombinations) {
+            double crossingScore = 0.0;
+            for (int i = 0; i < levelCombo.length; i++) {
+                if (levelCombo[i] == 1) {
+                    crossingScore += 3.0 * teamReports[i].getAttemptSuccessRates().get("levelOneCross");
+                } else {
+                    crossingScore += 6.0 * teamReports[i].getAttemptSuccessRates().get("levelTwoCross");
                 }
-                expectedValues.put(prefixes[i] + metric, value);
+            }
+
+            if (crossingScore >= bestCrossingScore) {
+                bestCrossingScore = crossingScore;
+                bestStartingLevels = levelCombo;
             }
         }
 
+        expectedSandstormPoints += bestCrossingScore;
+
+        predictedValues.put("sandstormBonus", bestCrossingScore);
+
+        // TODO Make this model more rigorous, with multi game piece autos
+        // Assumptions:
+        // If teams can place game pieces at a certain location, it doesn't matter where they start
+        // A team's attempt-success rate for a game pieces is the same regardless of placement location
+        // Bays where hatch panels are placed are pre-populated with cargo
+        // Teams can score a maximum of one game piece in sandstorm
+        final String[] gamePieceCombinations = new String[]{"HHH", "HHC", "HCH", "HCC", "CHH", "CHC", "CCH", "CCC"};
+
+        double bestGamePieceScore = 0.0;
+
+        boolean sideCargoShipHatchCapable = false;
+
+        for (TeamReport team : teamReports) {
+            if (team.getAbilities().get("sideCargoShipHatchSandstorm")) {
+                sideCargoShipHatchCapable = true;
+            }
+        }
+
+        for (String gamePieceCombo : gamePieceCombinations) {
+            double cargoShipCargo = 0.0;
+            double cargoShipHatches = 0.0;
+            double rocketHatches = 0.0;
+
+            int frontCargoShipCount = 0;
+
+            for (int i = 0; i < gamePieceCombo.length(); i++) {
+
+                if (gamePieceCombo.charAt(i) == 'H') {
+                    if (teamReports[i].getAbilities().get("frontCargoShipHatchSandstorm") && frontCargoShipCount < 2) {
+                        cargoShipHatches += teamReports[i].getAttemptSuccessRates().get("hatchAutoSuccess");
+                        frontCargoShipCount++;
+                    } else if (teamReports[i].getAbilities().get("sideCargoShipHatchSandstorm")) {
+                        cargoShipHatches += teamReports[i].getAttemptSuccessRates().get("hatchAutoSuccess");
+
+                    } else if (teamReports[i].getAbilities().get("rocketHatchSandstorm")) {
+                        rocketHatches += teamReports[i].getAttemptSuccessRates().get("hatchAutoSuccess");
+                    }
+                } else {
+                    cargoShipCargo += teamReports[i].getAttemptSuccessRates().get("cargoAutoSuccess");
+                }
+            }
+
+            double gamePieceScore = 5 * cargoShipHatches + 3 * cargoShipCargo + 2 * rocketHatches;
+
+
+            if (gamePieceScore >= bestGamePieceScore) {
+                bestGamePieceScore = gamePieceScore;
+                bestSandstormGamePieceCombo = gamePieceCombo;
+
+                predictedValues.put("autoCargoShipCargo", cargoShipCargo);
+                predictedValues.put("autoCargoShipHatches", cargoShipHatches);
+                predictedValues.put("autoRocketHatches", rocketHatches);
+            }
+        }
+
+        expectedSandstormPoints += bestGamePieceScore;
+
+        predictedValues.put("sandstormPoints", expectedSandstormPoints);
+
+        return expectedSandstormPoints;
+    }
+
+    private double calculatePredictedEndgamePoints() {
+        double bestEndgamePoints = 0;
+
+        final int[][] climbLevelCombos = new int[][]{{1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 2, 1}, {1, 2, 2}, {1, 2, 3},
+                {1, 3, 1}, {1, 3, 2}, {2, 1, 1}, {2, 1, 2}, {2, 1, 3}, {2, 2, 1}, {2, 2, 3}, {2, 3, 1}, {2, 3, 2},
+                {3, 1, 1}, {3, 1, 2}, {3, 2, 1}, {3, 2, 2}};
+
+        final int[] climbPointValues = new int[]{3, 6, 12};
+
+        for (int[] climbLevelCombo : climbLevelCombos) {
+            double endgamePoints = 0.0;
+            for (int i = 0; i < climbLevelCombo.length; i++) {
+                endgamePoints += climbPointValues[climbLevelCombo[i] - 1] * teamReports[i].getAttemptSuccessRates().get(
+                        "level" + numStrNames[i] + "Climb");
+            }
+
+            if (endgamePoints >= bestEndgamePoints) {
+                bestEndgamePoints = endgamePoints;
+                bestClimbLevels = climbLevelCombo;
+            }
+        }
+
+        // Assume no assisted climbs
+        /*for (int i = 0; i < teamReports.length; i++) {
+            double endgamePoints = 0.0;
+            int[] climbLevels = new int[3];
+            if (teamReports[i].getAbilities().get("doubleBuddyClimb")) {
+                endgamePoints += teamReports[i].getAverages().get("numPartnerClimbAssists") * (teamReports[i]
+                        .getAbilities().get("levelThreeBuddyClimb") ? 12 : 6);
+                climbLevels[i] = teamReports[i].findBestClimbLevel();
+                endgamePoints += climbLevels[i] * climbPointValues[climbLevels[i] - 1];
+                for (int j = 0; j < climbLevels.length; j++) {
+                    if (j != i) {
+                        climbLevels[j] = 0;
+                    }
+                }
+            } else if (teamReports[i].getAbilities().get("singleBuddyClimb")) {
+                endgamePoints += teamReports[i].getAverages().get("numPartnerClimbAssists") * (teamReports[i]
+                        .getAbilities().get("levelThreeBuddyClimb") ? 12 : 6);
+
+                double bestStandaloneClimbPoints = 0.0;
+
+                int bestStandaloneClimbLevel
+
+
+            }
+        }*/
+
+        predictedValues.put("endgamePoints", bestEndgamePoints);
+
+        return bestEndgamePoints;
     }
 
 
@@ -173,8 +298,6 @@ public class AllianceReport {
                 // Allow cargo ship cargo to be interchangeable with lvl 1 cargo
                 excessCargo += expectedValues.get("telecargoShipCargo");
 
-                // Decrease cap due to rocket hatches placed
-                cap -= predictedValues.get("autoRocketCargo");
             }
 
             if (excessCargo + expectedValues.get("telerocketLevel" + numStrNames[i] + "Cargo") > cap) {
@@ -204,55 +327,36 @@ public class AllianceReport {
         return totalCargo;
     }
 
-    private double calculatePredictedEndgamePoints() {
-        double expectedEndgamePoints = 0;
-        predictedValues.put("endgamePoints", 0.0);
-
-        return expectedEndgamePoints;
+    private void calculateOptimalNullHatchPanels(double confidenceLevel) {
+        // Make this a function of hatch panels placed in auto as well
+        predictedValues.put("optimalNullHatches",
+                Math.max(Math.min(8 - predictedValues.get("autoCargoShipHatches") - predictedValues.get(
+                        "teleCargoShipHatches"), 6), 0));
     }
 
-    private double calculatePredictedSandstormPoints() {
+    public void calculateMonteCarloExpectedValues(HashMap<String, Double>[] testSets) {
+        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
+                TeamReport.overallMetricNames};
 
-        double expectedSandstormPoints = 0;
+        String[] prefixes = new String[]{"auto", "tele", ""};
 
-        double bestCrossingScore = 0.0;
-
-
-        final int[][] levelCombinations = new int[][]{{2, 2, 1}, {2, 1, 2}, {1, 2, 2}, {1, 1, 2},
-                {1, 2, 1}, {1, 1, 1}};
-
-        // Iterate through all starting combinations
-        for (int[] levelCombo : levelCombinations) {
-            double crossingScore = 0.0;
-            for (int i = 0; i < levelCombo.length; i++) {
-                if (levelCombo[i] == 1) {
-                    crossingScore += 3.0 * teamReports[i].getAttemptSuccessRates().get("levelOneCross");
-                } else {
-                    crossingScore += 6.0 * teamReports[i].getAttemptSuccessRates().get("levelTwoCross");
+        for (int i = 0; i < metricSets.length; i++) {
+            for (String metric : metricSets[i]) {
+                double value = 0;
+                for (HashMap<String, Double> testSet : testSets) {
+                    value += testSet.get(prefixes[i] + metric);
                 }
-            }
-
-            if (crossingScore >= bestCrossingScore) {
-                bestCrossingScore = crossingScore;
-                bestStartingLevels = levelCombo;
+                expectedValues.put(prefixes[i] + metric, value);
             }
         }
 
-        expectedSandstormPoints += bestCrossingScore;
-
-
-
-        predictedValues.put("autoCargoShipCargo", 0.0);
-        predictedValues.put("autoCargoShipHatches", 0.0);
-        predictedValues.put("autoRocketHatches", 0.0);
-        predictedValues.put("autoRocketCargo", 0.0);
-
-        predictedValues.put("sandstormPoints", expectedSandstormPoints);
-
-        return expectedSandstormPoints;
     }
 
-    private void calculateMonteCarloStandardDeviations() {
+    private void calculateStandardDeviations() {
+
+    }
+
+    private void calculateTeleOpStandardDeviations() {
 
         for (int i = 0; i < MONTE_CARLO_ITERATIONS; i++) {
             ArrayList<HashMap<String, Double>> sampleMatchValues = new ArrayList<>();
