@@ -515,6 +515,9 @@ public class AllianceReport {
         return quickReport;
     }
 
+    /**
+     * @return
+     */
     private double calculateStdDevEndgamePoints() {
 
         final int[] climbPointValues = new int[]{3, 6, 12};
@@ -535,6 +538,11 @@ public class AllianceReport {
         return endgameVariance;
     }
 
+    /**
+     *
+     * @param simulationRawValues
+     * @return
+     */
     private double calculateStdDevTeleOpPoints(ArrayList<ArrayList<HashMap<String, Double>>> simulationRawValues) {
 
         ArrayList<String> metricNames = new ArrayList<>();
@@ -582,7 +590,11 @@ public class AllianceReport {
         return standardDeviations.get("telePoints");
     }
 
-    public void calculateMonteCarloExpectedValues(ArrayList<HashMap<String, Double>> testSets) {
+    /**
+     *
+     * @param testSets
+     */
+    private void calculateMonteCarloExpectedValues(ArrayList<HashMap<String, Double>> testSets) {
         String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
                 TeamReport.overallMetricNames};
 
@@ -600,7 +612,12 @@ public class AllianceReport {
 
     }
 
-    public double calculateRocketRpChance(ArrayList<ArrayList<HashMap<String, Double>>> simulationRawValues) {
+    /**
+     *
+     * @param simulationRawValues
+     * @return
+     */
+    private double calculateRocketRpChance(ArrayList<ArrayList<HashMap<String, Double>>> simulationRawValues) {
 
         int rocketRpAttainedCount = 0;
 
@@ -644,6 +661,11 @@ public class AllianceReport {
         return calculateClimbRpChance() + calculateRocketRpChance(generateMonteCarloSet()) + 2 * calculateWinChance(opposingAlliance);
     }
 
+    /**
+     *
+     * @param opposingAlliance
+     * @return
+     */
     public double calculateWinChance(AllianceReport opposingAlliance) {
 
         opposingAlliance.calculateStats();
@@ -663,14 +685,28 @@ public class AllianceReport {
         return winChance;
     }
 
+    /**
+     *
+     * @param metric
+     * @return
+     */
     public double getPredictedValue(String metric) {
         return predictedValues.get(metric);
     }
 
+    /**
+     *
+     * @param metric
+     * @return
+     */
     public double getStandardDeviation(String metric) {
         return standardDeviations.get(metric);
     }
 
+    /**
+     *
+     * @return
+     */
     public double getAvgSampleSize() {
         return avgSampleSize;
     }
