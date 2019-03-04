@@ -63,7 +63,7 @@ public class TeamReport {
         for (String key : model.getAbilities().keySet()) {
             abilities.put(key, false);
         }
-        teamNum = 0;
+        this.teamNum = 0;
         teamName = "";
     }
 

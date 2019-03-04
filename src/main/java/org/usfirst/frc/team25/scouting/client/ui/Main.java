@@ -24,7 +24,7 @@ public class Main extends Application {
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/team_25_logo.png")));
         primaryStage.setTitle("Raider Robotix Scouting Client");
-        primaryStage.setScene(new Scene(root, 820, 370));
+        primaryStage.setScene(new Scene(root, 820, 400));
         primaryStage.setResizable(false);
         primaryStage.show();
 

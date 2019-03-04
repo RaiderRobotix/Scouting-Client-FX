@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.*?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" minHeight="370.0" minWidth="820.0"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" minHeight="400.0" minWidth="820.0" prefHeight="400.0" prefWidth="820.0"
           xmlns="http://javafx.com/javafx/8.0.172-ea"
-          fx:controller="org.usfirst.frc.team25.scouting.client.ui.Controller">
+          fx:controller="org.usfirst.frc.team25.scouting.client.ui.MainController">
 
     <Pane prefHeight="105.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <ImageView fitHeight="88.0" fitWidth="76.0" layoutX="-86.0" layoutY="16.0" pickOnBounds="true"
@@ -23,7 +23,7 @@
         <Button fx:id="chooseDataFolderButton" layoutX="204.0" layoutY="53.0" mnemonicParsing="false"
                 text="Choose Data Folder"/>
         <Text layoutX="204.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Raider Robotix Scouting Client - v3.13">
+              text="Raider Robotix Scouting Client - v3.2">
             <font>
                 <Font name="Calibri Bold" size="20.0"/>
             </font>
@@ -52,28 +52,37 @@
         <CheckBox fx:id="generatePredictions" layoutX="205.0" layoutY="77.0" mnemonicParsing="false"
                   text="Predictions"/>
     </Pane>
-    <Pane prefHeight="60.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+    <Pane prefHeight="136.0" prefWidth="557.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
 
         <RadioButton fx:id="teamBasedReport" layoutX="14.0" layoutY="43.0" mnemonicParsing="false" selected="true"
                      text="Team-based"/>
-        <RadioButton fx:id="allianceBasedReport" layoutX="110.0" layoutY="43.0" mnemonicParsing="false"
+        <RadioButton fx:id="allianceBasedReport" layoutX="110.0" layoutY="42.0" mnemonicParsing="false"
                      text="Alliance-based"/>
-        <TextField fx:id="analysisTeamOne" layoutX="230.0" layoutY="39.0" prefHeight="25.0" prefWidth="70.0"
+        <TextField fx:id="analysisTeamOne" layoutX="230.0" layoutY="28.0" prefHeight="25.0" prefWidth="70.0"
                    promptText="Team 1"/>
-        <TextField fx:id="analysisTeamTwo" disable="true" layoutX="308.0" layoutY="39.0" prefHeight="25.0"
+        <TextField fx:id="analysisTeamTwo" disable="true" layoutX="308.0" layoutY="28.0" prefHeight="25.0"
                    prefWidth="70.0" promptText="Team 2"/>
-        <TextField fx:id="analysisTeamThree" disable="true" layoutX="388.0" layoutY="39.0" prefHeight="25.0"
+        <TextField fx:id="analysisTeamThree" disable="true" layoutX="388.0" layoutY="28.0" prefHeight="25.0"
                    prefWidth="70.0" promptText="Team 3"/>
         <Text layoutX="14.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Aggregate reports">
             <font>
                 <Font name="Calibri Bold" size="18.0"/>
             </font>
         </Text>
-        <Button fx:id="displayReportButton" disable="true" layoutX="487.0" layoutY="39.0" mnemonicParsing="false"
+        <Button fx:id="displayReportButton" disable="true" layoutX="487.0" layoutY="25.0" mnemonicParsing="false"
                 text="Display"/>
+        <TextField fx:id="analysisOppTeamOne" disable="true" layoutX="229.0" layoutY="63.0" prefHeight="25.0"
+                   prefWidth="70.0" promptText="Blue 1"/>
+        <TextField fx:id="analysisOppTeamTwo" disable="true" layoutX="307.0" layoutY="63.0" prefHeight="25.0"
+                   prefWidth="70.0" promptText="Blue 2"/>
+        <TextField fx:id="analysisOppTeamThree" disable="true" layoutX="387.0" layoutY="63.0" prefHeight="25.0"
+                   prefWidth="70.0" promptText="Blue 3"/>
+        <RadioButton fx:id="matchBasedReport" layoutX="14.0" layoutY="68.0" mnemonicParsing="false" text="Match-based"/>
+        <TextField fx:id="analysisMatchNum" disable="true" layoutX="479.0" layoutY="61.0" prefHeight="25.0"
+                   prefWidth="70.0" promptText="Match #"/>
 
     </Pane>
-    <Pane prefHeight="85.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+    <Pane prefHeight="130.0" prefWidth="557.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
         <RadioButton fx:id="teamEventsDownload" layoutX="14.0" layoutY="56.0" mnemonicParsing="false" selected="true"
                      text="All events in current year"/>
         <RadioButton fx:id="eventDownload" layoutX="179.0" layoutY="56.0" mnemonicParsing="false"
@@ -89,11 +98,23 @@
         <Button fx:id="downloadDataButton" disable="true" layoutX="487.0" layoutY="52.0" mnemonicParsing="false"
                 text="Download"/>
     </Pane>
-    <TextArea fx:id="statusTextBox" editable="false" prefHeight="350.0" prefWidth="242.0" wrapText="true"
+    <TextArea fx:id="statusTextBox" editable="false" prefHeight="382.0" prefWidth="260.0" wrapText="true"
               GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="4"
               GridPane.valignment="CENTER">
         <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
         </GridPane.margin>
     </TextArea>
+    <columnConstraints>
+        <ColumnConstraints/>
+        <ColumnConstraints/>
+        <ColumnConstraints/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints/>
+        <RowConstraints/>
+        <RowConstraints/>
+        <RowConstraints maxHeight="90.0" minHeight="65.0" prefHeight="90.0"/>
+        <RowConstraints maxHeight="92.0" minHeight="80.0" prefHeight="67.0"/>
+    </rowConstraints>
 </GridPane>

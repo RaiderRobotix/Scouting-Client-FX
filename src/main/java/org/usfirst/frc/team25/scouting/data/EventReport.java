@@ -228,6 +228,7 @@ public class EventReport {
 
     /**
      * Finds the scouting entries of alliance partners alongside the current team
+     *
      * @param entry Scouting entry of the team in the match to be queried
      * @return <code>ScoutEntry</code> array of the two partner scout entries
      */
@@ -518,7 +519,6 @@ public class EventReport {
 
     public void generatePicklists(File outputDirectory) {
         PicklistGenerator pg = new PicklistGenerator(scoutEntries, outputDirectory, event);
-        //pg.generateBogoCompareList();
         pg.generateComparePointList();
         pg.generatePickPointList();
     }
@@ -582,6 +582,36 @@ public class EventReport {
         } catch (Exception e) {
 
         }
+    }
+
+    public AllianceReport[] getAlliancesInMatch(int matchNum) throws FileNotFoundException {
+        AllianceReport[] allianceReports = new AllianceReport[2];
+        try {
+            File matchList = FileManager.getMatchList(directory);
+
+            String[] matches = FileManager.getFileString(matchList).split("\n");
+            for (String match : matches) {
+                String[] terms = match.split(",");
+
+                if (Integer.parseInt(terms[0]) == matchNum) {
+                    for (int i = 0; i < 2; i++) {
+                        int[] teamNums = new int[3];
+                        for (int j = 0; j < 3; j++) {
+                            teamNums[j] = Integer.parseInt(terms[j + 1 + 3 * i]);
+                        }
+                        allianceReports[i] = getAllianceReport(teamNums);
+                    }
+
+                    return allianceReports;
+                }
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new FileNotFoundException("Match list or scouting data not found");
+        }
+
+        return allianceReports;
+
     }
 
 

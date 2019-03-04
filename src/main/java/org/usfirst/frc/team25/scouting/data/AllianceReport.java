@@ -711,5 +711,9 @@ public class AllianceReport {
         return avgSampleSize;
     }
 
+    public TeamReport[] getTeamReports() {
+        return teamReports;
+    }
+
 
 }

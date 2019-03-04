@@ -146,7 +146,7 @@ public class FileManager {
         for (File file : FileManager.getFilesFromDirectory(directory)) {
             String fileName = file.getName();
             try {
-                if (fileName.split(FILE_EXTENSION_REGEX)[1].equals("csv") && fileName.contains("Match")) {
+                if (fileName.split(FILE_EXTENSION_REGEX)[1].equals("csv") && fileName.contains("Matches")) {
                     return file;
                 }
             } catch (Exception e) {
