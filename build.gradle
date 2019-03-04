@@ -1,11 +1,20 @@
 buildscript {
     dependencies {
         classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
     }
 
     repositories {
         mavenLocal()
         mavenCentral()
+
+
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -21,6 +30,7 @@ sourceCompatibility = 1.8
 repositories {
     mavenLocal()
     mavenCentral()
+
 }
 
 task createJar(type: Jar) {
@@ -29,19 +39,19 @@ task createJar(type: Jar) {
                 'Implementation-Version': 3.12,
                 'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
     }
-    baseName = project.name
+    baseName = 'Deep Space'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
 
-
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'com.google.code.gson:gson:2.7'
-    compile files('libs/TBA-APIv3-Java-Library.jar')
-    compile files('libs/commons-io-2.6.jar')
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6'
+    compile files('libs/TBA-APIv3-Java-Library.jar')
 
 }
 
@@ -50,10 +60,10 @@ jfx {
     vendor = 'Raider Robotix'
     jfxMainAppJarName = "raider-deep-space-client-v3.XX.jar"
     nativeReleaseVersion = "v3.12"
-    appName="Raider Robotix Scouting Client"
+    appName = "Raider Robotix Scouting Client"
 }
 
-jar{
+jar {
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }

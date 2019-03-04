@@ -239,6 +239,7 @@ public class TeamReport {
 
                 standardDeviations.put(levelPrefixes[i] + "Cross", Stats.standardDeviation(attempts,
                         counts.get(levelPrefixes[i] + "Cross")));
+
                 attemptSuccessRates.put(levelPrefixes[i] + "Cross", crossRate);
             }
 
@@ -292,21 +293,23 @@ public class TeamReport {
 
             if (entry.getPreMatch().getStartingGamePiece().equals("Cargo")) {
                 incrementCount("cargoStart");
+                if (entry.getSandstormCargo() >= 1) {
+                    incrementCount("cargoAutoSuccess");
+                }
             }
 
             if (entry.getPreMatch().getStartingGamePiece().equals("Hatch panel")) {
                 incrementCount("hatchStart");
-            }
-
-            if (entry.getSandstormHatches() >= 1) {
-                incrementCount("hatchAutoSuccess");
-            }
-
-            if (entry.getSandstormCargo() >= 1) {
-                incrementCount("cargoAutoSuccess");
+                if (entry.getSandstormHatches() >= 1) {
+                    incrementCount("hatchAutoSuccess");
+                }
             }
 
             if (entry.getAutonomous().isCrossHabLine()) {
+                if (entry.getPreMatch().getStartingLevel() == 2) {
+                    incrementCount("levelOneCross");
+                    incrementCount("levelOneStart");
+                }
                 incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
                 incrementCount("totalCross");
             }
@@ -481,8 +484,14 @@ public class TeamReport {
         return counts;
     }
 
-    public void generateMonteCarloAverages() {
+    public HashMap<String, Double> generateRandomSample() {
+        HashMap<String, Double> randomSample = new HashMap<>();
 
+        for (String value : averages.keySet()) {
+            randomSample.put(value, Stats.randomNormalValue(averages.get(value), standardDeviations.get(value)));
+        }
+
+        return randomSample;
     }
 
     public HashMap<String, Double> getAttemptSuccessRates() {

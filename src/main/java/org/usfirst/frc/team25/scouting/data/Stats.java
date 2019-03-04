@@ -1,5 +1,6 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.TDistribution;
 
 import java.lang.reflect.InvocationTargetException;
@@ -150,6 +151,30 @@ class Stats {
         }
 
         return Math.sqrt(((double) successes * (attempts - successes)) / (attempts * (attempts - 1)));
+    }
+
+    public static double sumStandardDeviation(double[] standardDeviations) {
+        double totalVariance = 0.0;
+
+        for (double standardDeviation : standardDeviations) {
+            totalVariance += Math.pow(standardDeviation, 2);
+        }
+
+        return Math.sqrt(totalVariance);
+    }
+
+    public static double multiplyVariance(double constant, double standardDeviation) {
+        return Math.pow(constant, 2) * Math.pow(standardDeviation, 2);
+    }
+
+    public static double rightTailNormalProbability(double value, double mean, double standardDeviation) {
+        return normalCumulativeDistributionFunction(value, Double.MAX_VALUE, mean, standardDeviation);
+    }
+
+    public static double normalCumulativeDistributionFunction(double lowerBound, double upperBound, double mean,
+                                                              double standardDeviation) {
+        NormalDistribution normalDistribution = new NormalDistribution(mean, standardDeviation);
+        return normalDistribution.probability(lowerBound, upperBound);
     }
 
 }

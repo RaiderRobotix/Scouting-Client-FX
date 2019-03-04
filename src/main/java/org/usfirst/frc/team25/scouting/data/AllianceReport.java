@@ -1,5 +1,7 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,7 +17,7 @@ public class AllianceReport {
     private int[] bestClimbLevels;
     final String[] numStrNames = new String[]{"One", "Two", "Three", "total"};
     private final double NULL_HATCH_CONFIDENCE = 0.9;
-    private final double MONTE_CARLO_ITERATIONS = 1000;
+    private final int MONTE_CARLO_ITERATIONS = 1000;
 
     private HashMap<String, Double> predictedValues;
 
@@ -30,6 +32,7 @@ public class AllianceReport {
         expectedValues = new HashMap<>();
         predictedValues = new HashMap<>();
         bestStartingLevels = new int[3];
+        standardDeviations = new HashMap<>();
     }
 
     public String getQuickAllianceReport() {
@@ -59,12 +62,14 @@ public class AllianceReport {
         double sandstormPoints = calculatePredictedSandstormPoints();
         double teleOpPoints = calculatePredictedTeleOpPoints();
         double endgamePoints = calculatePredictedEndgamePoints();
+        calculateStandardDeviations();
+        calculatePredictedRp();
+
         calculateOptimalNullHatchPanels(NULL_HATCH_CONFIDENCE);
 
         predictedValues.put("totalPoints", sandstormPoints + teleOpPoints + endgamePoints);
 
     }
-
 
     private void calculateExpectedValues() {
         String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
@@ -125,14 +130,6 @@ public class AllianceReport {
 
         double bestGamePieceScore = 0.0;
 
-        boolean sideCargoShipHatchCapable = false;
-
-        for (TeamReport team : teamReports) {
-            if (team.getAbilities().get("sideCargoShipHatchSandstorm")) {
-                sideCargoShipHatchCapable = true;
-            }
-        }
-
         for (String gamePieceCombo : gamePieceCombinations) {
             double cargoShipCargo = 0.0;
             double cargoShipHatches = 0.0;
@@ -167,11 +164,13 @@ public class AllianceReport {
                 predictedValues.put("autoCargoShipCargo", cargoShipCargo);
                 predictedValues.put("autoCargoShipHatches", cargoShipHatches);
                 predictedValues.put("autoRocketHatches", rocketHatches);
+                predictedValues.put("autoRocketCargo", 0.0);
             }
         }
 
         expectedSandstormPoints += bestGamePieceScore;
 
+        predictedValues.put("sandstormGamePiecePoints", bestGamePieceScore);
         predictedValues.put("sandstormPoints", expectedSandstormPoints);
 
         return expectedSandstormPoints;
@@ -190,7 +189,7 @@ public class AllianceReport {
             double endgamePoints = 0.0;
             for (int i = 0; i < climbLevelCombo.length; i++) {
                 endgamePoints += climbPointValues[climbLevelCombo[i] - 1] * teamReports[i].getAttemptSuccessRates().get(
-                        "level" + numStrNames[i] + "Climb");
+                        "level" + numStrNames[climbLevelCombo[i] - 1] + "Climb");
             }
 
             if (endgamePoints >= bestEndgamePoints) {
@@ -230,11 +229,10 @@ public class AllianceReport {
         return bestEndgamePoints;
     }
 
-
     private double calculatePredictedTeleOpPoints() {
 
-        double teleOpHatches = calculatePredictedTeleOpHatchPanels();
-        double teleOpCargo = calculatePredictedTeleOpCargo();
+        double teleOpHatches = calculatePredictedTeleOpHatchPanels(false);
+        double teleOpCargo = calculatePredictedTeleOpCargo(false);
 
         double expectedTeleOpPoints = 2 * teleOpHatches + 3 * teleOpCargo;
 
@@ -243,21 +241,21 @@ public class AllianceReport {
         return expectedTeleOpPoints;
     }
 
-    private double calculatePredictedTeleOpHatchPanels() {
+    private double calculatePredictedTeleOpHatchPanels(boolean rocketRp) {
 
         double excessHatches = 0;
         double totalHatches = 0;
 
 
         for (int i = 2; i >= 0; i--) {
-            double cap = 4.0;
+            double cap = rocketRp ? 2.0 : 4.0;
 
             if (i == 0) {
                 // Allow cargo ship hatches to be interchangeable with lvl 1 hatches
                 excessHatches += expectedValues.get("telecargoShipHatches");
 
                 // Decrease cap due to rocket hatches placed
-                cap -= predictedValues.get("autoRocketHatches");
+                cap = Math.max(0, cap - predictedValues.get("autoRocketHatches"));
             }
 
             if (excessHatches + expectedValues.get("telerocketLevel" + numStrNames[i] + "Hatches") > cap) {
@@ -287,17 +285,20 @@ public class AllianceReport {
 
     }
 
-    private double calculatePredictedTeleOpCargo() {
+    private double calculatePredictedTeleOpCargo(boolean rocketRp) {
         double excessCargo = 0;
         double totalCargo = 0;
 
         for (int i = 2; i >= 0; i--) {
-            double cap = predictedValues.get("teleRocketLevel" + numStrNames[i] + "Hatches");
+            double cap = Math.min(rocketRp ? 2.0 : 4, predictedValues.get("teleRocketLevel" + numStrNames[i] + "Hatches"
+            ));
 
             if (i == 0) {
                 // Allow cargo ship cargo to be interchangeable with lvl 1 cargo
                 excessCargo += expectedValues.get("telecargoShipCargo");
-
+                cap = Math.min(rocketRp ? 2.0 : 4,
+                        predictedValues.get("teleRocketLevel" + numStrNames[i] + "Hatches") + predictedValues.get(
+                                "autoRocketHatches"));
             }
 
             if (excessCargo + expectedValues.get("telerocketLevel" + numStrNames[i] + "Cargo") > cap) {
@@ -334,7 +335,132 @@ public class AllianceReport {
                         "teleCargoShipHatches"), 6), 0));
     }
 
-    public void calculateMonteCarloExpectedValues(HashMap<String, Double>[] testSets) {
+    private void calculateStandardDeviations() {
+
+        double sandstormStdDev = calculateStdDevSandstormPoints();
+        double teleOpStdDev = calculateStdDevTeleOpPoints(generateMonteCarloSet());
+        double endgameStdDev = calculateStdDevEndgamePoints();
+
+        double totalPointsStdDev = Stats.sumStandardDeviation(new double[]{sandstormStdDev, teleOpStdDev,
+                endgameStdDev});
+
+        standardDeviations.put("totalPoints", totalPointsStdDev);
+    }
+
+    private double calculateStdDevSandstormPoints() {
+        double sandstormBonusVariance = 0.0;
+
+        for (int i = 0; i < bestStartingLevels.length; i++) {
+            sandstormBonusVariance += Stats.multiplyVariance(bestStartingLevels[i] * 3,
+                    teamReports[i].getStandardDeviations().get("level" + numStrNames[bestStartingLevels[i] - 1] +
+                            "Cross"));
+        }
+
+        standardDeviations.put("sandstormBonus", Math.sqrt(sandstormBonusVariance));
+
+        double sandstormGamePieceVariance = 0.0;
+
+        for (int i = 0; i < bestSandstormGamePieceCombo.length(); i++) {
+            if (bestSandstormGamePieceCombo.charAt(i) == 'H') {
+                sandstormGamePieceVariance += Stats.multiplyVariance(5, teamReports[i].getStandardDeviations().get(
+                        "hatchAutoSuccess"));
+            } else {
+                sandstormGamePieceVariance += Stats.multiplyVariance(3, teamReports[i].getStandardDeviations().get(
+                        "cargoAutoSuccess"));
+            }
+        }
+
+        standardDeviations.put("sandstormGamePiecePoints", Math.sqrt(sandstormGamePieceVariance));
+
+        double sandstormPointsStdDev = Math.sqrt(sandstormBonusVariance + sandstormGamePieceVariance);
+
+        standardDeviations.put("sandstormPoints", sandstormPointsStdDev);
+
+        return sandstormPointsStdDev;
+    }
+
+    private double calculateStdDevEndgamePoints() {
+
+        final int[] climbPointValues = new int[]{3, 6, 12};
+
+        double endgameVariance = 0.0;
+
+        for (int i = 0; i < bestClimbLevels.length; i++) {
+            if (bestClimbLevels[i] != 0) {
+                endgameVariance += Stats.multiplyVariance(climbPointValues[bestClimbLevels[i] - 1],
+                        teamReports[i].getStandardDeviations().get("level" + numStrNames[bestClimbLevels[i] - 1] +
+                                "Climb"
+                        ));
+            }
+        }
+
+        standardDeviations.put("endgamePoints", Math.sqrt(endgameVariance));
+
+        return endgameVariance;
+    }
+
+    private ArrayList<ArrayList<HashMap<String, Double>>> generateMonteCarloSet() {
+
+        ArrayList<ArrayList<HashMap<String, Double>>> simulationValues = new ArrayList<>();
+
+        for (int i = 0; i < MONTE_CARLO_ITERATIONS; i++) {
+            ArrayList<HashMap<String, Double>> sampleMatchValues = new ArrayList<>();
+            for (TeamReport sample : teamReports) {
+                sampleMatchValues.add(sample.generateRandomSample());
+            }
+            simulationValues.add(sampleMatchValues);
+        }
+
+        return simulationValues;
+    }
+
+    private double calculateStdDevTeleOpPoints(ArrayList<ArrayList<HashMap<String, Double>>> simulationRawValues) {
+
+        ArrayList<String> metricNames = new ArrayList<>();
+
+        metricNames.add("telePoints");
+
+        final String[] locations = new String[]{"teleRocketLevelOne", "teleRocketLevelTwo", "teleRocketLevelThree",
+                "teleCargoShip"};
+        final String[] pieces = new String[]{"Hatches", "Cargo"};
+
+        for (String location : locations) {
+            for (String piece : pieces) {
+                metricNames.add(location + piece);
+            }
+        }
+
+        HashMap<String, double[]> simulationCalculatedValues = new HashMap<>();
+
+        for (String metric : metricNames) {
+            simulationCalculatedValues.put(metric, new double[MONTE_CARLO_ITERATIONS]);
+        }
+
+        for (int i = 0; i < simulationRawValues.size(); i++) {
+
+            calculateMonteCarloExpectedValues(simulationRawValues.get(i));
+            calculatePredictedTeleOpPoints();
+
+            for (String metric : metricNames) {
+
+                simulationCalculatedValues.get(metric)[i] = predictedValues.get(metric);
+            }
+        }
+
+
+        for (String metric : metricNames) {
+            standardDeviations.put(metric, Stats.standardDeviation(simulationCalculatedValues.get(metric)));
+        }
+
+
+        //Restores values using the original alliance report
+        calculateExpectedValues();
+        calculatePredictedTeleOpPoints();
+
+        return standardDeviations.get("telePoints");
+    }
+
+    public void calculateMonteCarloExpectedValues(ArrayList<HashMap<String, Double>> testSets) {
         String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
                 TeamReport.overallMetricNames};
 
@@ -352,49 +478,67 @@ public class AllianceReport {
 
     }
 
-    private void calculateStandardDeviations() {
+    public double calculatePredictedRp() {
 
+        return calculateHabDockChance() + calculateRocketRpChance(generateMonteCarloSet());
     }
 
-    private void calculateTeleOpStandardDeviations() {
+    public double calculateRocketRpChance(ArrayList<ArrayList<HashMap<String, Double>>> simulationRawValues) {
 
-        for (int i = 0; i < MONTE_CARLO_ITERATIONS; i++) {
-            ArrayList<HashMap<String, Double>> sampleMatchValues = new ArrayList<>();
+        int rocketRpAttainedCount = 0;
 
-            for (TeamReport sample : teamReports) {
-                sample.generateMonteCarloAverages();
+        for (ArrayList<HashMap<String, Double>> teamReportSet : simulationRawValues) {
 
+            calculateMonteCarloExpectedValues(teamReportSet);
+
+            calculatePredictedTeleOpHatchPanels(true);
+            calculatePredictedTeleOpCargo(true);
+
+            boolean rpAttained = true;
+
+            for (int j = 0; j < 3; j++) {
+                for (String gamePiece : new String[]{"Hatches", "Cargo"}) {
+                    double threshhold = 2.0 - ((j == 0) ? predictedValues.get("autoRocket" + gamePiece) : 0);
+                    double mean = predictedValues.get("teleRocketLevel" + numStrNames[j] + gamePiece);
+
+                    if (mean < threshhold) {
+                        rpAttained = false;
+                    }
+                }
+            }
+
+            if (rpAttained) {
+                rocketRpAttainedCount++;
             }
 
         }
 
-        standardDeviations.put("predictedPoints", 0.0);
-
-
-    }
-
-    public double calculatePredictedRp(AllianceReport opposingAlliance) {
-
-        return calculateHabDockChance() + calculateRocketRpChance() + 2 * calculateWinChance(opposingAlliance);
-    }
-
-    public double calculateWinChance(AllianceReport opposingAlliance) {
-        return 1.0;
-    }
-
-    public double calculateRocketRpChance() {
-        double rocketRpChance = 1.0;
-
+        double rocketRpChance = ((double) rocketRpAttainedCount) / MONTE_CARLO_ITERATIONS;
         predictedValues.put("rocketRpChance", rocketRpChance);
 
         return rocketRpChance;
     }
 
-    public double calculateHabDockChance() {
-        double habDockChance = 1.0;
 
+    public double calculateWinChance(AllianceReport opposingAlliance) {
+        return 1.0;
+    }
+
+    public double calculateHabDockChance() {
+        double habDockChance;
+        try {
+            habDockChance = Stats.rightTailNormalProbability(15, predictedValues.get("endgamePoints"),
+                    standardDeviations.get("endgamePoints"));
+        } catch (NotStrictlyPositiveException e) {
+            habDockChance = predictedValues.get("endgamePoints") >= 15 ? 1.0 : 0.0;
+        }
         predictedValues.put("habDockChance", habDockChance);
 
         return habDockChance;
+    }
+
+    public double calculatePredictedRp(AllianceReport opposingAlliance) {
+
+        return calculateHabDockChance() + calculateRocketRpChance(generateMonteCarloSet()) + 2 * calculateWinChance(opposingAlliance);
     }
 }

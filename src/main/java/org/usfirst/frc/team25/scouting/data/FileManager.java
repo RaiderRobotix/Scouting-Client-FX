@@ -56,7 +56,6 @@ public class FileManager {
     }
 
 
-
     /**
      * Gets list of files from directory
      *

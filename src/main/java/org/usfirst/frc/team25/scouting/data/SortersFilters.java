@@ -1,5 +1,6 @@
 package org.usfirst.frc.team25.scouting.data;
 
+
 import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.SimpleMatch;
 import com.thebluealliance.api.v3.models.SimpleTeam;
@@ -12,7 +13,6 @@ import java.util.*;
 /**
  * Collection of static methods to sort and filter ArrayLists of object models
  *
- * @author sng
  */
 public class SortersFilters {
 
