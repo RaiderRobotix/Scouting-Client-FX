@@ -57,18 +57,8 @@ class Stats {
         return Math.sqrt(sumSquareDev / (dataset.length - 1));
     }
 
-    /**
-     * Calculates arithmetic mean of a dataset
-     *
-     * @param dataset Array of numbers
-     * @return Average of entries in array, 0 if dataset.size() is 0
-     */
-    public static double average(double[] dataset) {
-        if (dataset.length == 0) {
-            return 0;
-        }
-
-        return sum(dataset) / dataset.length;
+    public static double standardError(double[] dataset) {
+        return standardError(standardDeviation(dataset), dataset.length);
     }
 
     /**
@@ -141,8 +131,12 @@ class Stats {
         return Math.max(tDistribution.sample() * standardError(dataset) + average(dataset), 0);
     }
 
-    public static double standardError(double[] dataset) {
-        return standardDeviation(dataset) / Math.sqrt(dataset.length);
+    public static double standardError(double standardDeviation, int sampleSize) {
+        return standardDeviation / Math.sqrt(sampleSize);
+    }
+
+    public static double inverseTValue(double percentile, double[] dataset) {
+        return inverseTValue(percentile, dataset.length - 1, average(dataset), standardDeviation(dataset));
     }
 
     public static double standardDeviation(int attempts, int successes) {
@@ -176,6 +170,64 @@ class Stats {
         NormalDistribution normalDistribution = new NormalDistribution(mean, standardDeviation);
         return normalDistribution.probability(lowerBound, upperBound);
     }
+
+    /**
+     * Calculates the arithmetic mean of a dataset
+     *
+     * @param dataset Array of numbers
+     * @return Average of entries in array, 0 if dataset.size() is 0
+     */
+    public static double average(double[] dataset) {
+        if (dataset.length == 0) {
+            return 0;
+        }
+
+        return sum(dataset) / dataset.length;
+    }
+
+    public static double inverseTValue(double percentile, double degreesOfFreedom, double mean,
+                                       double standardDeviation) {
+        double tScore = inverseTScore(percentile, degreesOfFreedom);
+        double standardError = standardError(standardDeviation, (int) degreesOfFreedom + 1);
+        return tScore * standardError + mean;
+
+    }
+
+    public static double inverseTScore(double area, double degreesOfFreedom) {
+        TDistribution tDistribution = new TDistribution(degreesOfFreedom);
+        return tDistribution.inverseCumulativeProbability(area);
+    }
+
+    public static double getUpperBoundZConfidenceInverval(double confidenceLevel, double mean,
+                                                          double standardDeviation) {
+        double percentile = confidenceLevel + (1 - confidenceLevel) / 2;
+        return inverseZValue(percentile, mean, standardDeviation);
+    }
+
+    public static double inverseZValue(double percentile, double mean, double standardDeviation) {
+        double zScore = inverseZScore(percentile);
+
+        return zScore * standardDeviation + mean;
+
+    }
+
+    public static double inverseZScore(double area) {
+        NormalDistribution normalDistribution = new NormalDistribution();
+        return normalDistribution.inverseCumulativeProbability(area);
+    }
+
+    public static double getUpperBoundTConfidenceInverval(double confidenceLevel, double degreesOfFreedom,
+                                                          double mean, double standardDeviation) {
+        double percentile = confidenceLevel + (1 - confidenceLevel) / 2;
+        return inverseTValue(percentile, degreesOfFreedom, mean, standardDeviation);
+    }
+
+    public static double getLowerBoundTConfidenceInverval(double confidenceLevel, double degreesOfFreedom,
+                                                          double mean, double standardDeviation) {
+        double percentile = (1 - confidenceLevel) / 2;
+        return inverseTValue(percentile, degreesOfFreedom, mean, standardDeviation);
+    }
+
 
 }
  

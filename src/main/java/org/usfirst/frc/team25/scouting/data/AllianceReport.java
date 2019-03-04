@@ -16,8 +16,8 @@ public class AllianceReport {
     private String bestSandstormGamePieceCombo;
     private int[] bestClimbLevels;
     final String[] numStrNames = new String[]{"One", "Two", "Three", "total"};
-    private final double NULL_HATCH_CONFIDENCE = 0.9;
-    private final int MONTE_CARLO_ITERATIONS = 1000;
+    private final double NULL_HATCH_CONFIDENCE = 0.8;
+    private final int MONTE_CARLO_ITERATIONS = 5000;
 
     private HashMap<String, Double> predictedValues;
 
@@ -330,9 +330,25 @@ public class AllianceReport {
 
     private void calculateOptimalNullHatchPanels(double confidenceLevel) {
         // Make this a function of hatch panels placed in auto as well
-        predictedValues.put("optimalNullHatches",
-                Math.max(Math.min(8 - predictedValues.get("autoCargoShipHatches") - predictedValues.get(
-                        "teleCargoShipHatches"), 6), 0));
+        double averageCargoShipHatches = predictedValues.get("autoCargoShipHatches") + predictedValues.get(
+                "teleCargoShipHatches");
+
+        double standardDeviation = Stats.sumStandardDeviation(new double[]{
+                standardDeviations.get("autoCargoShipHatches"), standardDeviations.get("teleCargoShipHatches")});
+        int minSampleSize = Math.min(Math.min(teamReports[0].getEntries().size(), teamReports[1].getEntries().size())
+                , teamReports[2].getEntries().size());
+
+        double optimisticCargoShipHatches = averageCargoShipHatches;
+        if (minSampleSize > 1) {
+            optimisticCargoShipHatches = Stats.inverseTValue(confidenceLevel, minSampleSize, averageCargoShipHatches,
+                    standardDeviation);
+
+        }
+
+
+        double nullHatches = Math.max(Math.min(8 - optimisticCargoShipHatches, 6), 0);
+        predictedValues.put("optimalNullHatches", nullHatches);
+
     }
 
     private void calculateStandardDeviations() {
@@ -359,17 +375,20 @@ public class AllianceReport {
         standardDeviations.put("sandstormBonus", Math.sqrt(sandstormBonusVariance));
 
         double sandstormGamePieceVariance = 0.0;
+        double sandstormHatchVariance = 0.0;
 
         for (int i = 0; i < bestSandstormGamePieceCombo.length(); i++) {
             if (bestSandstormGamePieceCombo.charAt(i) == 'H') {
                 sandstormGamePieceVariance += Stats.multiplyVariance(5, teamReports[i].getStandardDeviations().get(
                         "hatchAutoSuccess"));
+                sandstormHatchVariance += Math.pow(teamReports[i].getStandardDeviations().get("hatchAutoSuccess"), 2);
             } else {
                 sandstormGamePieceVariance += Stats.multiplyVariance(3, teamReports[i].getStandardDeviations().get(
                         "cargoAutoSuccess"));
             }
         }
 
+        standardDeviations.put("autoCargoShipHatches", Math.sqrt(sandstormHatchVariance));
         standardDeviations.put("sandstormGamePiecePoints", Math.sqrt(sandstormGamePieceVariance));
 
         double sandstormPointsStdDev = Math.sqrt(sandstormBonusVariance + sandstormGamePieceVariance);
@@ -445,6 +464,13 @@ public class AllianceReport {
 
                 simulationCalculatedValues.get(metric)[i] = predictedValues.get(metric);
             }
+
+
+            double averageCargoShipHatches = predictedValues.get("autoCargoShipHatches") + predictedValues.get(
+                    "teleCargoShipHatches");
+
+            double nullHatches = Math.max(Math.min(8 - averageCargoShipHatches, 6), 0);
+
         }
 
 
@@ -512,6 +538,9 @@ public class AllianceReport {
             }
 
         }
+
+        calculateExpectedValues();
+        calculatePredictedTeleOpPoints();
 
         double rocketRpChance = ((double) rocketRpAttainedCount) / MONTE_CARLO_ITERATIONS;
         predictedValues.put("rocketRpChance", rocketRpChance);
