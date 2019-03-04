@@ -466,7 +466,7 @@ public class EventReport {
     /**
      * Serializes the ArrayList of all ScoutEntrys into a JSON file
      *
-     * @param outputDirectory
+     * @param outputDirectory The directory to write the combined JSON file to
      * @return true if operation is successful, false otherwise
      */
     public boolean generateCombineJson(File outputDirectory) {
@@ -489,7 +489,7 @@ public class EventReport {
     /**
      * Serializes the HashMap of all TeamReports
      *
-     * @param outputDirectory
+     * @param outputDirectory The directory to write the combined TeamReport JSON files to
      */
     public void generateTeamReportJson(File outputDirectory) {
 
@@ -524,7 +524,7 @@ public class EventReport {
     }
 
     public void generateMatchPredictions(File outputDirectory) {
-        //TODO write this
+
         int greatestMatchNum = 0;
         for (ScoutEntry entry : scoutEntries) {
             if (entry.getPreMatch().getMatchNum() > greatestMatchNum) {
@@ -532,8 +532,8 @@ public class EventReport {
             }
         }
         File matchList = FileManager.getMatchList(outputDirectory);
-        String[] blocksOfStringMatchesArray = {};
-        List<String> futureMatchesBlockList = new ArrayList<String>();
+        String[] blocksOfStringMatchesArray;
+        List<String> futureMatchesBlockList = new ArrayList<>();
         try {
             String matchesString = FileManager.getFileString(matchList);
             blocksOfStringMatchesArray = matchesString.split("\n");
@@ -550,27 +550,31 @@ public class EventReport {
                 for (int i = 1; i < 4; i++) {
                     if (tempSplitElement[i].equals("25")) {
                         AllianceReport futureMatchPredictions1 =
-                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
+                                new AllianceReport(new TeamReport[]{
+                                        teamReports.get(Integer.parseInt(tempSplitElement[1])),
                                         teamReports.get(Integer.parseInt(tempSplitElement[2])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[3])));
+                                        teamReports.get(Integer.parseInt(tempSplitElement[3]))});
                         futureMatchPredictions1.getQuickAllianceReport();
 
                         AllianceReport futureMatchPredictions2 =
-                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[2])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[3])));
+                                new AllianceReport(new TeamReport[]{
+                                        teamReports.get(Integer.parseInt(tempSplitElement[4])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[5])),
+                                        teamReports.get(Integer.parseInt(tempSplitElement[6]))});
                         futureMatchPredictions2.getQuickAllianceReport();
                     } else {
                         AllianceReport futureMatchPredictions1 =
-                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[4])),
+                                new AllianceReport(new TeamReport[]{
+                                        teamReports.get(Integer.parseInt(tempSplitElement[4])),
                                         teamReports.get(Integer.parseInt(tempSplitElement[5])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[6])));
+                                        teamReports.get(Integer.parseInt(tempSplitElement[6]))});
                         futureMatchPredictions1.getQuickAllianceReport();
 
                         AllianceReport futureMatchPrediction2 =
-                                new AllianceReport(teamReports.get(Integer.parseInt(tempSplitElement[1])),
+                                new AllianceReport(new TeamReport[]{
+                                        teamReports.get(Integer.parseInt(tempSplitElement[1])),
                                         teamReports.get(Integer.parseInt(tempSplitElement[2])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[3])));
+                                        teamReports.get(Integer.parseInt(tempSplitElement[3]))});
                         futureMatchPrediction2.getQuickAllianceReport();
                     }
                 }
@@ -585,8 +589,13 @@ public class EventReport {
         return teamReports.get(teamNum);
     }
 
-    public AllianceReport getAllianceReport(int teamOne, int teamTwo, int teamThree) {
-        return new AllianceReport(teamReports.get(teamOne), teamReports.get(teamTwo), teamReports.get(teamThree));
+    public AllianceReport getAllianceReport(int[] teamNums) {
+        TeamReport[] teamReports = new TeamReport[teamNums.length];
+        for (int i = 0; i < teamNums.length; i++) {
+            teamReports[i] = getTeamReport(teamNums[i]);
+        }
+
+        return new AllianceReport(teamReports);
     }
 
 

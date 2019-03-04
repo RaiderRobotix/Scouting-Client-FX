@@ -40,21 +40,8 @@ class Stats {
         return Math.sqrt(totalVariance);
     }
 
-    /**
-     * Calculates the uncorrected standard deviation of an event
-     *
-     * @param dataset Array with data points
-     * @return Uncorrected standard deviation
-     */
-    public static double standardDeviation(double[] dataset) {
-        double average = average(dataset);
-        double sumSquareDev = 0;
-
-        for (double num : dataset) {
-            sumSquareDev += Math.pow(num - average, 2);
-        }
-
-        return Math.sqrt(sumSquareDev / (dataset.length - 1));
+    public static double randomNormalValue(double[] dataset) {
+        return randomNormalValue(mean(dataset), standardDeviation(dataset));
     }
 
     public static double standardError(double[] dataset) {
@@ -117,8 +104,21 @@ class Stats {
         return correctGetter;
     }
 
-    public static double randomNormalValue(double[] dataset) {
-        return randomNormalValue(average(dataset), standardDeviation(dataset));
+    /**
+     * Calculates the uncorrected standard deviation of an event
+     *
+     * @param dataset Array with data points
+     * @return Uncorrected standard deviation
+     */
+    public static double standardDeviation(double[] dataset) {
+        double average = mean(dataset);
+        double sumSquareDev = 0;
+
+        for (double num : dataset) {
+            sumSquareDev += Math.pow(num - average, 2);
+        }
+
+        return Math.sqrt(sumSquareDev / (dataset.length - 1));
     }
 
     public static double randomNormalValue(double mean, double standardDeviation) {
@@ -126,17 +126,27 @@ class Stats {
         return Math.max(r.nextGaussian() * standardDeviation + mean, 0);
     }
 
+    /**
+     * Calculates the arithmetic mean of a dataset
+     *
+     * @param dataset Array of numbers
+     * @return Average of entries in array, 0 if dataset.size() is 0
+     */
+    public static double mean(double[] dataset) {
+        if (dataset.length == 0) {
+            return 0;
+        }
+
+        return sum(dataset) / dataset.length;
+    }
+
     public static double randomTValue(double[] dataset) {
         TDistribution tDistribution = new TDistribution(dataset.length - 1);
-        return Math.max(tDistribution.sample() * standardError(dataset) + average(dataset), 0);
+        return Math.max(tDistribution.sample() * standardError(dataset) + mean(dataset), 0);
     }
 
-    public static double standardError(double standardDeviation, int sampleSize) {
+    public static double standardError(double standardDeviation, double sampleSize) {
         return standardDeviation / Math.sqrt(sampleSize);
-    }
-
-    public static double inverseTValue(double percentile, double[] dataset) {
-        return inverseTValue(percentile, dataset.length - 1, average(dataset), standardDeviation(dataset));
     }
 
     public static double standardDeviation(int attempts, int successes) {
@@ -161,28 +171,18 @@ class Stats {
         return Math.pow(constant, 2) * Math.pow(standardDeviation, 2);
     }
 
-    public static double rightTailNormalProbability(double value, double mean, double standardDeviation) {
-        return normalCumulativeDistributionFunction(value, Double.MAX_VALUE, mean, standardDeviation);
+    public static double inverseTValue(double percentile, double[] dataset) {
+        return inverseTValue(percentile, dataset.length - 1, mean(dataset), standardDeviation(dataset));
     }
 
-    public static double normalCumulativeDistributionFunction(double lowerBound, double upperBound, double mean,
-                                                              double standardDeviation) {
+    public static double rightTailNormalProbability(double value, double mean, double standardDeviation) {
+        return normalCumulativeDistribution(value, Double.MAX_VALUE, mean, standardDeviation);
+    }
+
+    public static double normalCumulativeDistribution(double lowerBound, double upperBound, double mean,
+                                                      double standardDeviation) {
         NormalDistribution normalDistribution = new NormalDistribution(mean, standardDeviation);
         return normalDistribution.probability(lowerBound, upperBound);
-    }
-
-    /**
-     * Calculates the arithmetic mean of a dataset
-     *
-     * @param dataset Array of numbers
-     * @return Average of entries in array, 0 if dataset.size() is 0
-     */
-    public static double average(double[] dataset) {
-        if (dataset.length == 0) {
-            return 0;
-        }
-
-        return sum(dataset) / dataset.length;
     }
 
     public static double inverseTValue(double percentile, double degreesOfFreedom, double mean,
@@ -226,6 +226,33 @@ class Stats {
                                                           double mean, double standardDeviation) {
         double percentile = (1 - confidenceLevel) / 2;
         return inverseTValue(percentile, degreesOfFreedom, mean, standardDeviation);
+    }
+
+    public static double twoSampleMeanTScore(double meanOne, double standardErrorOne, double meanTwo,
+                                             double standardErrorTwo) {
+        return (meanOne - meanTwo) / sumStandardDeviation(new double[]{standardErrorOne, standardErrorTwo});
+    }
+
+    /**
+     * Calculates the degrees of freedom in a two-sample t-test with independent random variables
+     *
+     * @param standardErrorOne The standard error of the first variable
+     * @param sampleSizeOne    The sample size of the first variable
+     * @param standardErrorTwo The standard error of the second variable
+     * @param sampleSizeTwo    The standard error of the second variable
+     * @return The degrees of freedom of the model as given by the Welch–Satterthwaite equation
+     */
+    public static double twoSampleDegreesOfFreedom(double standardErrorOne, double sampleSizeOne,
+                                                   double standardErrorTwo, double sampleSizeTwo) {
+        double numerator = Math.pow(Math.pow(standardErrorOne, 2) + Math.pow(standardErrorTwo, 2), 2);
+        double denominator =
+                Math.pow(standardErrorOne, 4) * 1 / (sampleSizeOne - 1) + Math.pow(standardErrorTwo, 4) * 1 / (sampleSizeTwo - 1);
+        return numerator / denominator;
+    }
+
+    public static double tCumulativeDistribution(double degreesOfFreedom, double tScore) {
+        TDistribution tDistribution = new TDistribution(degreesOfFreedom);
+        return tDistribution.cumulativeProbability(tScore);
     }
 
 

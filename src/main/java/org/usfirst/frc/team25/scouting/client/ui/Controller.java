@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
+import org.usfirst.frc.team25.scouting.data.AllianceReport;
 import org.usfirst.frc.team25.scouting.data.BlueAlliance;
 import org.usfirst.frc.team25.scouting.data.EventReport;
 import org.usfirst.frc.team25.scouting.data.FileManager;
@@ -185,7 +186,10 @@ public class Controller {
                     if (!eventReport.isTeamPlaying(teamOne) || !eventReport.isTeamPlaying(teamTwo) || !eventReport.isTeamPlaying(teamThree)) {
                         addStatus("Invalid team number(s) for event " + eventName + ". Please try again.");
                     } else {
-                        addStatus(eventReport.getAllianceReport(teamOne, teamTwo, teamThree).getQuickAllianceReport());
+                        AllianceReport allianceReport = eventReport.getAllianceReport(new int[]{teamOne, teamTwo,
+                                teamThree});
+                        addStatus(allianceReport.getQuickAllianceReport());
+
                     }
                 } catch (NumberFormatException e) {
                     addStatus("Invalid or missing team number(s). Please try again.");

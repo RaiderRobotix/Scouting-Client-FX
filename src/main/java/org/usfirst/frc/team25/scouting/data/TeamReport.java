@@ -32,6 +32,34 @@ public class TeamReport {
     private HashMap<String, Boolean> abilities;
     private ArrayList<String> frequentComments;
 
+    public TeamReport(TeamReport model) {
+        averages = new HashMap<>();
+        for (String key : model.getAverages().keySet()) {
+            averages.put(key, 0.0);
+        }
+
+        standardDeviations = new HashMap<>();
+        for (String key : model.getStandardDeviations().keySet()) {
+            standardDeviations.put(key, 0.0);
+        }
+
+        attemptSuccessRates = new HashMap<>();
+        for (String key : model.getAttemptSuccessRates().keySet()) {
+            attemptSuccessRates.put(key, 0.0);
+        }
+
+        counts = new HashMap<>();
+        for (String key : model.getCounts().keySet()) {
+            counts.put(key, 0);
+        }
+
+        abilities = new HashMap<>();
+        for (String key : model.getAbilities().keySet()) {
+            abilities.put(key, false);
+        }
+        teamNum = 0;
+        teamName = "";
+    }
 
     public TeamReport(int teamNum) {
         this.teamNum = teamNum;
@@ -347,15 +375,15 @@ public class TeamReport {
 
         for (String metric : autoMetricNames) {
             double[] values = Stats.getDoubleArray(autoList, metric, int.class);
-            averages.put("auto" + metric, Stats.average(values));
+            averages.put("auto" + metric, Stats.mean(values));
         }
         for (String metric : teleMetricNames) {
             double[] values = Stats.getDoubleArray(teleList, metric, int.class);
-            averages.put("tele" + metric, Stats.average(values));
+            averages.put("tele" + metric, Stats.mean(values));
         }
         for (String metric : overallMetricNames) {
             double[] values = Stats.getDoubleArray(overallList, metric, int.class);
-            averages.put(metric, Stats.average(values));
+            averages.put(metric, Stats.mean(values));
         }
 
 
