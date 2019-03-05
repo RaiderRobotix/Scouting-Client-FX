@@ -209,11 +209,12 @@ public class EventReport {
                         inaccuracyList += prefix + inaccuracies + "\n";
                     }
 
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    e.printStackTrace();
+                } catch (IndexOutOfBoundsException e) {
+
                 }
             }
             if (!inaccuracyList.isEmpty()) {
+                processEntries();
                 FileManager.outputFile(directory.getAbsolutePath() + "/Inaccuracies - " + event, "txt",
                         inaccuracyList);
                 return true;

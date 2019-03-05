@@ -707,8 +707,6 @@ public class AllianceReport {
      */
     public double calculateWinChance(AllianceReport opposingAlliance) {
 
-        opposingAlliance.calculateStats();
-
         double thisStandardError = Stats.standardError(standardDeviations.get("totalPoints"), avgSampleSize);
         double opposingStandardError = Stats.standardError(opposingAlliance.getStandardDeviation("totalPoints"),
                 opposingAlliance.getAvgSampleSize());
