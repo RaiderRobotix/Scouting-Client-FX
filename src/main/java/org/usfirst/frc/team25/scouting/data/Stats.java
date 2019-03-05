@@ -10,7 +10,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Random;
 
-class Stats {
+public class Stats {
 
 
     public static double round(double value, int places) {
@@ -81,6 +81,11 @@ class Stats {
             sumSquareDev += Math.pow(num - average, 2);
         }
 
+
+        if (dataset.length == 1) {
+            return 0;
+        }
+
         return Math.sqrt(sumSquareDev / (dataset.length - 1));
     }
 
@@ -100,6 +105,7 @@ class Stats {
      * @return
      */
     public static double standardError(double standardDeviation, double sampleSize) {
+
         return standardDeviation / Math.sqrt(sampleSize);
     }
 

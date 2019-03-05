@@ -34,6 +34,9 @@ public class MainController {
     private TextField analysisTeamOne, analysisTeamTwo, analysisTeamThree, teamNumEventCode, analysisOppTeamOne,
             analysisOppTeamTwo, analysisOppTeamThree, analysisMatchNum;
 
+    TextField[] allianceBasedGroup;
+    TextField[] matchBasedGroup;
+
     private EventReport eventReport;
     private ArrayList<File> jsonFileList;
     private String eventName;
@@ -52,6 +55,11 @@ public class MainController {
         ToggleGroup tbaDownloadGroup = new ToggleGroup();
         teamEventsDownload.setToggleGroup(tbaDownloadGroup);
         eventDownload.setToggleGroup(tbaDownloadGroup);
+
+        allianceBasedGroup = new TextField[]{analysisTeamTwo, analysisTeamThree};
+
+        matchBasedGroup = new TextField[]{analysisOppTeamOne, analysisOppTeamTwo, analysisOppTeamThree,
+                analysisMatchNum};
 
         dataDirectoryDisplay.setText("");
 
@@ -74,11 +82,10 @@ public class MainController {
                 displayReportButton.setDisable(false);
 
             }
+
+            retrieveEventReport();
         });
 
-        final TextField[] allianceBasedGroup = new TextField[]{analysisTeamTwo, analysisTeamThree};
-        final TextField[] matchBasedGroup = new TextField[]{analysisOppTeamOne, analysisOppTeamTwo,
-                analysisOppTeamThree, analysisMatchNum};
 
         allianceBasedReport.setOnAction(event -> {
             enableTextFieldGroup(allianceBasedGroup, allianceBasedReport.isSelected() || matchBasedReport.isSelected());
@@ -157,20 +164,22 @@ public class MainController {
 
 
         } else if (allianceBasedReport.isSelected()) {
-            int teamOne, teamTwo, teamThree;
+            int[] alliance = new int[3];
 
             try {
-                teamOne = Integer.parseInt(analysisTeamOne.getText());
-                teamTwo = Integer.parseInt(analysisTeamTwo.getText());
-                teamThree = Integer.parseInt(analysisTeamThree.getText());
-                if (!eventReport.isTeamPlaying(teamOne) || !eventReport.isTeamPlaying(teamTwo) || !eventReport.isTeamPlaying(teamThree)) {
-                    addStatus("Invalid team number(s) for event " + eventName + ". Please try again.");
-                } else {
-                    AllianceReport allianceReport = eventReport.getAllianceReport(new int[]{teamOne, teamTwo,
-                            teamThree});
-                    addStatus(allianceReport.getQuickAllianceReport());
-
+                alliance[0] = Integer.parseInt(analysisTeamOne.getText());
+                alliance[1] = Integer.parseInt(analysisTeamTwo.getText());
+                alliance[2] = Integer.parseInt(analysisTeamThree.getText());
+                for (int teamNum : alliance) {
+                    if (!eventReport.isTeamPlaying(teamNum)) {
+                        addStatus("Invalid team number(s) for event " + eventName + ". Please try again.");
+                        return;
+                    }
                 }
+
+                AllianceReport allianceReport = eventReport.getAllianceReport(alliance);
+                addStatus(allianceReport.getQuickAllianceReport());
+
             } catch (NumberFormatException e) {
                 addStatus("Invalid or missing team number(s). Please try again.");
 
@@ -178,9 +187,10 @@ public class MainController {
 
         } else {
             AllianceReport[] alliances = null;
+            int matchNum = 0;
             try {
                 if (!analysisMatchNum.getText().isEmpty()) {
-                    int matchNum = Integer.parseInt(analysisMatchNum.getText());
+                    matchNum = Integer.parseInt(analysisMatchNum.getText());
                     alliances = eventReport.getAlliancesInMatch(matchNum);
                 }
             } catch (NumberFormatException | IOException e) {
@@ -188,26 +198,51 @@ public class MainController {
             }
 
             try {
-
+                // Match schedule retrieval failed or unused
                 if (alliances == null) {
+                    alliances = new AllianceReport[2];
 
+                    int[] redAlliance = new int[3];
+                    redAlliance[0] = Integer.parseInt(analysisTeamOne.getText());
+                    redAlliance[1] = Integer.parseInt(analysisTeamTwo.getText());
+                    redAlliance[2] = Integer.parseInt(analysisTeamThree.getText());
+                    alliances[0] = eventReport.getAllianceReport(redAlliance);
+
+                    int[] blueAlliance = new int[3];
+
+                    for (int i = 0; i < 3; i++) {
+                        blueAlliance[i] = Integer.parseInt(matchBasedGroup[i].getText());
+                    }
+
+                    alliances[1] = eventReport.getAllianceReport(blueAlliance);
                 }
 
                 FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml" +
                         "/match_predictions.fxml"));
 
                 Stage stage = new Stage();
+                Scene scene = new Scene(loader.load(), 968, 483);
 
                 stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/team_25_logo.png")));
                 stage.setTitle("Match Predictions");
-                stage.setScene(new Scene(loader.load(), 968, 483));
-                MatchPredictionController controller = loader.getController();
-                controller.initialize(alliances);
+                stage.setScene(scene);
                 stage.setResizable(false);
+
+                MatchPredictionController controller = loader.getController();
+
+                if (matchNum != 0) {
+                    controller.setMatchNumber(matchNum);
+                }
+
+                controller.setEventKey(eventName);
+                controller.setScene(scene);
+                controller.initialize(alliances[0], alliances[1]);
+
                 stage.show();
 
             } catch (Exception e) {
                 e.printStackTrace();
+                addStatus("Invalid or empty team number(s). Please try again.");
             }
         }
     }
@@ -275,6 +310,7 @@ public class MainController {
      * processing
      */
     private void retrieveEventReport() {
+
         this.jsonFileList = FileManager.getDataFiles(currentDataDirectory);
 
         if (jsonFileList.size() == 0) {

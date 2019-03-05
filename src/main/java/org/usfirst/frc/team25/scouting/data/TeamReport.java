@@ -24,8 +24,7 @@ public class TeamReport {
             "rocketLevelTwoCargo", "rocketLevelThreeCargo", "numPartnerClimbAssists"};
     public static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
     public static final String[] overallMetricNames = new String[]{"calculatedPointContribution",
-            "calculatedSandstormPoints",
-            "calculatedTeleOpPoints"};
+            "calculatedSandstormPoints", "calculatedTeleOpPoints", "totalHatches", "totalCargo"};
     private String teamName, frequentRobotCommentStr, allComments;
     private HashMap<String, Double> averages, standardDeviations, attemptSuccessRates;
     private HashMap<String, Integer> counts;
@@ -40,27 +39,27 @@ public class TeamReport {
      */
     public TeamReport(TeamReport model) {
         averages = new HashMap<>();
-        for (String key : model.getAverages().keySet()) {
+        for (String key : model.averages.keySet()) {
             averages.put(key, 0.0);
         }
 
         standardDeviations = new HashMap<>();
-        for (String key : model.getStandardDeviations().keySet()) {
+        for (String key : model.standardDeviations.keySet()) {
             standardDeviations.put(key, 0.0);
         }
 
         attemptSuccessRates = new HashMap<>();
-        for (String key : model.getAttemptSuccessRates().keySet()) {
+        for (String key : model.attemptSuccessRates.keySet()) {
             attemptSuccessRates.put(key, 0.0);
         }
 
         counts = new HashMap<>();
-        for (String key : model.getCounts().keySet()) {
+        for (String key : model.counts.keySet()) {
             counts.put(key, 0);
         }
 
         abilities = new HashMap<>();
-        for (String key : model.getAbilities().keySet()) {
+        for (String key : model.abilities.keySet()) {
             abilities.put(key, false);
         }
         this.teamNum = 0;
@@ -455,9 +454,7 @@ public class TeamReport {
 
     }
 
-    public HashMap<String, Boolean> getAbilities() {
-        return abilities;
-    }
+
 
     /**
      * Determines if teams are capable of intaking game pieces from the floor and their potential sandstorm modes
@@ -508,20 +505,24 @@ public class TeamReport {
     }
 
 
-    public HashMap<String, Double> getAverages() {
-        return averages;
+    public boolean getAbility(String metric) {
+        return abilities.get(metric);
     }
 
-    public HashMap<String, Double> getStandardDeviations() {
-        return standardDeviations;
+    public double getAverage(String metric) {
+        return averages.get(metric);
     }
 
-    public HashMap<String, Integer> getCounts() {
-        return counts;
+    public double getStandardDeviation(String metric) {
+        return standardDeviations.get(metric);
     }
 
-    public HashMap<String, Double> getAttemptSuccessRates() {
-        return attemptSuccessRates;
+    public int getCount(String metric) {
+        return counts.get(metric);
+    }
+
+    public double getAttemptSuccessRate(String metric) {
+        return attemptSuccessRates.get(metric);
     }
 
     public HashMap<String, Double> generateRandomSample() {

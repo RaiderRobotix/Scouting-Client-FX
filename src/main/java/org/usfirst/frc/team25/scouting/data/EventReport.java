@@ -622,7 +622,9 @@ public class EventReport {
     public AllianceReport getAllianceReport(int[] teamNums) {
         TeamReport[] teamReports = new TeamReport[teamNums.length];
         for (int i = 0; i < teamNums.length; i++) {
-            teamReports[i] = getTeamReport(teamNums[i]);
+            if (getTeamReport(teamNums[i]) != null) {
+                teamReports[i] = getTeamReport(teamNums[i]);
+            }
         }
 
         return new AllianceReport(teamReports);

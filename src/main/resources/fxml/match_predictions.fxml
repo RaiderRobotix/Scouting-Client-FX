@@ -14,23 +14,23 @@
             </image>
         </ImageView>
         <Text fx:id="matchNumText" layoutX="171.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Match X Predictions">
+              text="Match X Predictions" visible="false">
             <font>
                 <Font name="Tahoma Bold" size="19.0"/>
             </font>
         </Text>
-        <Text fx:id="eventCode" layoutX="525.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2019njfbe">
+        <Text fx:id="eventKey" layoutX="525.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2019njfbe">
             <font>
                 <Font name="Tahoma Bold" size="19.0"/>
             </font>
         </Text>
-        <Text fx:id="redRocketLevelThreeCargo" layoutX="75.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
+        <Text fx:id="redTeleRocketLevelThreeCargo" layoutX="75.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
               text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
         </Text>
-        <Text fx:id="redRocketLevelTwoCargo" layoutX="129.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
+        <Text fx:id="redTeleRocketLevelTwoCargo" layoutX="129.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
               text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
@@ -48,14 +48,14 @@
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
         </Text>
-        <Text fx:id="redRocketLevelThreeHatches" layoutX="75.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
+        <Text fx:id="redTeleRocketLevelThreeHatches" layoutX="75.0" layoutY="107.0" strokeType="OUTSIDE"
+              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
         </Text>
-        <Text fx:id="redRocketLevelTwoHatches" layoutX="129.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
+        <Text fx:id="redTeleRocketLevelTwoHatches" layoutX="129.0" layoutY="106.0" strokeType="OUTSIDE"
+              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
@@ -78,13 +78,13 @@
                 <Font name="Tahoma Bold" size="16.0"/>
             </font>
         </Text>
-        <Text fx:id="blueRocketLevelThreeCargo" layoutX="656.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
+        <Text fx:id="blueTeleRocketLevelThreeCargo" layoutX="656.0" layoutY="72.0" strokeType="OUTSIDE"
+              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
         </Text>
-        <Text fx:id="blueRocketLevelTwoCargo" layoutX="710.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
+        <Text fx:id="blueTeleRocketLevelTwoCargo" layoutX="710.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
               text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
@@ -102,14 +102,14 @@
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
         </Text>
-        <Text fx:id="blueRocketLevelThreeHatches" layoutX="656.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
+        <Text fx:id="blueTeleRocketLevelThreeHatches" layoutX="656.0" layoutY="108.0" strokeType="OUTSIDE"
+              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
         </Text>
-        <Text fx:id="blueRocketLevelTwoHatches" layoutX="710.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
+        <Text fx:id="blueTeleRocketLevelTwoHatches" layoutX="710.0" layoutY="107.0" strokeType="OUTSIDE"
+              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
             <font>
                 <Font name="Tahoma Bold" size="28.0"/>
             </font>
@@ -174,37 +174,37 @@
                 <Font name="Tahoma Bold" size="24.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeleHatches" fill="WHITE" layoutX="392.0" layoutY="383.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeleHatchPoints" fill="WHITE" layoutX="392.0" layoutY="383.0" stroke="BLACK"
+              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+            <font>
+                <Font name="Tahoma Bold" size="24.0"/>
+            </font>
+        </Text>
+        <Text fx:id="redTeleCargoPoints" fill="WHITE" layoutX="393.0" layoutY="413.0" stroke="BLACK"
+              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+            <font>
+                <Font name="Tahoma Bold" size="24.0"/>
+            </font>
+        </Text>
+        <Text fx:id="redEndgamePoints" fill="WHITE" layoutX="393.0" layoutY="445.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
             <font>
                 <Font name="Tahoma Bold" size="24.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeleCargo" fill="WHITE" layoutX="393.0" layoutY="413.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redEndgamePoints" fill="WHITE" layoutX="392.0" layoutY="445.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamOneHatches" fill="WHITE" layoutX="125.0" layoutY="190.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamOneHatches" fill="WHITE" layoutX="122.0" layoutY="190.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamOneCargo" fill="WHITE" layoutX="194.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamOneCargo" fill="WHITE" layoutX="185.0" layoutY="189.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamOneStart" fill="WHITE" layoutX="256.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamOneStart" fill="WHITE" layoutX="247.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
               text="2H (100%)">
             <font>
                 <Font name="Tahoma" size="23.0"/>
@@ -222,19 +222,19 @@
                 <Font name="Tahoma Bold" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamTwoHatches" fill="WHITE" layoutX="124.0" layoutY="228.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamTwoHatches" fill="WHITE" layoutX="121.0" layoutY="228.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamTwoCargo" fill="WHITE" layoutX="193.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamTwoCargo" fill="WHITE" layoutX="184.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamTwoStart" fill="WHITE" layoutX="255.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamTwoStart" fill="WHITE" layoutX="246.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
               text="2H (100%)">
             <font>
                 <Font name="Tahoma" size="23.0"/>
@@ -252,19 +252,19 @@
                 <Font name="Tahoma Bold" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamThreeHatches" fill="WHITE" layoutX="124.0" layoutY="270.0" stroke="BLACK"
+        <Text fx:id="redTeamThreeHatches" fill="WHITE" layoutX="121.0" layoutY="270.0" stroke="BLACK"
               strokeType="OUTSIDE" text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamThreeCargo" fill="WHITE" layoutX="193.0" layoutY="269.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamThreeCargo" fill="WHITE" layoutX="184.0" layoutY="269.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="redTeamThreeStart" fill="WHITE" layoutX="255.0" layoutY="268.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="redTeamThreeStart" fill="WHITE" layoutX="246.0" layoutY="268.0" stroke="BLACK" strokeType="OUTSIDE"
               text="2H (100%)">
             <font>
                 <Font name="Tahoma" size="23.0"/>
@@ -301,7 +301,7 @@
             </font>
         </Text>
         <Text fx:id="blueTeamOneNum" fill="WHITE" layoutX="517.0" layoutY="191.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="25">
+              text="2590">
             <font>
                 <Font name="Tahoma Bold" size="25.0"/>
             </font>
@@ -318,37 +318,37 @@
                 <Font name="Tahoma Bold" size="24.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeleHatches" fill="WHITE" layoutX="868.0" layoutY="380.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="blueTeleHatchPoints" fill="WHITE" layoutX="868.0" layoutY="380.0" stroke="BLACK"
+              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+            <font>
+                <Font name="Tahoma Bold" size="24.0"/>
+            </font>
+        </Text>
+        <Text fx:id="blueTeleCargoPoints" fill="WHITE" layoutX="869.0" layoutY="410.0" stroke="BLACK"
+              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+            <font>
+                <Font name="Tahoma Bold" size="24.0"/>
+            </font>
+        </Text>
+        <Text fx:id="blueEndgamePoints" fill="WHITE" layoutX="869.0" layoutY="442.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
             <font>
                 <Font name="Tahoma Bold" size="24.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeleCargo" fill="WHITE" layoutX="869.0" layoutY="410.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueEndgamePoints" fill="WHITE" layoutX="868.0" layoutY="442.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamOneHatches" fill="WHITE" layoutX="607.0" layoutY="190.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0">
+        <Text fx:id="blueTeamOneHatches" fill="WHITE" layoutX="604.0" layoutY="190.0" stroke="BLACK"
+              strokeType="OUTSIDE" text="10.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamOneCargo" fill="WHITE" layoutX="676.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
+        <Text fx:id="blueTeamOneCargo" fill="WHITE" layoutX="667.0" layoutY="189.0" stroke="BLACK" strokeType="OUTSIDE"
+              text="10.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamOneStart" fill="WHITE" layoutX="738.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="blueTeamOneStart" fill="WHITE" layoutX="729.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
               text="2H (100%)">
             <font>
                 <Font name="Tahoma" size="23.0"/>
@@ -366,19 +366,19 @@
                 <Font name="Tahoma Bold" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamTwoHatches" fill="WHITE" layoutX="606.0" layoutY="228.0" stroke="BLACK"
+        <Text fx:id="blueTeamTwoHatches" fill="WHITE" layoutX="603.0" layoutY="228.0" stroke="BLACK"
               strokeType="OUTSIDE" text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamTwoCargo" fill="WHITE" layoutX="675.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="blueTeamTwoCargo" fill="WHITE" layoutX="666.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
               text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamTwoStart" fill="WHITE" layoutX="737.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
+        <Text fx:id="blueTeamTwoStart" fill="WHITE" layoutX="728.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
               text="2H (100%)">
             <font>
                 <Font name="Tahoma" size="23.0"/>
@@ -396,19 +396,19 @@
                 <Font name="Tahoma Bold" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamThreeHatches" fill="WHITE" layoutX="606.0" layoutY="270.0" stroke="BLACK"
+        <Text fx:id="blueTeamThreeHatches" fill="WHITE" layoutX="603.0" layoutY="270.0" stroke="BLACK"
               strokeType="OUTSIDE" text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamThreeCargo" fill="WHITE" layoutX="675.0" layoutY="269.0" stroke="BLACK"
+        <Text fx:id="blueTeamThreeCargo" fill="WHITE" layoutX="666.0" layoutY="269.0" stroke="BLACK"
               strokeType="OUTSIDE" text="0.0">
             <font>
                 <Font name="Tahoma" size="25.0"/>
             </font>
         </Text>
-        <Text fx:id="blueTeamThreeStart" fill="WHITE" layoutX="737.0" layoutY="268.0" stroke="BLACK"
+        <Text fx:id="blueTeamThreeStart" fill="WHITE" layoutX="728.0" layoutY="268.0" stroke="BLACK"
               strokeType="OUTSIDE" text="2H (100%)">
             <font>
                 <Font name="Tahoma" size="23.0"/>
