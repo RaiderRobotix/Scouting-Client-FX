@@ -518,9 +518,10 @@ public class EventReport {
     }
 
     public void generatePicklists(File outputDirectory) {
-        PicklistGenerator pg = new PicklistGenerator(scoutEntries, outputDirectory, event);
+        PicklistGenerator pg = new PicklistGenerator(scoutEntries, teamReports, outputDirectory, event);
         pg.generateComparePointList();
         pg.generatePickPointList();
+        pg.generateCalculatedFirstPicklist(new ArrayList<>());
     }
 
     public boolean generateMatchPredictions(File outputDirectory) {
@@ -608,10 +609,10 @@ public class EventReport {
     }
 
     public AllianceReport getAllianceReport(int[] teamNums) {
-        TeamReport[] teamReports = new TeamReport[teamNums.length];
+        ArrayList<TeamReport> teamReports = new ArrayList<>();
         for (int i = 0; i < teamNums.length; i++) {
             if (getTeamReport(teamNums[i]) != null) {
-                teamReports[i] = getTeamReport(teamNums[i]);
+                teamReports.add(getTeamReport(teamNums[i]));
             }
         }
 

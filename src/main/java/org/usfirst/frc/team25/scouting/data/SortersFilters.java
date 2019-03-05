@@ -66,6 +66,30 @@ public class SortersFilters {
      * @param order     true to sort the values of the HashMap in ascending order, false for descending order
      * @return A sorted version of unsortMap
      */
+    public static HashMap<Integer, Double> sortByComparatorDouble(HashMap<Integer, Double> unsortMap,
+                                                                  final boolean order) {
+
+        List<Map.Entry<Integer, Double>> list = new LinkedList<>(unsortMap.entrySet());
+
+        // Sorting the list based on values
+        list.sort((o1, o2) -> {
+            if (order) {
+                return o1.getValue().compareTo(o2.getValue());
+            } else {
+                return o2.getValue().compareTo(o1.getValue());
+
+            }
+        });
+
+        // Maintaining insertion order with the help of LinkedList
+        HashMap<Integer, Double> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Double> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
     public static HashMap<Integer, Integer> sortByComparator(HashMap<Integer, Integer> unsortMap, final boolean order) {
 
         List<Map.Entry<Integer, Integer>> list = new LinkedList<>(unsortMap.entrySet());

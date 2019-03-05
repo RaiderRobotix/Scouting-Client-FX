@@ -58,32 +58,24 @@ public class AllianceReport {
      * @throws NullPointerException If <code>teamReports</code> is <code>null</code> or has a <code>null</code> team
      *                              report as its first element
      */
-    public AllianceReport(TeamReport[] teamReports) throws NullPointerException {
-
-        TeamReport nonNullTeamReport = null;
-
-        for (TeamReport teamReport : teamReports) {
-            if (teamReport != null) {
-                nonNullTeamReport = teamReport;
-            }
-        }
+    public AllianceReport(ArrayList<TeamReport> teamReports) {
 
         this.teamReports = new TeamReport[3];
 
-        for (int i = 0; i < 3; i++) {
-            try {
-                if (teamReports[i] == null) {
-                    this.teamReports[i] = new TeamReport(nonNullTeamReport);
-                } else {
-                    this.teamReports[i] = teamReports[i];
-                }
-            } catch (IndexOutOfBoundsException e) {
-                if (i == 0) {
-                    throw new NullPointerException("Alliance report must be initialized with at least one team");
-                }
-                this.teamReports[i] = new TeamReport(nonNullTeamReport);
+        int i = 0;
+        for (TeamReport teamReport : teamReports) {
+            if (teamReport != null) {
+                this.teamReports[i] = teamReport;
+                i++;
             }
         }
+
+        for (int j = 0; j < 3; j++) {
+            if (this.teamReports[j] == null) {
+                this.teamReports[j] = new TeamReport(this.teamReports[0]);
+            }
+        }
+
 
         expectedValues = new HashMap<>();
         predictedValues = new HashMap<>();
@@ -94,15 +86,20 @@ public class AllianceReport {
         int validTeamReports = 0;
 
         for (TeamReport teamReport : this.teamReports) {
+
             if (teamReport != null && teamReport.getTeamNum() != 0) {
                 avgSampleSize += teamReport.getEntries().size();
                 validTeamReports++;
             }
         }
 
-        avgSampleSize /= validTeamReports;
-
+        if (validTeamReports == 0) {
+            avgSampleSize = 0;
+        } else {
+            avgSampleSize /= validTeamReports;
+        }
         calculateStats();
+
     }
 
     /**

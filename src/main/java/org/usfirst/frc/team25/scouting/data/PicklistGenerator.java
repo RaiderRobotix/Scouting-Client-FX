@@ -42,10 +42,13 @@ class PicklistGenerator {
      */
     private final File outputDirectory;
     private String eventName;
+    private final HashMap<Integer, TeamReport> teamReports;
 
-    public PicklistGenerator(ArrayList<ScoutEntry> scoutEntries, File outputDirectory, String eventName) {
+    public PicklistGenerator(ArrayList<ScoutEntry> scoutEntries, HashMap<Integer, TeamReport> teamReports,
+                             File outputDirectory, String eventName) {
         this.scoutEntries = scoutEntries;
         this.outputDirectory = outputDirectory;
+        this.teamReports = teamReports;
 
         comparisons = new ArrayList<Comparison>();
         teamNums = new ArrayList<Integer>();
@@ -459,17 +462,17 @@ class PicklistGenerator {
      * Not recommended for serious analysis.
      */
     public void generateComparePointList() {
-        HashMap<Integer, Integer> compareList = new HashMap<>();
+        HashMap<Integer, Double> compareList = new HashMap<>();
         for (Comparison comp : comparisons) {
             int better = comp.getBetterTeam(), worse = comp.getWorseTeam();
             if (!compareList.containsKey(better)) {
-                compareList.put(better, 1);
+                compareList.put(better, (double) 1);
             } else {
                 compareList.put(better, compareList.get(better) + 1);
             }
 
             if (!compareList.containsKey(worse)) {
-                compareList.put(worse, -1);
+                compareList.put(worse, (double) -1);
             } else {
                 compareList.put(worse, compareList.get(worse) - 1);
             }
@@ -486,11 +489,11 @@ class PicklistGenerator {
      * @param teamPointsMap RankingTree to process
      * @return Formatted list, with tree levels not clamped down
      */
-    private String hashMapToStringList(HashMap<Integer, Integer> teamPointsMap) {
-        teamPointsMap = SortersFilters.sortByComparator(teamPointsMap, false);
+    private String hashMapToStringList(HashMap<Integer, Double> teamPointsMap) {
+        teamPointsMap = SortersFilters.sortByComparatorDouble(teamPointsMap, false);
         StringBuilder result = new StringBuilder();
         int rank = 1;
-        for (Map.Entry<Integer, Integer> entry : teamPointsMap.entrySet()) {
+        for (Map.Entry<Integer, Double> entry : teamPointsMap.entrySet()) {
             result.append(rank).append(". ").append(entry.getKey()).append(": ");
             result.append(entry.getValue()).append(" pts\n");
             rank++;
@@ -506,36 +509,76 @@ class PicklistGenerator {
      * TODO Make the points an average rather than a summation
      */
     public void generatePickPointList() {
-        HashMap<Integer, Integer> pickPoints = new HashMap<>();
+        HashMap<Integer, ArrayList<Integer>> pickPointSets = new HashMap<>();
 
         for (ScoutEntry entry : scoutEntries) {
             try {
                 Integer teamNum = entry.getPreMatch().getTeamNum();
 
-                if (!pickPoints.containsKey(teamNum)) {
-                    pickPoints.put(teamNum, 0);
+                if (!pickPointSets.containsKey(teamNum)) {
+                    pickPointSets.put(teamNum, new ArrayList<>());
                 }
 
-                pickPoints.put(teamNum, pickPoints.get(teamNum) + entry.getPostMatch().getPickNumber());
+                pickPointSets.get(teamNum).add(entry.getPostMatch().getPickNumber());
 
             } catch (NullPointerException e) {
 
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Pick Points" + eventName +
-                        ".txt"),
-                hashMapToStringList(pickPoints));
+        HashMap<Integer, Double> pickPoints = new HashMap<>();
+
+        for (int key : pickPointSets.keySet()) {
+            double[] pickPointArray = new double[pickPointSets.get(key).size()];
+
+            for (int i = 0; i < pickPointSets.get(key).size(); i++) {
+                pickPointArray[i] = pickPointSets.get(key).get(i);
+            }
+
+            pickPoints.put(key, Stats.round(Stats.mean(pickPointArray), 2));
+        }
+
+
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Pick Points - " + eventName +
+                ".txt"), hashMapToStringList(pickPoints));
 
     }
 
     /**
      * Generates a list based on a calculated ability to be a good first pick robot
      * Calculated ability derived from collected metrics (e.g. climbs, cargo, hatches)
-     * TODO write this
      */
-    public void generateCalculatedFirstPicklist() {
+    public void generateCalculatedFirstPicklist(ArrayList<TeamReport> knownPartners) {
+        double baselineScore = 0.0;
+        if (knownPartners.size() != 0) {
+            baselineScore = new AllianceReport(knownPartners).getPredictedValue("totalPoints");
+        }
 
+        HashMap<Integer, Double> pickPoints = new HashMap<>();
+
+        for (int team : teamNums) {
+            TeamReport currentTeamReport = teamReports.get(team);
+
+            if (knownPartners.contains(teamReports.get(currentTeamReport))) {
+                continue;
+            }
+
+            ArrayList<TeamReport> potentialAllianceTeams = new ArrayList<>(knownPartners);
+
+            potentialAllianceTeams.add(currentTeamReport);
+
+            double dysfunctionalPercent =
+                    (double) currentTeamReport.getCount("dysfunctional") / (currentTeamReport.getCount("noShow") + currentTeamReport.getEntries().size());
+
+            double pointValue =
+                    (1 - dysfunctionalPercent) * (new AllianceReport(potentialAllianceTeams).getPredictedValue(
+                            "totalPoints") - baselineScore);
+
+            pickPoints.put(team, Stats.round(pointValue, 2));
+        }
+
+        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Point Contributions - " + eventName +
+                ".txt"), hashMapToStringList(pickPoints));
     }
 
     /**

@@ -215,11 +215,13 @@ public class TeamReport {
      */
     public void filterNoShow() {
         counts.put("noShow", 0);
+        counts.put("dysfunctional", 0);
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getPreMatch().isRobotNoShow()) {
                 entries.remove(i);
                 i--;
                 incrementCount("noShow");
+                incrementCount("dysfunctional");
             }
         }
     }
@@ -363,6 +365,9 @@ public class TeamReport {
                 incrementCount("totalClimbSuccess");
             }
 
+            if (entry.getPostMatch().getRobotQuickCommentSelections().get("Lost communications") || entry.getPostMatch().getRobotQuickCommentSelections().get("Tipped over")) {
+                incrementCount("dysfunctional");
+            }
 
         }
     }
@@ -376,6 +381,8 @@ public class TeamReport {
                 for (ScoutEntry entry : entries) {
                     if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
                         commentFrequencies.put(key, 1 + commentFrequencies.get(key));
+
+
                     }
                 }
             }
@@ -453,7 +460,6 @@ public class TeamReport {
 
 
     }
-
 
 
     /**
