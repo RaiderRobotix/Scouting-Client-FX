@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -523,7 +522,7 @@ public class EventReport {
         pg.generatePickPointList();
     }
 
-    public void generateMatchPredictions(File outputDirectory) {
+    public boolean generateMatchPredictions(File outputDirectory) {
 
         int greatestMatchNum = 0;
         for (ScoutEntry entry : scoutEntries) {
@@ -531,57 +530,45 @@ public class EventReport {
                 greatestMatchNum = entry.getPreMatch().getMatchNum();
             }
         }
-        File matchList = FileManager.getMatchList(outputDirectory);
-        String[] blocksOfStringMatchesArray;
-        List<String> futureMatchesBlockList = new ArrayList<>();
+
         try {
-            String matchesString = FileManager.getFileString(matchList);
-            blocksOfStringMatchesArray = matchesString.split("\n");
-            for (String element : blocksOfStringMatchesArray) {
-                String[] tempArray = element.split(",");
-                for (String tempElement : tempArray) {
-                    if (tempElement.equals("25") && Integer.parseInt(tempArray[0]) > greatestMatchNum) {
-                        futureMatchesBlockList.add(element);
+            String predictions = "";
+
+            File matchList = FileManager.getMatchList(directory);
+
+            String[] matches = FileManager.getFileString(matchList).split("\n");
+
+            for (int i = greatestMatchNum + 1; i < matches.length - 1; i++) {
+                AllianceReport[] allianceReports = getAlliancesInMatch(i);
+                predictions += "Match " + i + ": ";
+                for (int j = 0; j < allianceReports.length; j++) {
+                    predictions += allianceReports[j].getTeamReports()[0].getTeamNum() + "-";
+                    predictions += allianceReports[j].getTeamReports()[1].getTeamNum() + "-";
+                    predictions += allianceReports[j].getTeamReports()[2].getTeamNum() + " (";
+                    predictions += Stats.round(allianceReports[j].calculatePredictedRp(allianceReports[Math.abs(j - 1)]), 1) + " RP, ";
+                    predictions += Stats.round(allianceReports[j].getPredictedValue("totalPoints"), 1) + " pts)";
+                    if (j == 0) {
+                        predictions += " vs. ";
                     }
                 }
+                double redWinChance = allianceReports[0].calculateWinChance(allianceReports[1]);
+                if (redWinChance > 0.5) {
+                    predictions += " - Red win, " + Stats.round(redWinChance * 100, 2) + "%\n";
+                } else {
+                    predictions += " - Blue win, " + Stats.round((1 - redWinChance) * 100, 2) + "%\n";
+                }
+
             }
-            for (String element : futureMatchesBlockList) {
-                String[] tempSplitElement = element.split(",");
-                for (int i = 1; i < 4; i++) {
-                    if (tempSplitElement[i].equals("25")) {
-                        AllianceReport futureMatchPredictions1 =
-                                new AllianceReport(new TeamReport[]{
-                                        teamReports.get(Integer.parseInt(tempSplitElement[1])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[2])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[3]))});
-                        futureMatchPredictions1.getQuickAllianceReport();
 
-                        AllianceReport futureMatchPredictions2 =
-                                new AllianceReport(new TeamReport[]{
-                                        teamReports.get(Integer.parseInt(tempSplitElement[4])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[5])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[6]))});
-                        futureMatchPredictions2.getQuickAllianceReport();
-                    } else {
-                        AllianceReport futureMatchPredictions1 =
-                                new AllianceReport(new TeamReport[]{
-                                        teamReports.get(Integer.parseInt(tempSplitElement[4])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[5])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[6]))});
-                        futureMatchPredictions1.getQuickAllianceReport();
-
-                        AllianceReport futureMatchPrediction2 =
-                                new AllianceReport(new TeamReport[]{
-                                        teamReports.get(Integer.parseInt(tempSplitElement[1])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[2])),
-                                        teamReports.get(Integer.parseInt(tempSplitElement[3]))});
-                        futureMatchPrediction2.getQuickAllianceReport();
-                    }
-                }
+            if (!predictions.isEmpty()) {
+                FileManager.outputFile(outputDirectory.getAbsolutePath() + "/MatchPredictions", "txt", predictions);
+                return true;
             }
         } catch (Exception e) {
 
         }
+
+        return false;
     }
 
     public AllianceReport[] getAlliancesInMatch(int matchNum) throws FileNotFoundException {

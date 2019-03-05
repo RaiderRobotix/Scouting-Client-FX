@@ -291,8 +291,11 @@ public class MainController {
         }
 
         if (generatePredictions.isSelected()) {
-            eventReport.generateMatchPredictions(currentDataDirectory);
-            status += "\nFuture match predictions generated";
+            if (eventReport.generateMatchPredictions(currentDataDirectory)) {
+                status += "\nFuture match predictions generated";
+            } else {
+                status += "\nMatch prediction generation failed";
+            }
         }
 
 

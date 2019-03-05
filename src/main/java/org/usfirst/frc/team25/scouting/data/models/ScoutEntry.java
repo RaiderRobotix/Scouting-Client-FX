@@ -40,14 +40,13 @@ public class ScoutEntry implements Serializable {
 
 
         //Tele-Op
-        teleOpHatches = teleOpRocketHatches + teleOp.getCargoShipHatches();
-
         teleOpRocketHatches = teleOp.getRocketLevelOneHatches() + teleOp.getRocketLevelTwoHatches()
                 + teleOp.getRocketLevelThreeHatches();
 
         teleOpRocketCargo = teleOp.getRocketLevelOneCargo() + teleOp.getRocketLevelTwoCargo()
                 + teleOp.getRocketLevelThreeCargo();
 
+        teleOpHatches = teleOpRocketHatches + teleOp.getCargoShipHatches();
         teleOpCargo = teleOpRocketCargo + teleOp.getCargoShipCargo();
 
 
@@ -69,16 +68,15 @@ public class ScoutEntry implements Serializable {
             calculatedSandstormPoints += preMatch.getStartingLevel() * 3;
         }
 
-        calculatedTeleOpPoints = teleOpHatches * 2
-                + teleOpCargo * 3;
+        calculatedTeleOpPoints = teleOpHatches * 2 + teleOpCargo * 3;
 
         calculatedClimbPoints = 0;
 
         if ((teleOp.isSuccessHabClimb()) || teleOp.getNumPartnerClimbAssists() > 0) {
             calculatedClimbPoints += Math.pow(2, (teleOp.getSuccessHabClimbLevel() - 1)) * 3;
-            calculatedClimbPoints += 3 * teleOp.getNumPartnerClimbAssists()
-                    * (Math.pow(2, teleOp.getPartnerClimbAssistEndLevel() - 1)
-                    - Math.pow(2, teleOp.getPartnerClimbAssistStartLevel() - 1));
+            calculatedClimbPoints += 3 * teleOp.getNumPartnerClimbAssists() * (Math.pow(2,
+                    teleOp.getPartnerClimbAssistEndLevel() - 1) - Math.pow(2,
+                    teleOp.getPartnerClimbAssistStartLevel() - 1));
         }
 
         calculatedPointContribution = calculatedSandstormPoints + calculatedClimbPoints + calculatedTeleOpPoints;

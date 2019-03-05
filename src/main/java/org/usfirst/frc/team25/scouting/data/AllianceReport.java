@@ -1,8 +1,7 @@
 package org.usfirst.frc.team25.scouting.data;
 
-import org.apache.commons.math3.exception.NotStrictlyPositiveException;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -24,7 +23,7 @@ public class AllianceReport {
      * The number of Monte Carlo simulation iterations to run to compute standard deviations of functions.
      * A larger number of iterations generally provides greater accuracy.
      */
-    private final int MONTE_CARLO_ITERATIONS = 5000;
+    private final int MONTE_CARLO_ITERATIONS = 1000;
     private final String[] numStrNames = new String[]{"One", "Two", "Three", "total"};
     /**
      * Denotes the best HAB levels to start from at the beginning of the match in order to maximize points earned.
@@ -432,7 +431,6 @@ public class AllianceReport {
         }
 
 
-
         //Restores values using the original alliance report
         calculateExpectedValues();
         calculatePredictedTeleOpPoints();
@@ -480,13 +478,33 @@ public class AllianceReport {
     }
 
     public double calculateClimbRpChance() {
-        double climbRpChance;
-        try {
-            climbRpChance = Stats.rightTailNormalProbability(15, predictedValues.get("endgamePoints"),
-                    standardDeviations.get("endgamePoints"));
-        } catch (NotStrictlyPositiveException e) {
-            climbRpChance = predictedValues.get("endgamePoints") >= 15 ? 1.0 : 0.0;
+        double climbRpChance = 0.0;
+
+        final int[] climbPointValues = new int[]{3, 6, 12};
+
+        for (int teamOneClimb = 0; teamOneClimb < 2; teamOneClimb++) {
+            for (int teamTwoClimb = 0; teamTwoClimb < 2; teamTwoClimb++) {
+                for (int teamThreeClimb = 0; teamThreeClimb < 2; teamThreeClimb++) {
+                    int points = 0;
+                    int[] climbStatus = new int[]{teamOneClimb, teamTwoClimb, teamThreeClimb};
+                    for (int i = 0; i < 3; i++) {
+                        points += climbStatus[i] * climbPointValues[bestClimbLevels[i] - 1];
+                    }
+                    if (points >= 15) {
+                        double probabilityIteration = 1.0;
+                        for (int i = 0; i < 3; i++) {
+                            if (climbStatus[i] == 1) {
+                                probabilityIteration *= teamReports[i].getAttemptSuccessRate("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb");
+                            } else {
+                                probabilityIteration *= 1 - teamReports[i].getAttemptSuccessRate("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb");
+                            }
+                        }
+                        climbRpChance += probabilityIteration;
+                    }
+                }
+            }
         }
+
         predictedValues.put("climbRp", climbRpChance);
 
         return climbRpChance;
@@ -499,6 +517,9 @@ public class AllianceReport {
      */
     public String getQuickAllianceReport() {
 
+        Object[] keys = predictedValues.keySet().toArray();
+        Arrays.sort(keys);
+
         String quickReport = "";
         for (TeamReport report : teamReports) {
             quickReport += "Team " + report.getTeamNum();
@@ -509,7 +530,7 @@ public class AllianceReport {
             quickReport += "\n";
         }
 
-        for (String key : predictedValues.keySet()) {
+        for (Object key : keys) {
             quickReport += key + ": " + Stats.round(predictedValues.get(key), 2) + "\n";
         }
 
