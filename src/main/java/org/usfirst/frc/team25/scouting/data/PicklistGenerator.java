@@ -5,6 +5,7 @@ import org.usfirst.frc.team25.scouting.data.models.RankingTree;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -310,8 +311,12 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Topological Sort - " + eventName + ".txt"),
-                rankTreeStringToStringList(tree));
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Topological Sort - " + eventName, "txt",
+                    rankTreeStringToStringList(tree));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -359,8 +364,12 @@ class PicklistGenerator {
             }
         } while (swapsNeeded);
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Head to Head - " + eventName + ".txt"),
-                arrayListToStringList(orderedList));
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Head to Head - " + eventName, "txt",
+                    arrayListToStringList(orderedList));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -381,13 +390,12 @@ class PicklistGenerator {
     }
 
     /**
-     * Randomly generates many trees , then averages the ranks of teams
-     * in trees above a certain compliance percentage (threshold is a function of the number of teams).
-     * Needs many iterations, but the final result is 80-90% compliant, depending
-     * on the number of transitive contradictions.
-     * Running the method multiple times will lead to different lists, but the top and bottom tiers are
-     * generally consistent.
-     * TODO Improve the final result by taking more averages
+     * Randomly generates many trees , then averages the ranks of teams in trees above a certain compliance
+     * percentage (threshold is a function of the number of teams).
+     * Needs many iterations, but the final result is 80-90% compliant, depending on the number of transitive
+     * contradictions.
+     * Running the method multiple times will lead to different lists, but the top and bottom tiers are generally
+     * consistent.
      * Note, however, that we may already be reaching the best possible trees
      */
     public void generateBogoCompareList() {
@@ -451,8 +459,12 @@ class PicklistGenerator {
 
         //generateHeadToHeadList(bestTree.toArrayList(), "bogo");
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Bogo Compare - " + eventName + ".txt"),
-                rankTreeStringToStringList(bestTree));
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Bogo Compare - " + eventName, "txt",
+                    rankTreeStringToStringList(bestTree));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -478,8 +490,12 @@ class PicklistGenerator {
             }
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Compare Points - " + eventName + ".txt"),
-                hashMapToStringList(compareList));
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Compare Points - " + eventName, "txt",
+                    hashMapToStringList(compareList));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -506,7 +522,6 @@ class PicklistGenerator {
      * May be inaccurate due to some teams receiving more entries than others
      * and the different rating scales of each scouts (some may tend to give higher ratings, etc.)
      * Generally representative of robot ability.
-     * TODO Make the points an average rather than a summation
      */
     public void generatePickPointList() {
         HashMap<Integer, ArrayList<Integer>> pickPointSets = new HashMap<>();
@@ -539,8 +554,12 @@ class PicklistGenerator {
         }
 
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Pick Points - " + eventName +
-                ".txt"), hashMapToStringList(pickPoints));
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Pick Points - " + eventName, "txt",
+                    hashMapToStringList(pickPoints));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -577,8 +596,12 @@ class PicklistGenerator {
             pickPoints.put(team, Stats.round(pointValue, 2));
         }
 
-        FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "//Picklist - Point Contributions - " + eventName +
-                ".txt"), hashMapToStringList(pickPoints));
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Point Contributions - " + eventName, "txt",
+                    hashMapToStringList(pickPoints));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

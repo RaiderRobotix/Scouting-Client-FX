@@ -8,13 +8,11 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.usfirst.frc.team25.scouting.data.AllianceReport;
-import org.usfirst.frc.team25.scouting.data.BlueAlliance;
-import org.usfirst.frc.team25.scouting.data.EventReport;
-import org.usfirst.frc.team25.scouting.data.FileManager;
+import org.usfirst.frc.team25.scouting.data.*;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -254,13 +252,19 @@ public class MainController {
         retrieveEventReport();
 
         if (backupJson.isSelected()) {
-            FileManager.createBackup(jsonFileList, currentDataDirectory);
-            status += "\nBackup JSON files created";
+            try {
+                FileManager.createBackup(jsonFileList, currentDataDirectory);
+                status += "\nBackup JSON files created";
+            } catch (FileNotFoundException e) {
+                status += "\nJSON file backup failed";
+            }
+
         }
 
         if (fixErrors.isSelected()) {
-            eventReport.generateInaccuracyList(currentDataDirectory);
-            if (eventReport.fixInaccuraciesTBA()) {
+            InaccuracyFixer fixer = new InaccuracyFixer(eventReport);
+            if (fixer.fixInaccuraciesTBA()) {
+                fixer.generateInaccuracyList(currentDataDirectory);
                 status += "\nInaccuracies fixed and inaccuracy list generated";
             } else {
                 status += "\nNo inaccuracies found or Internet unavailable";

@@ -76,7 +76,6 @@ public class AllianceReport {
             }
         }
 
-
         expectedValues = new HashMap<>();
         predictedValues = new HashMap<>();
         bestStartingLevels = new int[3];
@@ -93,11 +92,10 @@ public class AllianceReport {
             }
         }
 
-        if (validTeamReports == 0) {
-            avgSampleSize = 0;
-        } else {
+        if (validTeamReports != 0) {
             avgSampleSize /= validTeamReports;
         }
+
         calculateStats();
 
     }

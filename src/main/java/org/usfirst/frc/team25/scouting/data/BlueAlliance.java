@@ -67,13 +67,13 @@ public class BlueAlliance {
 
         try {
             String eventShortName = TBA.eventRequest.getEvent(eventCode).getKey();
-            if (exportSimpleTeamList(eventCode, outputFolder.getAbsolutePath() + "/Teams - " + eventShortName)) {
+            if (exportSimpleTeamList(eventCode, outputFolder, "Teams - " + eventShortName)) {
                 response += "\nSimple team list downloaded";
             }
-            if (exportTeamList(eventCode, outputFolder.getAbsolutePath() + "/TeamNames - " + eventShortName)) {
+            if (exportTeamList(eventCode, outputFolder, "TeamNames - " + eventShortName)) {
                 response += "\nTeam names downloaded";
             }
-            if (exportMatchList(eventCode, outputFolder.getAbsolutePath() + "/Matches - " + eventShortName)) {
+            if (exportMatchList(eventCode, outputFolder, "Matches - " + eventShortName)) {
                 response += "\nMatch schedule downloaded";
             }
 
@@ -92,7 +92,7 @@ public class BlueAlliance {
      * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
      * @param fileName  File name of output file, without extension
      */
-    public static boolean exportSimpleTeamList(String eventCode, String fileName) throws FileNotFoundException {
+    public static boolean exportSimpleTeamList(String eventCode, File outputDirectory, String fileName) throws FileNotFoundException {
 
 
         StringBuilder teamList = new StringBuilder();
@@ -110,7 +110,7 @@ public class BlueAlliance {
         output.setCharAt(output.length() - 1, ' ');
 
         if (!teamList.toString().isEmpty()) {
-            FileManager.outputFile(fileName, "csv", teamList.toString());
+            FileManager.outputFile(outputDirectory, fileName, "csv", teamList.toString());
             return true;
         }
 
@@ -125,7 +125,7 @@ public class BlueAlliance {
      * @param fileName  File name of output file, without extension
      */
 
-    private static boolean exportTeamList(String eventCode, String fileName) throws FileNotFoundException {
+    private static boolean exportTeamList(String eventCode, File outputDirectory, String fileName) throws FileNotFoundException {
 
         StringBuilder teamList = new StringBuilder();
 
@@ -140,7 +140,7 @@ public class BlueAlliance {
         }
 
         if (!teamList.toString().isEmpty()) {
-            FileManager.outputFile(fileName, "csv", teamList.toString());
+            FileManager.outputFile(outputDirectory, fileName, "csv", teamList.toString());
             return true;
         }
 
@@ -155,7 +155,7 @@ public class BlueAlliance {
      * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
      * @param fileName  File name of output, without extension
      */
-    private static boolean exportMatchList(String eventCode, String fileName) throws FileNotFoundException {
+    private static boolean exportMatchList(String eventCode, File outputDirectory, String fileName) throws FileNotFoundException {
         StringBuilder matchList = new StringBuilder();
         try {
             for (Match match :
@@ -182,7 +182,7 @@ public class BlueAlliance {
         }
 
         if (!matchList.toString().isEmpty()) {
-            FileManager.outputFile(fileName, "csv", matchList.toString());
+            FileManager.outputFile(outputDirectory, fileName, "csv", matchList.toString());
             return true;
         }
 
@@ -217,8 +217,7 @@ public class BlueAlliance {
 
         Gson gson = new Gson();
         String jsonString = gson.toJson(matches);
-        FileManager.outputFile(outputDirectory.getAbsolutePath() + "//ScoreBreakdown - " + eventCode, "json",
-                jsonString);
+        FileManager.outputFile(outputDirectory, "ScoreBreakdown - " + eventCode, "json", jsonString);
 
         return true;
     }

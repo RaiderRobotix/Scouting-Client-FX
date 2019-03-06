@@ -25,31 +25,19 @@ public class FileManager {
     public static final String FILE_EXTENSION_REGEX = "\\.(?=[^.]+$)";
 
 
+    public static void outputFile(File rootDirectory, String fileName, String extension, String fileContents) throws FileNotFoundException {
+        outputFile(new File(rootDirectory.getAbsolutePath() + "//" + fileName + "." + extension), fileContents);
+    }
+
     /**
      * Writes a string to a output target file
      *
      * @param file         File object containing the output filename and directory
      * @param fileContents String contents of output file
      */
-    public static void outputFile(File file, String fileContents) {
-        try {
-            PrintWriter outputFile = new PrintWriter(file);
-            outputFile.write(fileContents);
-            outputFile.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+    public static void outputFile(File file, String fileContents) throws FileNotFoundException {
 
-    /**
-     * Writes a string to a output target file
-     *
-     * @param fileName     File name of output file
-     * @param extension    File extension, without the dot ('.')
-     * @param fileContents String contents of output file
-     */
-    public static void outputFile(String fileName, String extension, String fileContents) throws FileNotFoundException {
-        PrintWriter outputFile = new PrintWriter(fileName + "." + extension);
+        PrintWriter outputFile = new PrintWriter(file);
         outputFile.write(fileContents);
         outputFile.close();
 
@@ -188,7 +176,7 @@ public class FileManager {
         return jsonFileList;
     }
 
-    public static boolean createBackup(ArrayList<File> files, File rootDirectory) {
+    public static boolean createBackup(ArrayList<File> files, File rootDirectory) throws FileNotFoundException {
 
         File backupDirectory = new File(rootDirectory.getAbsolutePath() + "/backup");
         if (!backupDirectory.exists()) {
@@ -199,6 +187,7 @@ public class FileManager {
             String newFileName = file.getName().split(FILE_EXTENSION_REGEX)[0] + " - Backup " + new SimpleDateFormat(
                     "MM-dd HH-mm").format(new Date()) + "." + file.getName().split(FILE_EXTENSION_REGEX)[1];
             File backupFile = new File(backupDirectory.getAbsolutePath() + "/" + newFileName);
+
             outputFile(backupFile, getFileString(file));
         }
 

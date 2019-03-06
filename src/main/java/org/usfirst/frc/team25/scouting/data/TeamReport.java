@@ -17,13 +17,13 @@ public class TeamReport {
     private transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
 
-    public static final String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
+    public final static String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
             "rocketCargo"};
-    public static final String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
+    public final static String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
             "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
             "rocketLevelTwoCargo", "rocketLevelThreeCargo", "numPartnerClimbAssists"};
-    public static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
-    public static final String[] overallMetricNames = new String[]{"calculatedPointContribution",
+    public final static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
+    public final static String[] overallMetricNames = new String[]{"calculatedPointContribution",
             "calculatedSandstormPoints", "calculatedTeleOpPoints", "totalHatches", "totalCargo"};
     private String teamName, frequentRobotCommentStr, allComments;
     private HashMap<String, Double> averages, standardDeviations, attemptSuccessRates;
@@ -531,6 +531,12 @@ public class TeamReport {
         return attemptSuccessRates.get(metric);
     }
 
+    /**
+     * Generates a random sample of various metrics computed in <code>averages</code>, assuming a normal distribution
+     * with standard deviations specified by the team's <code>standardDeviations</code>
+     *
+     * @return A HashMap with metric names as keys and their associated random values
+     */
     public HashMap<String, Double> generateRandomSample() {
         HashMap<String, Double> randomSample = new HashMap<>();
 
