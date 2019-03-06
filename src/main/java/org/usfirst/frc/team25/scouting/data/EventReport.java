@@ -21,8 +21,7 @@ public class EventReport {
     private final ArrayList<ScoutEntry> scoutEntries;
     private final String event;
     private final File directory;
-    private HashMap<Integer, TeamReport> teamReports;
-    private String inaccuracyList;
+    private final HashMap<Integer, TeamReport> teamReports;
     private File teamNameList;
 
     /**
@@ -34,7 +33,6 @@ public class EventReport {
      */
     public EventReport(ArrayList<ScoutEntry> entries, String event, File directory) {
         teamReports = new HashMap<>();
-        inaccuracyList = "";
 
         this.scoutEntries = entries;
         this.event = event;
@@ -179,9 +177,9 @@ public class EventReport {
                 }
 
                 if (i == 2 || i == 3) {
-                    header.append(shortNames[i] + " - ");
+                    header.append(shortNames[i]).append(" - ");
                 }
-                header.append(StringProcessing.convertCamelToSentenceCase(metric.getName()) + ",");
+                header.append(StringProcessing.convertCamelToSentenceCase(metric.getName())).append(",");
             }
         }
 
@@ -245,7 +243,13 @@ public class EventReport {
         PicklistGenerator pg = new PicklistGenerator(scoutEntries, teamReports, outputDirectory, event);
         pg.generateComparePointList();
         pg.generatePickPointList();
-        pg.generateCalculatedFirstPicklist(new ArrayList<>());
+
+        ArrayList<TeamReport> knownAlliancePartners = new ArrayList<>();
+        if (teamReports.containsKey(25)) {
+            knownAlliancePartners.add(teamReports.get(25));
+        }
+
+        pg.generateCalculatedFirstPicklist(knownAlliancePartners);
     }
 
     public boolean generateMatchPredictions(File outputDirectory) {
@@ -258,7 +262,7 @@ public class EventReport {
         }
 
         try {
-            String predictions = "";
+            StringBuilder predictions = new StringBuilder();
 
             File matchList = FileManager.getMatchList(directory);
 
@@ -266,32 +270,33 @@ public class EventReport {
 
             for (int i = greatestMatchNum + 1; i < matches.length - 1; i++) {
                 AllianceReport[] allianceReports = getAlliancesInMatch(i);
-                predictions += "Match " + i + ": ";
+                predictions.append("Match ").append(i).append(": ");
                 for (int j = 0; j < allianceReports.length; j++) {
-                    predictions += allianceReports[j].getTeamReports()[0].getTeamNum() + "-";
-                    predictions += allianceReports[j].getTeamReports()[1].getTeamNum() + "-";
-                    predictions += allianceReports[j].getTeamReports()[2].getTeamNum() + " (";
-                    predictions += Stats.round(allianceReports[j].calculatePredictedRp(allianceReports[Math.abs(j - 1)]), 1) + " RP, ";
-                    predictions += Stats.round(allianceReports[j].getPredictedValue("totalPoints"), 1) + " pts)";
+                    predictions.append(allianceReports[j].getTeamReports()[0].getTeamNum()).append("-");
+                    predictions.append(allianceReports[j].getTeamReports()[1].getTeamNum()).append("-");
+                    predictions.append(allianceReports[j].getTeamReports()[2].getTeamNum()).append(" (");
+                    predictions.append(Stats.round(allianceReports[j].calculatePredictedRp(allianceReports[Math.abs(j - 1)]), 1)).append(" RP, ");
+                    predictions.append(Stats.round(allianceReports[j].getPredictedValue("totalPoints"), 1)).append(" " +
+                            "pts)");
                     if (j == 0) {
-                        predictions += " vs. ";
+                        predictions.append(" vs. ");
                     }
                 }
                 double redWinChance = allianceReports[0].calculateWinChance(allianceReports[1]);
                 if (redWinChance > 0.5) {
-                    predictions += " - Red win, " + Stats.round(redWinChance * 100, 2) + "%\n";
+                    predictions.append(" - Red win, ").append(Stats.round(redWinChance * 100, 2)).append("%\n");
                 } else {
-                    predictions += " - Blue win, " + Stats.round((1 - redWinChance) * 100, 2) + "%\n";
+                    predictions.append(" - Blue win, ").append(Stats.round((1 - redWinChance) * 100, 2)).append("%\n");
                 }
 
             }
 
-            if (!predictions.isEmpty()) {
-                FileManager.outputFile(outputDirectory, "MatchPredictions", "txt", predictions);
+            if (predictions.length() > 0) {
+                FileManager.outputFile(outputDirectory, "MatchPredictions", "txt", predictions.toString());
                 return true;
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return false;
@@ -334,9 +339,9 @@ public class EventReport {
 
     public AllianceReport getAllianceReport(int[] teamNums) {
         ArrayList<TeamReport> teamReports = new ArrayList<>();
-        for (int i = 0; i < teamNums.length; i++) {
-            if (getTeamReport(teamNums[i]) != null) {
-                teamReports.add(getTeamReport(teamNums[i]));
+        for (int teamNum : teamNums) {
+            if (getTeamReport(teamNum) != null) {
+                teamReports.add(getTeamReport(teamNum));
             }
         }
 

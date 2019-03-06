@@ -9,7 +9,7 @@ import java.util.HashMap;
  */
 public class AllianceReport {
 
-    private TeamReport[] teamReports;
+    private final TeamReport[] teamReports;
 
     /**
      * The confidence level of not reaching the scoring potential when computing the optimal number of null hatch panels
@@ -18,6 +18,7 @@ public class AllianceReport {
      * 80% of the matches they play. Note that if this value is high, the alliance may not be able to place hatch
      * panels at a rate that matches their cargo cycling, thus also being detrimental.
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private final double NULL_HATCH_CONFIDENCE = 0.8;
     /**
      * The number of Monte Carlo simulation iterations to run to compute standard deviations of functions.
@@ -47,7 +48,9 @@ public class AllianceReport {
      * The average number of scout entries made for each team in the alliance
      */
     private double avgSampleSize;
-    private HashMap<String, Double> predictedValues, expectedValues, standardDeviations;
+    private final HashMap<String, Double> predictedValues;
+    private final HashMap<String, Double> expectedValues;
+    private final HashMap<String, Double> standardDeviations;
 
 
     /**
@@ -71,7 +74,7 @@ public class AllianceReport {
         }
 
         for (int j = 0; j < 3; j++) {
-            if (this.teamReports[j] == null) {
+            if (this.teamReports[j] == null && this.teamReports[0] != null) {
                 this.teamReports[j] = new TeamReport(this.teamReports[0]);
             }
         }
@@ -105,7 +108,7 @@ public class AllianceReport {
      * panels
      * placed, and predicted bonus ranking points of the alliance
      */
-    public void calculateStats() {
+    private void calculateStats() {
 
         calculateExpectedValues();
 
@@ -373,7 +376,7 @@ public class AllianceReport {
         return endgameVariance;
     }
 
-    public double calculatePredictedRp() {
+    private double calculatePredictedRp() {
 
         double bonusRp = calculateClimbRpChance() + calculateRocketRpChance(generateMonteCarloSet());
 
@@ -382,55 +385,37 @@ public class AllianceReport {
         return bonusRp;
     }
 
-    /**
-     * @param simulationRawValues
-     * @return
-     */
-    private double calculateStdDevTeleOpPoints(ArrayList<ArrayList<HashMap<String, Double>>> simulationRawValues) {
+    private double calculateClimbRpChance() {
+        double climbRpChance = 0.0;
 
-        ArrayList<String> metricNames = new ArrayList<>();
+        final int[] climbPointValues = new int[]{3, 6, 12};
 
-        metricNames.add("telePoints");
-
-        final String[] locations = new String[]{"teleRocketLevelOne", "teleRocketLevelTwo", "teleRocketLevelThree",
-                "teleCargoShip"};
-        final String[] pieces = new String[]{"Hatches", "Cargo"};
-
-        for (String location : locations) {
-            for (String piece : pieces) {
-                metricNames.add(location + piece);
+        for (int teamOneClimb = 0; teamOneClimb < 2; teamOneClimb++) {
+            for (int teamTwoClimb = 0; teamTwoClimb < 2; teamTwoClimb++) {
+                for (int teamThreeClimb = 0; teamThreeClimb < 2; teamThreeClimb++) {
+                    int points = 0;
+                    int[] climbStatus = new int[]{teamOneClimb, teamTwoClimb, teamThreeClimb};
+                    for (int i = 0; i < 3; i++) {
+                        points += climbStatus[i] * climbPointValues[bestClimbLevels[i] - 1];
+                    }
+                    if (points >= 15) {
+                        double probabilityIteration = 1.0;
+                        for (int i = 0; i < 3; i++) {
+                            if (climbStatus[i] == 1) {
+                                probabilityIteration *= teamReports[i].getAttemptSuccessRate("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb");
+                            } else {
+                                probabilityIteration *= 1 - teamReports[i].getAttemptSuccessRate("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb");
+                            }
+                        }
+                        climbRpChance += probabilityIteration;
+                    }
+                }
             }
         }
 
-        HashMap<String, double[]> simulationCalculatedValues = new HashMap<>();
+        predictedValues.put("climbRp", climbRpChance);
 
-        for (String metric : metricNames) {
-            simulationCalculatedValues.put(metric, new double[MONTE_CARLO_ITERATIONS]);
-        }
-
-        for (int i = 0; i < simulationRawValues.size(); i++) {
-
-            calculateMonteCarloExpectedValues(simulationRawValues.get(i));
-            calculatePredictedTeleOpPoints();
-
-            for (String metric : metricNames) {
-
-                simulationCalculatedValues.get(metric)[i] = predictedValues.get(metric);
-            }
-
-        }
-
-
-        for (String metric : metricNames) {
-            standardDeviations.put(metric, Stats.standardDeviation(simulationCalculatedValues.get(metric)));
-        }
-
-
-        //Restores values using the original alliance report
-        calculateExpectedValues();
-        calculatePredictedTeleOpPoints();
-
-        return standardDeviations.get("telePoints");
+        return climbRpChance;
     }
 
     /**
@@ -472,75 +457,15 @@ public class AllianceReport {
         return simulationValues;
     }
 
-    public double calculateClimbRpChance() {
-        double climbRpChance = 0.0;
-
-        final int[] climbPointValues = new int[]{3, 6, 12};
-
-        for (int teamOneClimb = 0; teamOneClimb < 2; teamOneClimb++) {
-            for (int teamTwoClimb = 0; teamTwoClimb < 2; teamTwoClimb++) {
-                for (int teamThreeClimb = 0; teamThreeClimb < 2; teamThreeClimb++) {
-                    int points = 0;
-                    int[] climbStatus = new int[]{teamOneClimb, teamTwoClimb, teamThreeClimb};
-                    for (int i = 0; i < 3; i++) {
-                        points += climbStatus[i] * climbPointValues[bestClimbLevels[i] - 1];
-                    }
-                    if (points >= 15) {
-                        double probabilityIteration = 1.0;
-                        for (int i = 0; i < 3; i++) {
-                            if (climbStatus[i] == 1) {
-                                probabilityIteration *= teamReports[i].getAttemptSuccessRate("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb");
-                            } else {
-                                probabilityIteration *= 1 - teamReports[i].getAttemptSuccessRate("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb");
-                            }
-                        }
-                        climbRpChance += probabilityIteration;
-                    }
-                }
-            }
-        }
-
-        predictedValues.put("climbRp", climbRpChance);
-
-        return climbRpChance;
-    }
-
     /**
-     * Generates a text report for the alliance
-     *
-     * @return An easily-readable string of the key stats of the alliance
-     */
-    public String getQuickAllianceReport() {
-
-        Object[] keys = predictedValues.keySet().toArray();
-        Arrays.sort(keys);
-
-        String quickReport = "";
-        for (TeamReport report : teamReports) {
-            quickReport += "Team " + report.getTeamNum();
-
-            if (!report.getTeamName().isEmpty()) {
-                quickReport += " - " + report.getTeamName();
-            }
-            quickReport += "\n";
-        }
-
-        for (Object key : keys) {
-            quickReport += key + ": " + Stats.round(predictedValues.get(key), 2) + "\n";
-        }
-
-        return quickReport;
-    }
-
-    /**
-     * @param simulationRawValues
+     * @param allianceSimulationValues
      * @return
      */
-    private double calculateRocketRpChance(ArrayList<ArrayList<HashMap<String, Double>>> simulationRawValues) {
+    private double calculateRocketRpChance(ArrayList<ArrayList<HashMap<String, Double>>> allianceSimulationValues) {
 
         int rocketRpAttainedCount = 0;
 
-        for (ArrayList<HashMap<String, Double>> teamReportSet : simulationRawValues) {
+        for (ArrayList<HashMap<String, Double>> teamReportSet : allianceSimulationValues) {
 
             calculateMonteCarloExpectedValues(teamReportSet);
 
@@ -551,10 +476,10 @@ public class AllianceReport {
 
             for (int j = 0; j < 3; j++) {
                 for (String gamePiece : new String[]{"Hatches", "Cargo"}) {
-                    double threshhold = 2.0 - ((j == 0) ? predictedValues.get("autoRocket" + gamePiece) : 0);
+                    double threshold = 2.0 - ((j == 0) ? predictedValues.get("autoRocket" + gamePiece) : 0);
                     double mean = predictedValues.get("teleRocketLevel" + numStrNames[j] + gamePiece);
 
-                    if (mean < threshhold) {
+                    if (mean < threshold) {
                         rpAttained = false;
                     }
                 }
@@ -573,6 +498,84 @@ public class AllianceReport {
         predictedValues.put("rocketRp", rocketRpChance);
 
         return rocketRpChance;
+    }
+
+    /**
+     * @param allianceSimulationValues
+     * @return
+     */
+    private double calculateStdDevTeleOpPoints(ArrayList<ArrayList<HashMap<String, Double>>> allianceSimulationValues) {
+
+        ArrayList<String> metricNames = new ArrayList<>();
+
+        metricNames.add("telePoints");
+
+        final String[] locations = new String[]{"teleRocketLevelOne", "teleRocketLevelTwo", "teleRocketLevelThree",
+                "teleCargoShip"};
+        final String[] pieces = new String[]{"Hatches", "Cargo"};
+
+        for (String location : locations) {
+            for (String piece : pieces) {
+                metricNames.add(location + piece);
+            }
+        }
+
+        HashMap<String, double[]> simulationCalculatedValues = new HashMap<>();
+
+        for (String metric : metricNames) {
+            simulationCalculatedValues.put(metric, new double[MONTE_CARLO_ITERATIONS]);
+        }
+
+        for (int i = 0; i < allianceSimulationValues.size(); i++) {
+
+            calculateMonteCarloExpectedValues(allianceSimulationValues.get(i));
+            calculatePredictedTeleOpPoints();
+
+            for (String metric : metricNames) {
+
+                simulationCalculatedValues.get(metric)[i] = predictedValues.get(metric);
+            }
+
+        }
+
+
+        for (String metric : metricNames) {
+            standardDeviations.put(metric, Stats.standardDeviation(simulationCalculatedValues.get(metric)));
+        }
+
+
+        //Restores values using the original alliance report
+        calculateExpectedValues();
+        calculatePredictedTeleOpPoints();
+
+        return standardDeviations.get("telePoints");
+    }
+
+    /**
+     * Generates a text report for the alliance
+     *
+     * @return An easily-readable string of the key stats of the alliance
+     */
+    public String getQuickAllianceReport() {
+
+        Object[] keys = predictedValues.keySet().toArray();
+        Arrays.sort(keys);
+
+        StringBuilder quickReport = new StringBuilder();
+        for (TeamReport report : teamReports) {
+            quickReport.append("Team ").append(report.getTeamNum());
+
+            if (!report.getTeamName().isEmpty()) {
+                quickReport.append(" - ").append(report.getTeamName());
+            }
+            quickReport.append("\n");
+        }
+
+        for (Object key : keys) {
+            quickReport.append(key).append(": ").append(Stats.round(predictedValues.get(key), 2)).append("\n");
+        }
+
+        return quickReport.toString();
     }
 
     private double calculatePredictedTeleOpHatchPanels(boolean rocketRp) {
@@ -712,9 +715,7 @@ public class AllianceReport {
                 opposingStandardError, opposingAlliance.getAvgSampleSize());
 
 
-        double winChance = Stats.tCumulativeDistribution(degreesOfFreedom, tScore);
-
-        return winChance;
+        return Stats.tCumulativeDistribution(degreesOfFreedom, tScore);
     }
 
     /**

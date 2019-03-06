@@ -11,7 +11,7 @@ public class MatchPredictionController {
 
     @FXML
     Text redTeamOneNum, eventKey, matchNumText;
-    Scene scene;
+    private Scene scene;
 
     public void initialize(AllianceReport redAlliance, AllianceReport blueAlliance) {
 

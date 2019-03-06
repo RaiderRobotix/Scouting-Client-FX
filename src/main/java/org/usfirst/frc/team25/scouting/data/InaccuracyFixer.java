@@ -185,7 +185,7 @@ public class InaccuracyFixer {
                     }
 
                 } catch (IndexOutOfBoundsException e) {
-
+                    e.printStackTrace();
                 }
             }
             if (!inaccuracyList.isEmpty()) {

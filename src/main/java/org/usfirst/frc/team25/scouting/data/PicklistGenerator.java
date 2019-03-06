@@ -42,7 +42,7 @@ class PicklistGenerator {
      * The directory to output the generated picklists
      */
     private final File outputDirectory;
-    private String eventName;
+    private final String eventName;
     private final HashMap<Integer, TeamReport> teamReports;
 
     public PicklistGenerator(ArrayList<ScoutEntry> scoutEntries, HashMap<Integer, TeamReport> teamReports,
@@ -51,8 +51,8 @@ class PicklistGenerator {
         this.outputDirectory = outputDirectory;
         this.teamReports = teamReports;
 
-        comparisons = new ArrayList<Comparison>();
-        teamNums = new ArrayList<Integer>();
+        comparisons = new ArrayList<>();
+        teamNums = new ArrayList<>();
         compLookup = new HashMap<>();
 
         this.eventName = eventName;
@@ -84,7 +84,8 @@ class PicklistGenerator {
 
         //Create a second comparison list to iterate through; you can't modify an array list
         // that you're currently iterating through
-        ArrayList<Comparison> dupComparisonList = (ArrayList<Comparison>) comparisons.clone();
+        @SuppressWarnings("unchecked") ArrayList<Comparison> dupComparisonList =
+                (ArrayList<Comparison>) comparisons.clone();
 
         //Remove contradictions
         for (Comparison comp : dupComparisonList) {
@@ -119,13 +120,13 @@ class PicklistGenerator {
                                                   HashMap<String, Integer> comparisonTable) {
         Collections.sort(teamList);
         StringBuilder compareMatrix = new StringBuilder(",");
-        for (int i = 0; i < teamList.size(); i++) {
-            compareMatrix.append(teamList.get(i)).append(",");
+        for (Integer integer1 : teamList) {
+            compareMatrix.append(integer1).append(",");
         }
         for (int i = 0; i < teamList.size(); i++) {
             compareMatrix.append("\n").append(teamList.get(i)).append(",");
-            for (int j = 0; j < teamList.size(); j++) {
-                String key = getTeamTupleString(teamList.get(i), teamList.get(j));
+            for (Integer integer : teamList) {
+                String key = getTeamTupleString(teamList.get(i), integer);
                 if (!comparisonTable.containsKey(key)) {
                     compareMatrix.append("-,");
                 } else {
@@ -160,7 +161,7 @@ class PicklistGenerator {
         tree.addNode(targetTeam);
 
         //Rebuild comparison list from the beginning, so compliance percent can start at 100
-        ArrayList<Comparison> comparisons = new ArrayList<Comparison>();
+        ArrayList<Comparison> comparisons = new ArrayList<>();
 
         for (int i = 0; i < teamNums.size(); i++) {
             targetTeam = teamNums.get(i);
@@ -441,15 +442,15 @@ class PicklistGenerator {
                 }
 
             }
-            for (int j = 0; j < teamNums.size(); j++) {
+            for (Integer teamNum : teamNums) {
                 if (goodIterations < 10) {
                     goodIterations = 10;
                 }
-                if (!bestRanks.containsKey(teamNums.get(j))) {
-                    bestRanks.put(teamNums.get(j), totalRanks.get(teamNums.get(j)) / (goodIterations / 10));
-                } else if (totalRanks.containsKey(teamNums.get(j))) {
-                    bestRanks.put(teamNums.get(j),
-                            totalRanks.get(teamNums.get(j)) / (goodIterations / 10) + bestRanks.get(teamNums.get(j)));
+                if (!bestRanks.containsKey(teamNum)) {
+                    bestRanks.put(teamNum, totalRanks.get(teamNum) / (goodIterations / 10));
+                } else if (totalRanks.containsKey(teamNum)) {
+                    bestRanks.put(teamNum,
+                            totalRanks.get(teamNum) / (goodIterations / 10) + bestRanks.get(teamNum));
                 }
             }
         }
@@ -537,7 +538,7 @@ class PicklistGenerator {
                 pickPointSets.get(teamNum).add(entry.getPostMatch().getPickNumber());
 
             } catch (NullPointerException e) {
-
+                e.printStackTrace();
             }
         }
 
@@ -573,12 +574,13 @@ class PicklistGenerator {
             baselineScore = new AllianceReport(knownPartners).getPredictedValue("totalPoints");
         }
 
+
         HashMap<Integer, Double> pickPoints = new HashMap<>();
 
         for (int team : teamNums) {
             TeamReport currentTeamReport = teamReports.get(team);
 
-            if (knownPartners.contains(teamReports.get(currentTeamReport))) {
+            if (knownPartners.contains(currentTeamReport)) {
                 continue;
             }
 

@@ -25,14 +25,16 @@ public class TeamReport {
     public final static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
     public final static String[] overallMetricNames = new String[]{"calculatedPointContribution",
             "calculatedSandstormPoints", "calculatedTeleOpPoints", "totalHatches", "totalCargo"};
-    private String teamName, frequentRobotCommentStr, allComments;
-    private HashMap<String, Double> averages, standardDeviations, attemptSuccessRates;
-    private HashMap<String, Integer> counts;
-    private HashMap<String, Boolean> abilities;
+    private final HashMap<String, Double> averages;
+    private final HashMap<String, Double> standardDeviations;
+    private final HashMap<String, Double> attemptSuccessRates;
+    private final HashMap<String, Integer> counts;
+    private final HashMap<String, Boolean> abilities;
+    private String teamName, frequentCommentStr, allComments;
     private ArrayList<String> frequentComments;
 
     /**
-     * Constructs an empty TeamReport based on the metrics calculated in the model team report
+     * An empty constructor that creates an TeamReport based on the metrics calculated in the model team report
      * Used to simulate additional alliance members
      *
      * @param model A team report with calculations performed on a real set of scouting entries
@@ -63,7 +65,10 @@ public class TeamReport {
             abilities.put(key, false);
         }
         this.teamNum = 0;
-        teamName = "";
+        this.teamName = "";
+        this.frequentCommentStr = "";
+        this.allComments = "";
+        this.frequentComments = new ArrayList<>();
     }
 
 
@@ -76,7 +81,7 @@ public class TeamReport {
         this.teamNum = teamNum;
         entries = new ArrayList<>();
         teamName = "";
-        frequentRobotCommentStr = "";
+        frequentCommentStr = "";
 
         averages = new HashMap<>();
         standardDeviations = new HashMap<>();
@@ -94,65 +99,64 @@ public class TeamReport {
      */
     public String getQuickStatus() {
 
-        String statusString = "Team " + getTeamNum();
+        StringBuilder statusString = new StringBuilder("Team " + getTeamNum());
 
         if (!getTeamName().isEmpty()) {
-            statusString += " - " + getTeamName();
+            statusString.append(" - ").append(getTeamName());
         }
 
-        statusString += "\n\nSandstorm:";
+        statusString.append("\n\nSandstorm:");
 
         for (String metric : autoMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
-                    (averages.get("auto" + metric), 2);
+            statusString.append("\nAvg. ").append(StringProcessing.convertCamelToSentenceCase(metric)).append(": ").append(Stats.round
+                    (averages.get("auto" + metric), 2));
         }
 
-        statusString += "\nHAB line cross: " + Stats.round(attemptSuccessRates.get("totalCross") * 100, 2) + "% ("
-                + counts.get("totalCross") + "/" + entries.size() + ")";
+        statusString.append("\nHAB line cross: ").append(Stats.round(attemptSuccessRates.get("totalCross") * 100, 2)).append("% (").append(counts.get("totalCross")).append("/").append(entries.size()).append(")");
 
         for (int i = 0; i < 2; i++) {
-            statusString += "\nHAB lvl " + (i + 1) + " cross: ";
-            statusString += Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Cross") * 100, 2) + "% " +
-                    "(" + counts.get(levelPrefixes[i] + "Cross") + "/" + counts.get(levelPrefixes[i] + "Start") + ")";
+            statusString.append("\nHAB lvl ").append(i + 1).append(" cross: ");
+            statusString.append(Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Cross") * 100, 2)).append("% "
+            ).append("(").append(counts.get(levelPrefixes[i] + "Cross")).append("/").append(counts.get(levelPrefixes[i] + "Start")).append(")");
         }
 
-        statusString += "\n\nTele-Op:";
+        statusString.append("\n\nTele-Op:");
 
         for (String metric : teleMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
-                    (averages.get("tele" + metric), 2);
+            statusString.append("\nAvg. ").append(StringProcessing.convertCamelToSentenceCase(metric)).append(": ").append(Stats.round
+                    (averages.get("tele" + metric), 2));
         }
 
-        statusString += "\n\nEndgame:";
+        statusString.append("\n\nEndgame:");
 
         for (int i = 0; i < 4; i++) {
 
             if (i == 3) {
-                statusString += "\nTotal climb success: ";
+                statusString.append("\nTotal climb success: ");
             } else {
-                statusString += "\nLvl " + (i + 1) + " climb success: ";
+                statusString.append("\nLvl ").append(i + 1).append(" climb success: ");
             }
-            statusString += Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Climb") * 100, 0) + "% " +
-                    "(" + counts.get(levelPrefixes[i] + "ClimbSuccess") + "/" + counts.get(levelPrefixes[i] +
-                    "ClimbAttempt") + ")";
+            statusString.append(Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Climb") * 100, 0)).append("% "
+            ).append("(").append(counts.get(levelPrefixes[i] + "ClimbSuccess")).append("/").append(counts.get(levelPrefixes[i] +
+                    "ClimbAttempt")).append(")");
 
         }
 
-        statusString += "\n\nOverall:";
+        statusString.append("\n\nOverall:");
 
         for (String metric : overallMetricNames) {
-            statusString += "\nAvg. " + StringProcessing.convertCamelToSentenceCase(metric) + ": " + Stats.round
-                    (averages.get(metric), 2);
+            statusString.append("\nAvg. ").append(StringProcessing.convertCamelToSentenceCase(metric)).append(": ").append(Stats.round
+                    (averages.get(metric), 2));
         }
 
-        if (!frequentRobotCommentStr.isEmpty()) {
-            statusString += "\n\nCommon quick comments:\n" + frequentRobotCommentStr;
+        if (!frequentCommentStr.isEmpty()) {
+            statusString.append("\n\nCommon quick comments:\n").append(frequentCommentStr);
         }
         if (!allComments.isEmpty()) {
-            statusString += "\nAll comments:\n" + allComments;
+            statusString.append("\nAll comments:\n").append(allComments);
         }
 
-        return statusString;
+        return statusString.toString();
 
     }
 
@@ -213,7 +217,7 @@ public class TeamReport {
     /**
      * Removes scouting entries where the robot did not show up and increments the "no show" count
      */
-    public void filterNoShow() {
+    private void filterNoShow() {
         counts.put("noShow", 0);
         counts.put("dysfunctional", 0);
         for (int i = 0; i < entries.size(); i++) {
@@ -238,7 +242,7 @@ public class TeamReport {
      * Calculates the counts, averages, standard deviations, and attempt-success rates of data in stored scouting
      * entries, provided that data exists
      */
-    public void calculateStats() {
+    private void calculateStats() {
 
         if (entries.size() > 0) {
             calculateCounts();
@@ -372,7 +376,7 @@ public class TeamReport {
         }
     }
 
-    public void findFrequentComments() {
+    private void findFrequentComments() {
 
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
         if (entries.size() > 0) {
@@ -399,7 +403,7 @@ public class TeamReport {
 
         for (String comment : frequentComments) {
 
-            frequentRobotCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
+            frequentCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
         }
 
         allComments = "";

@@ -7,442 +7,438 @@
 <Pane xmlns:fx="http://javafx.com/fxml/1" maxHeight="483.0" maxWidth="968.0" minHeight="483.0" minWidth="968.0"
       prefHeight="483.0" prefWidth="968.0" xmlns="http://javafx.com/javafx/8.0.172-ea"
       fx:controller="org.usfirst.frc.team25.scouting.client.ui.MatchPredictionController">
-    <children>
-        <ImageView fitHeight="484.0" fitWidth="992.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../img/match_predictions_notext.png"/>
-            </image>
-        </ImageView>
-        <Text fx:id="matchNumText" layoutX="171.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Match X Predictions" visible="false">
-            <font>
-                <Font name="Tahoma Bold" size="19.0"/>
-            </font>
-        </Text>
-        <Text fx:id="eventKey" layoutX="525.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2019njfbe">
-            <font>
-                <Font name="Tahoma Bold" size="19.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeleRocketLevelThreeCargo" layoutX="75.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeleRocketLevelTwoCargo" layoutX="129.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redRocketLevelOneCargo" layoutX="187.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redCargoShipCargo" layoutX="330.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0"
-              textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeleRocketLevelThreeHatches" layoutX="75.0" layoutY="107.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeleRocketLevelTwoHatches" layoutX="129.0" layoutY="106.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redRocketLevelOneHatches" layoutX="187.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redCargoShipHatches" layoutX="330.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redOptimalNullHatches" fill="WHITE" layoutX="244.0" layoutY="107.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="6.0 NULL" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="16.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeleRocketLevelThreeCargo" layoutX="656.0" layoutY="72.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeleRocketLevelTwoCargo" layoutX="710.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueRocketLevelOneCargo" layoutX="768.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueCargoShipCargo" layoutX="911.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeleRocketLevelThreeHatches" layoutX="656.0" layoutY="108.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeleRocketLevelTwoHatches" layoutX="710.0" layoutY="107.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueRocketLevelOneHatches" layoutX="768.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueCargoShipHatches" layoutX="911.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="28.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueOptimalNullHatches" fill="WHITE" layoutX="825.0" layoutY="108.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="6.0 NULL" textAlignment="CENTER">
-            <font>
-                <Font name="Tahoma Bold" size="16.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTotalPoints" fill="WHITE" layoutX="394.0" layoutY="102.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="CENTER" wrappingWidth="85.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="29.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redWinChance" fill="#403b42" layoutX="408.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0%" textAlignment="CENTER" wrappingWidth="58.163596004247665">
-            <font>
-                <Font name="Tahoma Bold" size="17.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueWinChance" fill="#403b42" layoutX="507.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0.0%" textAlignment="CENTER" wrappingWidth="58.163596004247665">
-            <font>
-                <Font name="Tahoma Bold" size="17.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTotalPoints" fill="WHITE" layoutX="488.0" layoutY="102.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="CENTER" wrappingWidth="85.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="29.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamOneNum" fill="WHITE" layoutX="35.0" layoutY="191.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="25">
-            <font>
-                <Font name="Tahoma Bold" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redSandstormBonus" fill="WHITE" layoutX="392.0" layoutY="322.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redSandstormGamePiecePoints" fill="WHITE" layoutX="393.0" layoutY="353.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeleHatchPoints" fill="WHITE" layoutX="392.0" layoutY="383.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeleCargoPoints" fill="WHITE" layoutX="393.0" layoutY="413.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redEndgamePoints" fill="WHITE" layoutX="393.0" layoutY="445.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamOneHatches" fill="WHITE" layoutX="122.0" layoutY="190.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamOneCargo" fill="WHITE" layoutX="185.0" layoutY="189.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamOneStart" fill="WHITE" layoutX="247.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="2H (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamOneClimb" fill="WHITE" layoutX="373.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="3 (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamTwoNum" fill="WHITE" layoutX="34.0" layoutY="229.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="25">
-            <font>
-                <Font name="Tahoma Bold" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamTwoHatches" fill="WHITE" layoutX="121.0" layoutY="228.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamTwoCargo" fill="WHITE" layoutX="184.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamTwoStart" fill="WHITE" layoutX="246.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="2H (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamTwoClimb" fill="WHITE" layoutX="372.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="3 (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamThreeNum" fill="WHITE" layoutX="34.0" layoutY="271.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="25">
-            <font>
-                <Font name="Tahoma Bold" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamThreeHatches" fill="WHITE" layoutX="121.0" layoutY="270.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamThreeCargo" fill="WHITE" layoutX="184.0" layoutY="269.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamThreeStart" fill="WHITE" layoutX="246.0" layoutY="268.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="2H (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redTeamThreeClimb" fill="WHITE" layoutX="372.0" layoutY="268.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="3 (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redPredictedRp" fill="WHITE" layoutX="37.0" layoutY="319.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0 RP">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redRocketRp" fill="WHITE" layoutX="72.0" layoutY="353.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redClimbRp" fill="WHITE" layoutX="72.0" layoutY="397.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="redWinRp" fill="WHITE" layoutX="72.0" layoutY="440.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamOneNum" fill="WHITE" layoutX="517.0" layoutY="191.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="2590">
-            <font>
-                <Font name="Tahoma Bold" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueSandstormBonus" fill="WHITE" layoutX="868.0" layoutY="319.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueSandstormGamePiecePoints" fill="WHITE" layoutX="869.0" layoutY="350.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeleHatchPoints" fill="WHITE" layoutX="868.0" layoutY="380.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeleCargoPoints" fill="WHITE" layoutX="869.0" layoutY="410.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueEndgamePoints" fill="WHITE" layoutX="869.0" layoutY="442.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
-            <font>
-                <Font name="Tahoma Bold" size="24.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamOneHatches" fill="WHITE" layoutX="604.0" layoutY="190.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="10.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamOneCargo" fill="WHITE" layoutX="667.0" layoutY="189.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="10.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamOneStart" fill="WHITE" layoutX="729.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="2H (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamOneClimb" fill="WHITE" layoutX="855.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="3 (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamTwoNum" fill="WHITE" layoutX="516.0" layoutY="229.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="25">
-            <font>
-                <Font name="Tahoma Bold" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamTwoHatches" fill="WHITE" layoutX="603.0" layoutY="228.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamTwoCargo" fill="WHITE" layoutX="666.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamTwoStart" fill="WHITE" layoutX="728.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="2H (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamTwoClimb" fill="WHITE" layoutX="854.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="3 (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamThreeNum" fill="WHITE" layoutX="516.0" layoutY="271.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="25">
-            <font>
-                <Font name="Tahoma Bold" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamThreeHatches" fill="WHITE" layoutX="603.0" layoutY="270.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamThreeCargo" fill="WHITE" layoutX="666.0" layoutY="269.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamThreeStart" fill="WHITE" layoutX="728.0" layoutY="268.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="2H (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueTeamThreeClimb" fill="WHITE" layoutX="854.0" layoutY="268.0" stroke="BLACK"
-              strokeType="OUTSIDE" text="3 (100%)">
-            <font>
-                <Font name="Tahoma" size="23.0"/>
-            </font>
-        </Text>
-        <Text fx:id="bluePredictedRp" fill="WHITE" layoutX="519.0" layoutY="319.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0 RP">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueRocketRp" fill="WHITE" layoutX="554.0" layoutY="353.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueClimbRp" fill="WHITE" layoutX="554.0" layoutY="397.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-        <Text fx:id="blueWinRp" fill="WHITE" layoutX="554.0" layoutY="440.0" stroke="BLACK" strokeType="OUTSIDE"
-              text="0.0">
-            <font>
-                <Font name="Tahoma" size="25.0"/>
-            </font>
-        </Text>
-    </children>
+    <ImageView fitHeight="484.0" fitWidth="992.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true">
+        <Image url="@../img/match_predictions_notext.png"/>
+    </ImageView>
+    <Text fx:id="matchNumText" layoutX="171.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="Match X Predictions" visible="false">
+        <font>
+            <Font name="Tahoma Bold" size="19.0"/>
+        </font>
+    </Text>
+    <Text fx:id="eventKey" layoutX="525.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2019njfbe">
+        <font>
+            <Font name="Tahoma Bold" size="19.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeleRocketLevelThreeCargo" layoutX="75.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeleRocketLevelTwoCargo" layoutX="129.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redRocketLevelOneCargo" layoutX="187.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redCargoShipCargo" layoutX="330.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0"
+          textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeleRocketLevelThreeHatches" layoutX="75.0" layoutY="107.0" strokeType="OUTSIDE"
+          strokeWidth="0.0" text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeleRocketLevelTwoHatches" layoutX="129.0" layoutY="106.0" strokeType="OUTSIDE"
+          strokeWidth="0.0" text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redRocketLevelOneHatches" layoutX="187.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redCargoShipHatches" layoutX="330.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redOptimalNullHatches" fill="WHITE" layoutX="244.0" layoutY="107.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="6.0 NULL" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="16.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeleRocketLevelThreeCargo" layoutX="656.0" layoutY="72.0" strokeType="OUTSIDE"
+          strokeWidth="0.0" text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeleRocketLevelTwoCargo" layoutX="710.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueRocketLevelOneCargo" layoutX="768.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueCargoShipCargo" layoutX="911.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeleRocketLevelThreeHatches" layoutX="656.0" layoutY="108.0" strokeType="OUTSIDE"
+          strokeWidth="0.0" text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeleRocketLevelTwoHatches" layoutX="710.0" layoutY="107.0" strokeType="OUTSIDE"
+          strokeWidth="0.0" text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueRocketLevelOneHatches" layoutX="768.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueCargoShipHatches" layoutX="911.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="28.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueOptimalNullHatches" fill="WHITE" layoutX="825.0" layoutY="108.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="6.0 NULL" textAlignment="CENTER">
+        <font>
+            <Font name="Tahoma Bold" size="16.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTotalPoints" fill="WHITE" layoutX="394.0" layoutY="102.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0" textAlignment="CENTER" wrappingWidth="85.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="29.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redWinChance" fill="#403b42" layoutX="408.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0%" textAlignment="CENTER" wrappingWidth="58.163596004247665">
+        <font>
+            <Font name="Tahoma Bold" size="17.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueWinChance" fill="#403b42" layoutX="507.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          text="0.0%" textAlignment="CENTER" wrappingWidth="58.163596004247665">
+        <font>
+            <Font name="Tahoma Bold" size="17.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTotalPoints" fill="WHITE" layoutX="488.0" layoutY="102.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0" textAlignment="CENTER" wrappingWidth="85.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="29.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamOneNum" fill="WHITE" layoutX="35.0" layoutY="191.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="25">
+        <font>
+            <Font name="Tahoma Bold" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redSandstormBonus" fill="WHITE" layoutX="392.0" layoutY="322.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redSandstormGamePiecePoints" fill="WHITE" layoutX="393.0" layoutY="353.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeleHatchPoints" fill="WHITE" layoutX="392.0" layoutY="383.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeleCargoPoints" fill="WHITE" layoutX="393.0" layoutY="413.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redEndgamePoints" fill="WHITE" layoutX="393.0" layoutY="445.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamOneHatches" fill="WHITE" layoutX="122.0" layoutY="190.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamOneCargo" fill="WHITE" layoutX="185.0" layoutY="189.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamOneStart" fill="WHITE" layoutX="247.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="2H (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamOneClimb" fill="WHITE" layoutX="373.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="3 (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamTwoNum" fill="WHITE" layoutX="34.0" layoutY="229.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="25">
+        <font>
+            <Font name="Tahoma Bold" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamTwoHatches" fill="WHITE" layoutX="121.0" layoutY="228.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamTwoCargo" fill="WHITE" layoutX="184.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamTwoStart" fill="WHITE" layoutX="246.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="2H (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamTwoClimb" fill="WHITE" layoutX="372.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="3 (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamThreeNum" fill="WHITE" layoutX="34.0" layoutY="271.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="25">
+        <font>
+            <Font name="Tahoma Bold" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamThreeHatches" fill="WHITE" layoutX="121.0" layoutY="270.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamThreeCargo" fill="WHITE" layoutX="184.0" layoutY="269.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamThreeStart" fill="WHITE" layoutX="246.0" layoutY="268.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="2H (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redTeamThreeClimb" fill="WHITE" layoutX="372.0" layoutY="268.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="3 (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redPredictedRp" fill="WHITE" layoutX="37.0" layoutY="319.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0 RP">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redRocketRp" fill="WHITE" layoutX="72.0" layoutY="353.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redClimbRp" fill="WHITE" layoutX="72.0" layoutY="397.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="redWinRp" fill="WHITE" layoutX="72.0" layoutY="440.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamOneNum" fill="WHITE" layoutX="517.0" layoutY="191.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="2590">
+        <font>
+            <Font name="Tahoma Bold" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueSandstormBonus" fill="WHITE" layoutX="868.0" layoutY="319.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueSandstormGamePiecePoints" fill="WHITE" layoutX="869.0" layoutY="350.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeleHatchPoints" fill="WHITE" layoutX="868.0" layoutY="380.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeleCargoPoints" fill="WHITE" layoutX="869.0" layoutY="410.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueEndgamePoints" fill="WHITE" layoutX="869.0" layoutY="442.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0" textAlignment="RIGHT" wrappingWidth="58.16357073560357">
+        <font>
+            <Font name="Tahoma Bold" size="24.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamOneHatches" fill="WHITE" layoutX="604.0" layoutY="190.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="10.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamOneCargo" fill="WHITE" layoutX="667.0" layoutY="189.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="10.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamOneStart" fill="WHITE" layoutX="729.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="2H (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamOneClimb" fill="WHITE" layoutX="855.0" layoutY="188.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="3 (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamTwoNum" fill="WHITE" layoutX="516.0" layoutY="229.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="25">
+        <font>
+            <Font name="Tahoma Bold" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamTwoHatches" fill="WHITE" layoutX="603.0" layoutY="228.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamTwoCargo" fill="WHITE" layoutX="666.0" layoutY="227.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamTwoStart" fill="WHITE" layoutX="728.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="2H (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamTwoClimb" fill="WHITE" layoutX="854.0" layoutY="226.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="3 (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamThreeNum" fill="WHITE" layoutX="516.0" layoutY="271.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="25">
+        <font>
+            <Font name="Tahoma Bold" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamThreeHatches" fill="WHITE" layoutX="603.0" layoutY="270.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamThreeCargo" fill="WHITE" layoutX="666.0" layoutY="269.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamThreeStart" fill="WHITE" layoutX="728.0" layoutY="268.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="2H (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueTeamThreeClimb" fill="WHITE" layoutX="854.0" layoutY="268.0" stroke="BLACK"
+          strokeType="OUTSIDE" text="3 (100%)">
+        <font>
+            <Font name="Tahoma" size="23.0"/>
+        </font>
+    </Text>
+    <Text fx:id="bluePredictedRp" fill="WHITE" layoutX="519.0" layoutY="319.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0 RP">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueRocketRp" fill="WHITE" layoutX="554.0" layoutY="353.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueClimbRp" fill="WHITE" layoutX="554.0" layoutY="397.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
+    <Text fx:id="blueWinRp" fill="WHITE" layoutX="554.0" layoutY="440.0" stroke="BLACK" strokeType="OUTSIDE"
+          text="0.0">
+        <font>
+            <Font name="Tahoma" size="25.0"/>
+        </font>
+    </Text>
 </Pane>

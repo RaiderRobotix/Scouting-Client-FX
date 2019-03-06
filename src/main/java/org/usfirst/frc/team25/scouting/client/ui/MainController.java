@@ -12,7 +12,6 @@ import org.usfirst.frc.team25.scouting.data.*;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -32,14 +31,14 @@ public class MainController {
     private TextField analysisTeamOne, analysisTeamTwo, analysisTeamThree, teamNumEventCode, analysisOppTeamOne,
             analysisOppTeamTwo, analysisOppTeamThree, analysisMatchNum;
 
-    TextField[] allianceBasedGroup;
-    TextField[] matchBasedGroup;
+    private TextField[] allianceBasedGroup;
+    private TextField[] matchBasedGroup;
 
     private EventReport eventReport;
     private ArrayList<File> jsonFileList;
     private String eventName;
 
-    private File currentDataDirectory, teamNameList;
+    private File currentDataDirectory;
 
     public void initialize() {
 
@@ -100,9 +99,7 @@ public class MainController {
             enableTextFieldGroup(matchBasedGroup, matchBasedReport.isSelected());
         });
 
-        generateFilesButton.setOnAction(event -> {
-            processData();
-        });
+        generateFilesButton.setOnAction(event -> processData());
 
         downloadDataButton.setOnAction(event -> {
             String response;
@@ -123,9 +120,7 @@ public class MainController {
             addStatus(response);
         });
 
-        displayReportButton.setOnAction(event -> {
-            displayAggregateReport();
-        });
+        displayReportButton.setOnAction(event -> displayAggregateReport());
     }
 
     private void enableTextFieldGroup(TextField[] textFields, boolean enable) {
@@ -252,10 +247,9 @@ public class MainController {
         retrieveEventReport();
 
         if (backupJson.isSelected()) {
-            try {
-                FileManager.createBackup(jsonFileList, currentDataDirectory);
+            if (FileManager.createBackup(jsonFileList, currentDataDirectory)) {
                 status += "\nBackup JSON files created";
-            } catch (FileNotFoundException e) {
+            } else {
                 status += "\nJSON file backup failed";
             }
 
@@ -331,7 +325,7 @@ public class MainController {
 
         ArrayList<ScoutEntry> scoutEntries = FileManager.deserializeData(jsonFileList);
 
-        this.teamNameList = FileManager.getTeamNameList(currentDataDirectory);
+        File teamNameList = FileManager.getTeamNameList(currentDataDirectory);
 
         this.eventReport = new EventReport(scoutEntries, eventName, currentDataDirectory);
 

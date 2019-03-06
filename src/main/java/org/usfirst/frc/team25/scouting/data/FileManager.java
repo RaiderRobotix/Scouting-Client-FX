@@ -55,16 +55,6 @@ public class FileManager {
     }
 
 
-    private static void deleteFile(String filePath) {
-        try {
-            File file = new File(filePath);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Deserializes and combines contents of JSON files exported by the Android scouting app
      *
@@ -121,7 +111,7 @@ public class FileManager {
                     return file;
                 }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
         }
@@ -138,7 +128,7 @@ public class FileManager {
                     return file;
                 }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
         }
@@ -169,14 +159,14 @@ public class FileManager {
                     jsonFileList.add(file);
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-
+                e.printStackTrace();
             }
         }
 
         return jsonFileList;
     }
 
-    public static boolean createBackup(ArrayList<File> files, File rootDirectory) throws FileNotFoundException {
+    public static boolean createBackup(ArrayList<File> files, File rootDirectory) {
 
         File backupDirectory = new File(rootDirectory.getAbsolutePath() + "/backup");
         if (!backupDirectory.exists()) {
@@ -188,7 +178,11 @@ public class FileManager {
                     "MM-dd HH-mm").format(new Date()) + "." + file.getName().split(FILE_EXTENSION_REGEX)[1];
             File backupFile = new File(backupDirectory.getAbsolutePath() + "/" + newFileName);
 
-            outputFile(backupFile, getFileString(file));
+            try {
+                outputFile(backupFile, getFileString(file));
+            } catch (FileNotFoundException e) {
+                return false;
+            }
         }
 
         return true;

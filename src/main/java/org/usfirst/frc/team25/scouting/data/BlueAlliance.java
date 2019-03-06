@@ -39,17 +39,17 @@ public class BlueAlliance {
      */
     public static String downloadTeamEvents(File outputFolder, int teamNum) {
         int year = Calendar.getInstance().get(Calendar.YEAR);
-        String response = "Downloading event data for Team " + teamNum + " in " + year + "\n";
+        StringBuilder response = new StringBuilder("Downloading event data for Team " + teamNum + " in " + year + "\n");
         try {
             for (Event event : TBA.teamRequest.getEvents(teamNum, year)) {
-                response += "\n" + downloadEventTeamData(outputFolder, event.getKey()) + "\n";
+                response.append("\n").append(downloadEventTeamData(outputFolder, event.getKey())).append("\n");
             }
         } catch (IOException | NullPointerException e) {
             e.printStackTrace();
-            response = teamNum + " is an invalid team number.\nPlease try again.";
+            response = new StringBuilder(teamNum + " is an invalid team number.\nPlease try again.");
         }
 
-        return response;
+        return response.toString();
 
     }
 

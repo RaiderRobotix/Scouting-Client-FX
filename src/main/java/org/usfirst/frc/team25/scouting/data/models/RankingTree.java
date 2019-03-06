@@ -35,7 +35,7 @@ public class RankingTree {
      * @param teamOrder An ArrayList that determines the levels and nodes of a new RankingTree
      */
     public RankingTree(ArrayList<Integer> teamOrder) {
-        this.ranks = new HashMap<Integer, Integer>();
+        this.ranks = new HashMap<>();
         for (int i = 0; i < teamOrder.size(); i++) {
             ranks.put(teamOrder.get(i), teamOrder.size() - i);
         }
@@ -55,7 +55,7 @@ public class RankingTree {
      */
     public HashMap<Integer, Integer> getTreeHashMap() {
         return (HashMap<Integer, Integer>) ranks.entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     }
 
@@ -204,7 +204,7 @@ public class RankingTree {
                 }
                 validComparisons++;
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
 

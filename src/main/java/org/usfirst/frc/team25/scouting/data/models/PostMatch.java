@@ -13,7 +13,7 @@ public class PostMatch {
     private final int teamTwoCompare;
     private final int pickNumber;
     private final String comparison;
-    public HashMap<String, Boolean> robotQuickCommentSelections;
+    private HashMap<String, Boolean> robotQuickCommentSelections;
     private transient String robotQuickCommentStr;
     private String robotComment, focus;
 
