@@ -21,6 +21,7 @@
             <Font name="Tahoma Bold" size="19.0"/>
         </font>
     </Text>
+    <!-- Ensure ID names are consistent with metric names in AllianceReport data array objects -->
     <Text fx:id="redTeleRocketLevelThreeCargo" layoutX="75.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
           text="0.0" textAlignment="CENTER">
         <font>

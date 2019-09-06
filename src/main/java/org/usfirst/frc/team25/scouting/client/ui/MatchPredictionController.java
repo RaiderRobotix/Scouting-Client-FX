@@ -53,6 +53,7 @@ public class MatchPredictionController {
             setText(color, "optimalNullHatches", displayDouble(alliance.getPredictedValue("optimalNullHatches")) + " " +
                     "NULL");
 
+            // Miscellaneous metrics dependent on winPercent
             double winPercent = alliance.calculateWinChance(otherAlliance) * 100;
 
             setText(color, "winChance", displayDouble(winPercent) + "%");
@@ -71,46 +72,68 @@ public class MatchPredictionController {
                 setText(color, "team" + numStrNames[i] + "Cargo",
                         displayDouble(currentTeam.getAverage("totalCargo")));
 
+                // Generate display string for starting position and HAB crossing percentage
                 String startString = "";
-                startString += alliance.getBestStartingLevels()[i] + Character.toString(alliance.getBestSandstormGamePieceCombo().charAt(i)) + " (";
+                char assignedGamePiece = alliance.getBestSandstormGamePieceCombo().charAt(i);
+                startString += alliance.getBestStartingLevels()[i] + Character.toString(assignedGamePiece) + " (";
 
-                if (alliance.getBestSandstormGamePieceCombo().charAt(i) == 'H') {
+                if (assignedGamePiece == 'H') {
                     startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("hatchAutoSuccess"));
                 } else {
-                    startString += (int) Stats.round(100 * currentTeam.getAttemptSuccessRate("cargoAutoSuccess"), 0);
+                    startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("cargoAutoSuccess"));
                 }
                 startString += "%)";
 
-
                 setText(color, "team" + numStrNames[i] + "Start", startString);
 
+                // Generate display string for HAB climbing
                 int bestLevel = alliance.getTeamReports()[i].findBestClimbLevel();
                 String climbString = bestLevel + " (";
-                climbString += (int) Stats.round(100 * currentTeam.getAttemptSuccessRate("level" + numStrNames[bestLevel - 1] + "Climb"), 0);
+                climbString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("level" + numStrNames[bestLevel - 1] + "Climb"));
                 climbString += "%)";
 
                 setText(color, "team" + numStrNames[i] + "Climb", climbString);
-
             }
         }
 
 
     }
 
+    /**
+     * Sets the UI <cdoe>Text</cdoe> component to the specified metric's value
+     *
+     * @param color      Either <code>red</code> or <code>blue</code>, corresponding to the alliance that the value
+     *                   belongs to
+     * @param metricName ID of the <code>Text</code> object, corresponding to a data metric
+     * @param text       String to display in the specified field
+     */
     private void setText(String color, String metricName, String text) {
         String modifiedMetricName = Character.toUpperCase(metricName.charAt(0)) + metricName.substring(1);
         String idName = color + modifiedMetricName;
         ((Text) scene.lookup("#" + idName)).setText(text);
     }
 
+    /**
+     * Converts floating-point numbers into easily-displayable strings
+     * @param value Number to display
+     * @return Value rounded to the tenths place, as a <code>String</code>
+     */
     private String displayDouble(double value) {
         return Double.toString(Stats.round(value, 1));
     }
 
+    /**
+     * Sets the event key text on the screen
+     * @param eventKey Current event's fully-qualified key
+     */
     public void setEventKey(String eventKey) {
         this.eventKey.setText(eventKey);
     }
 
+    /**
+     * Sets the match number text on the screen
+     * @param matchNumber Match number for the current prediction
+     */
     public void setMatchNumber(int matchNumber) {
         matchNumText.setText("Match " + matchNumber + " Predictions");
         matchNumText.setVisible(true);
