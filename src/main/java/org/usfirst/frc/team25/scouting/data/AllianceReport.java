@@ -15,43 +15,43 @@ public class AllianceReport {
      * The confidence level of not reaching the scoring potential when computing the optimal number of null hatch panels
      * E.g. A value of 0.8 means that an alliance would be able to score more, if they weren't "capped" by the null
      * hatch panels, in 20% of the matches they play. Conversely, the number of hatch panels would benefit them in
-     * 80% of the matches they play. Note that if this value is high, the alliance may not be able to place hatch
+     * 80% of the matches they play. Note that if this value is low, the alliance may not be able to place hatch
      * panels at a rate that matches their cargo cycling, thus also being detrimental.
      */
     @SuppressWarnings("FieldCanBeLocal")
     private final double NULL_HATCH_CONFIDENCE = 0.8;
+
     /**
      * The number of Monte Carlo simulation iterations to run to compute standard deviations of functions.
      * A larger number of iterations generally provides greater accuracy.
      */
     private final int MONTE_CARLO_ITERATIONS = 1000;
     private final String[] numStrNames = new String[]{"One", "Two", "Three", "total"};
+
     /**
      * Denotes the best HAB levels to start from at the beginning of the match in order to maximize points earned.
      * Positions correspond to the alliance member position.
      * Assumes that no more than two robots can start from HAB level 2.
      */
     private int[] bestStartingLevels;
+    private final HashMap<String, Double> predictedValues, expectedValues, standardDeviations;
     /**
      * Denotes the best HAB levels to climb at the end of the match in order to maximize points earned.
      * Positions correspond to the alliance member position.
-     * Assumes that no more than two robots can climb HAB level 2 and no more than one robot can climb HAB level 1.
+     * Assumes that no more than two robots can climb HAB level 2 and no more than one robot can climb HAB level 3.
      */
     private int[] bestClimbLevels;
-    /**
-     * A string denoting the game pieces each member of the alliance should start with in order to maximize points
-     * earned. An "H" refers to a hatch panel, while a "C" refers to a cargo. The position of each character refers
-     * to the alliance member position.
-     */
-    private String bestSandstormGamePieceCombo;
+
     /**
      * The average number of scout entries made for each team in the alliance
      */
     private double avgSampleSize;
-    private final HashMap<String, Double> predictedValues;
-    private final HashMap<String, Double> expectedValues;
-    private final HashMap<String, Double> standardDeviations;
-
+    /**
+     * A string denoting the game pieces each member of the alliance should start with in order to maximize points
+     * earned. An "H" refers to a hatch panel, while a "C" refers to a cargo. The position of each character corresponds
+     * to the alliance member position.
+     */
+    private String bestSandstormGamePieceCombo;
 
     /**
      * Constructs a report to simulate an in-match alliance of three teams
@@ -65,6 +65,7 @@ public class AllianceReport {
 
         this.teamReports = new TeamReport[3];
 
+        // Automatically adds team reports to the created array, skipping null entries
         int i = 0;
         for (TeamReport teamReport : teamReports) {
             if (teamReport != null) {
@@ -73,6 +74,7 @@ public class AllianceReport {
             }
         }
 
+        // Auto-populates null team reports with the first (non-null) team report
         for (int j = 0; j < 3; j++) {
             if (this.teamReports[j] == null && this.teamReports[0] != null) {
                 this.teamReports[j] = new TeamReport(this.teamReports[0]);
@@ -83,12 +85,11 @@ public class AllianceReport {
         predictedValues = new HashMap<>();
         bestStartingLevels = new int[3];
         standardDeviations = new HashMap<>();
-
         avgSampleSize = 0;
+
         int validTeamReports = 0;
 
         for (TeamReport teamReport : this.teamReports) {
-
             if (teamReport != null && teamReport.getTeamNum() != 0) {
                 avgSampleSize += teamReport.getEntries().size();
                 validTeamReports++;
@@ -100,13 +101,11 @@ public class AllianceReport {
         }
 
         calculateStats();
-
     }
 
     /**
      * Calculates and stores the predicted point breakdowns, expected values, standard deviations, optimal null hatch
-     * panels
-     * placed, and predicted bonus ranking points of the alliance
+     * panels placed, and predicted bonus ranking points of the alliance
      */
     private void calculateStats() {
 
@@ -115,19 +114,39 @@ public class AllianceReport {
         double sandstormPoints = calculatePredictedSandstormPoints();
         double teleOpPoints = calculatePredictedTeleOpPoints();
         double endgamePoints = calculatePredictedEndgamePoints();
+        predictedValues.put("totalPoints", sandstormPoints + teleOpPoints + endgamePoints);
 
         calculateStandardDeviations();
         calculatePredictedRp();
-
         calculateOptimalNullHatchPanels(NULL_HATCH_CONFIDENCE);
+    }
 
-        predictedValues.put("totalPoints", sandstormPoints + teleOpPoints + endgamePoints);
+    /**
+     * Calculates and stores the expected values of metrics for an alliance.
+     * An expected value of a metric is defined as the sum of the average values of that metric across the teams in
+     * an alliance.
+     */
+    private void calculateExpectedValues() {
+        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
+                TeamReport.overallMetricNames};
 
+        String[] prefixes = new String[]{"auto", "tele", ""};
+
+        for (int i = 0; i < metricSets.length; i++) {
+            for (String metric : metricSets[i]) {
+                double expectedValue = 0;
+
+                for (TeamReport report : teamReports) {
+                    expectedValue += report.getAverage(prefixes[i] + metric);
+                }
+
+                expectedValues.put(prefixes[i] + metric, expectedValue);
+            }
+        }
     }
 
     private double calculatePredictedSandstormBonus() {
         double bestCrossingScore = 0.0;
-
 
         final int[][] levelCombinations = new int[][]{{2, 2, 1}, {2, 1, 2}, {1, 2, 2}, {1, 1, 2},
                 {1, 2, 1}, {1, 1, 1}};
@@ -239,32 +258,6 @@ public class AllianceReport {
                 bestClimbLevels = climbLevelCombo;
             }
         }
-
-        // Assume no assisted climbs
-        /*for (int i = 0; i < teamReports.length; i++) {
-            double endgamePoints = 0.0;
-            int[] climbLevels = new int[3];
-            if (teamReports[i].getAbility("doubleBuddyClimb")) {
-                endgamePoints += teamReports[i].getAverage("numPartnerClimbAssists") * (teamReports[i]
-                        .getAbility("levelThreeBuddyClimb") ? 12 : 6);
-                climbLevels[i] = teamReports[i].findBestClimbLevel();
-                endgamePoints += climbLevels[i] * climbPointValues[climbLevels[i] - 1];
-                for (int j = 0; j < climbLevels.length; j++) {
-                    if (j != i) {
-                        climbLevels[j] = 0;
-                    }
-                }
-            } else if (teamReports[i].getAbility("singleBuddyClimb")) {
-                endgamePoints += teamReports[i].getAverage("numPartnerClimbAssists") * (teamReports[i]
-                        .getAbility("levelThreeBuddyClimb") ? 12 : 6);
-
-                double bestStandaloneClimbPoints = 0.0;
-
-                int bestStandaloneClimbLevel
-
-
-            }
-        }*/
 
         predictedValues.put("endgamePoints", bestEndgamePoints);
 
@@ -416,30 +409,6 @@ public class AllianceReport {
         predictedValues.put("climbRp", climbRpChance);
 
         return climbRpChance;
-    }
-
-    /**
-     * Calculates and stores the expected values of metrics for an alliance.
-     * An expected value of a metric is defined as the sum of the average values of that metric across the teams in
-     * an alliance.
-     */
-    private void calculateExpectedValues() {
-        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
-                TeamReport.overallMetricNames};
-
-        String[] prefixes = new String[]{"auto", "tele", ""};
-
-        for (int i = 0; i < metricSets.length; i++) {
-            for (String metric : metricSets[i]) {
-                double expectedValue = 0;
-
-                for (TeamReport report : teamReports) {
-                    expectedValue += report.getAverage(prefixes[i] + metric);
-                }
-
-                expectedValues.put(prefixes[i] + metric, expectedValue);
-            }
-        }
     }
 
     private ArrayList<ArrayList<HashMap<String, Double>>> generateMonteCarloSet() {
