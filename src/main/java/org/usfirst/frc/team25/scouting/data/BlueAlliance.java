@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -18,7 +19,6 @@ import java.util.Calendar;
 /**
  * Class of static methods used to interface with online data from The Blue Alliance
  *
- * @author sng
  */
 public class BlueAlliance {
 
@@ -26,10 +26,10 @@ public class BlueAlliance {
 
     public static void initializeApi(Class c) throws IOException {
 
-
-        String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"), "utf-8");
+        //Note that secret.txt must be created on each client computer
+        String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"),
+                StandardCharsets.UTF_8);
         TBA = new TBA(apiKey);
-
     }
 
     /**
@@ -207,19 +207,20 @@ public class BlueAlliance {
 
     }
 
-    public static boolean downloadQualificationMatchData(String eventCode, File outputDirectory) throws IOException {
+    /**
+     * Downloads the qualification match game data for matches that have been played at the current event
+     *
+     * @param eventCode       Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
+     * @param outputDirectory Output folder for downloaded file
+     * @throws IOException if <code>outputDirectory</code> does not exist
+     */
+    public static void downloadQualificationMatchData(String eventCode, File outputDirectory) throws IOException {
         ArrayList<Match> matches =
                 SortersFilters.sortByMatchNum(SortersFilters.filterQualification(new ArrayList<>(Arrays.asList(TBA.eventRequest.getMatches(eventCode)))));
-
-        if (matches.size() == 0) {
-            return false;
-        }
 
         Gson gson = new Gson();
         String jsonString = gson.toJson(matches);
         FileManager.outputFile(outputDirectory, "ScoreBreakdown - " + eventCode, "json", jsonString);
-
-        return true;
     }
 
 

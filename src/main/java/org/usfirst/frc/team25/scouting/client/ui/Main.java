@@ -11,6 +11,10 @@ import org.usfirst.frc.team25.scouting.data.BlueAlliance;
 
 import java.io.IOException;
 
+/**
+ * Entry point to the program
+ * Responsible for creating the main scene and initializing the TBA API
+ */
 public class Main extends Application {
 
 
