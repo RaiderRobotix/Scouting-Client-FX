@@ -115,6 +115,7 @@ public class MatchPredictionController {
 
     /**
      * Converts floating-point numbers into easily-displayable strings
+     *
      * @param value Number to display
      * @return Value rounded to the tenths place, as a <code>String</code>
      */
@@ -124,6 +125,7 @@ public class MatchPredictionController {
 
     /**
      * Sets the event key text on the screen
+     *
      * @param eventKey Current event's fully-qualified key
      */
     public void setEventKey(String eventKey) {
@@ -132,6 +134,7 @@ public class MatchPredictionController {
 
     /**
      * Sets the match number text on the screen
+     *
      * @param matchNumber Match number for the current prediction
      */
     public void setMatchNumber(int matchNumber) {

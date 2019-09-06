@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 
 /**
  * Class representation of a tree with multiple nodes, each having a level
- *
- * @author sng
+ * Note: This was not implemented when creating 2019 picklists
  */
 public class RankingTree {
 
@@ -25,7 +24,6 @@ public class RankingTree {
     //Initializes a RankingTree with the structure of an old one
     public RankingTree(HashMap<Integer, Integer> ranks) {
         this.ranks = ranks;
-
     }
 
     /**
@@ -270,9 +268,7 @@ public class RankingTree {
                 }
             }
         }
-
         setLevel(teamNum, getLevel(teamNum) - 1);
-
     }
 
 }

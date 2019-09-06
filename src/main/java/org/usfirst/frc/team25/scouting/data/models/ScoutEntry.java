@@ -1,6 +1,5 @@
 package org.usfirst.frc.team25.scouting.data.models;
 
-
 import java.io.Serializable;
 
 public class ScoutEntry implements Serializable {
@@ -31,8 +30,6 @@ public class ScoutEntry implements Serializable {
 
 
     public void calculateDerivedStats() {
-
-
         //Sandstorm
         sandstormCargo = sandstorm.getRocketCargo() + sandstorm.getCargoShipCargo();
 

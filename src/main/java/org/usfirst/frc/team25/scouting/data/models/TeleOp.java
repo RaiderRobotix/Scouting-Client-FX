@@ -29,6 +29,35 @@ public class TeleOp {
     private int partnerClimbAssistStartLevel;
     private int partnerClimbAssistEndLevel;
 
+    public TeleOp(int cargoShipHatches, int rocketLevelOneHatches, int rocketLevelTwoHatches,
+                  int rocketLevelThreeHatches, int cargoShipCargo, int rocketLevelOneCargo,
+                  int rocketLevelTwoCargo, int rocketLevelThreeCargo, int hatchesDropped,
+                  int cargoDropped, boolean attemptHabClimb, int attemptHabClimbLevel,
+                  boolean successHabClimb, int successHabClimbLevel,
+                  boolean climbAssistedByPartner, int assistingClimbTeamNum,
+                  int numPartnerClimbAssists, int partnerClimbAssistEndLevel,
+                  int partnerClimbAssistStartLevel) {
+        this.cargoShipHatches = cargoShipHatches;
+        this.rocketLevelOneHatches = rocketLevelOneHatches;
+        this.rocketLevelTwoHatches = rocketLevelTwoHatches;
+        this.rocketLevelThreeHatches = rocketLevelThreeHatches;
+        this.cargoShipCargo = cargoShipCargo;
+        this.rocketLevelOneCargo = rocketLevelOneCargo;
+        this.rocketLevelTwoCargo = rocketLevelTwoCargo;
+        this.rocketLevelThreeCargo = rocketLevelThreeCargo;
+        this.hatchesDropped = hatchesDropped;
+        this.cargoDropped = cargoDropped;
+        this.attemptHabClimb = attemptHabClimb;
+        this.attemptHabClimbLevel = attemptHabClimbLevel;
+        this.successHabClimb = successHabClimb;
+        this.successHabClimbLevel = successHabClimbLevel;
+        this.climbAssistedByPartner = climbAssistedByPartner;
+        this.assistingClimbTeamNum = assistingClimbTeamNum;
+        this.numPartnerClimbAssists = numPartnerClimbAssists;
+        this.partnerClimbAssistEndLevel = partnerClimbAssistEndLevel;
+        this.partnerClimbAssistStartLevel = partnerClimbAssistStartLevel;
+    }
+
     public void setCargoShipHatches(int cargoShipHatches) {
         this.cargoShipHatches = cargoShipHatches;
     }
@@ -104,36 +133,6 @@ public class TeleOp {
     public void setPartnerClimbAssistEndLevel(int partnerClimbAssistEndLevel) {
         this.partnerClimbAssistEndLevel = partnerClimbAssistEndLevel;
     }
-
-    public TeleOp(int cargoShipHatches, int rocketLevelOneHatches, int rocketLevelTwoHatches,
-                  int rocketLevelThreeHatches, int cargoShipCargo, int rocketLevelOneCargo,
-                  int rocketLevelTwoCargo, int rocketLevelThreeCargo, int hatchesDropped,
-                  int cargoDropped, boolean attemptHabClimb, int attemptHabClimbLevel,
-                  boolean successHabClimb, int successHabClimbLevel,
-                  boolean climbAssistedByPartner, int assistingClimbTeamNum,
-                  int numPartnerClimbAssists, int partnerClimbAssistEndLevel,
-                  int partnerClimbAssistStartLevel) {
-        this.cargoShipHatches = cargoShipHatches;
-        this.rocketLevelOneHatches = rocketLevelOneHatches;
-        this.rocketLevelTwoHatches = rocketLevelTwoHatches;
-        this.rocketLevelThreeHatches = rocketLevelThreeHatches;
-        this.cargoShipCargo = cargoShipCargo;
-        this.rocketLevelOneCargo = rocketLevelOneCargo;
-        this.rocketLevelTwoCargo = rocketLevelTwoCargo;
-        this.rocketLevelThreeCargo = rocketLevelThreeCargo;
-        this.hatchesDropped = hatchesDropped;
-        this.cargoDropped = cargoDropped;
-        this.attemptHabClimb = attemptHabClimb;
-        this.attemptHabClimbLevel = attemptHabClimbLevel;
-        this.successHabClimb = successHabClimb;
-        this.successHabClimbLevel = successHabClimbLevel;
-        this.climbAssistedByPartner = climbAssistedByPartner;
-        this.assistingClimbTeamNum = assistingClimbTeamNum;
-        this.numPartnerClimbAssists = numPartnerClimbAssists;
-        this.partnerClimbAssistEndLevel = partnerClimbAssistEndLevel;
-        this.partnerClimbAssistStartLevel = partnerClimbAssistStartLevel;
-    }
-
 
     public int getCargoShipHatches() {
         return cargoShipHatches;

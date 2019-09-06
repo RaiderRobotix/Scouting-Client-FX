@@ -1,8 +1,7 @@
 package org.usfirst.frc.team25.scouting.data.models;
 
-
 /**
- * Object model for autonomous period of a match
+ * Object model for autonomous (or sandstorm) period of a match
  */
 public class Autonomous {
 
@@ -27,7 +26,6 @@ public class Autonomous {
     private boolean cargoDroppedRocket;
 
     private boolean opponentCargoShipLineFoul;
-
 
     public Autonomous(int rocketCargo, int rocketHatches, int cargoShipHatches,
                       int cargoShipCargo, int hatchesDropped, int cargoDropped,
@@ -83,20 +81,12 @@ public class Autonomous {
         return opponentCargoShipLineFoul;
     }
 
-    public void setCrossHabLine(boolean crossHabLine) {
-        this.crossHabLine = crossHabLine;
-    }
-
     public boolean isFrontCargoShipHatchCapable() {
         return frontCargoShipHatchCapable;
     }
 
     public boolean isSideCargoShipHatchCapable() {
         return sideCargoShipHatchCapable;
-    }
-
-    public void setSideCargoShipHatchCapable(boolean sideCargoShipHatchCapable) {
-        this.sideCargoShipHatchCapable = sideCargoShipHatchCapable;
     }
 
     public boolean isHatchesDroppedRocket() {
@@ -111,12 +101,20 @@ public class Autonomous {
         return cargoDroppedCargoShip;
     }
 
-    public void setCargoDroppedCargoShip(boolean cargoDroppedCargoShip) {
-        this.cargoDroppedCargoShip = cargoDroppedCargoShip;
-    }
-
     public boolean isCargoDroppedRocket() {
         return cargoDroppedRocket;
+    }
+
+    public void setCrossHabLine(boolean crossHabLine) {
+        this.crossHabLine = crossHabLine;
+    }
+
+    public void setSideCargoShipHatchCapable(boolean sideCargoShipHatchCapable) {
+        this.sideCargoShipHatchCapable = sideCargoShipHatchCapable;
+    }
+
+    public void setCargoDroppedCargoShip(boolean cargoDroppedCargoShip) {
+        this.cargoDroppedCargoShip = cargoDroppedCargoShip;
     }
 
     public void setCargoDroppedRocket(boolean cargoDroppedRocket) {

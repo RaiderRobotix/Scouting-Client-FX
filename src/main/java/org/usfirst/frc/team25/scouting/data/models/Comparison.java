@@ -2,8 +2,6 @@ package org.usfirst.frc.team25.scouting.data.models;
 
 /**
  * Class that holds a comparison between two teams
- *
- * @author sng
  */
 public class Comparison {
 
