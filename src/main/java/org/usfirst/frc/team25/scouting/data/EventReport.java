@@ -220,7 +220,7 @@ public class EventReport {
             knownPartnersArray.add(teamReports.get(team));
         }
 
-        pg.generateCalculatedFirstPicklist(knownPartnersArray);
+        pg.generateCalculatedPickAbilityList(knownPartnersArray);
     }
 
     /**

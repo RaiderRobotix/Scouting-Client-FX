@@ -187,7 +187,7 @@ public class MainController {
         if (fixErrors.isSelected()) {
             InaccuracyFixer fixer = new InaccuracyFixer(eventReport);
             if (fixer.fixInaccuraciesTBA()) {
-                fixer.generateInaccuracyList(currentDataDirectory);
+                fixer.saveInaccuracyList(currentDataDirectory);
                 status += "\nInaccuracies fixed and inaccuracy list generated";
             } else {
                 status += "\nNo inaccuracies found or Internet unavailable";

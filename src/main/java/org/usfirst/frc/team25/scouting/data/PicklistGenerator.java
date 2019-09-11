@@ -568,7 +568,7 @@ class PicklistGenerator {
      * Generates a list based on a calculated ability to be a good first pick robot
      * Calculated ability derived from collected metrics (e.g. climbs, cargo, hatches)
      */
-    public void generateCalculatedFirstPicklist(ArrayList<TeamReport> knownPartners) {
+    public void generateCalculatedPickAbilityList(ArrayList<TeamReport> knownPartners) {
         double baselineScore = 0.0;
         if (knownPartners.size() != 0) {
             baselineScore = new AllianceReport(knownPartners).getPredictedValue("totalPoints");
@@ -604,15 +604,6 @@ class PicklistGenerator {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Generates a list based on a calculated ability to be a good first pick robot
-     * Calculated ability derived from collected metrics (e.g. climbs, cargo, hatches)
-     * TODO write this
-     */
-    public void generateCalculatedSecondPicklist() {
-
     }
 
 }
