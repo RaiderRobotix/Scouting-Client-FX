@@ -27,7 +27,7 @@ public class InaccuracyFixer {
      * For the 2019 season, this fixes HAB line crossings, starting levels, partner climbs assisted, and HAB climbs
      * Generates a list of inaccuracies, along with scout names, team numbers and match numbers
      *
-     * @return <code>true</code> if inaccuracies are found, false otherwise
+     * @return <code>true</code> if inaccuracies are found, <code>false</code> otherwise
      */
     public boolean fixInaccuraciesTBA() {
 

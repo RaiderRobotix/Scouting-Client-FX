@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Class representation of a tree with multiple nodes, each having a level
- * Note: This was not implemented when creating 2019 picklists
+ * Class representation of a tree with multiple nodes, each having a level that represents the position of a team on
+ * a picklist
+ * Note: This was not implemented when creating 2019 picklists and was mostly created as an experiment for an
+ * improved comparison picklist during Summer 2018
  */
 public class RankingTree {
 

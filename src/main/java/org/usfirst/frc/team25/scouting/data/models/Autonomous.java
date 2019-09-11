@@ -27,6 +27,7 @@ public class Autonomous {
 
     private boolean opponentCargoShipLineFoul;
 
+
     public Autonomous(int rocketCargo, int rocketHatches, int cargoShipHatches,
                       int cargoShipCargo, int hatchesDropped, int cargoDropped,
                       boolean crossHabLine, boolean opponentCargoShipLineFoul,
