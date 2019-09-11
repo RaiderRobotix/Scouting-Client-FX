@@ -7,6 +7,7 @@ import com.thebluealliance.api.v3.models.SimpleTeam;
 import com.thebluealliance.api.v3.models.Team;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -168,5 +169,41 @@ public class SortersFilters {
             }
         }
         return correctGetter;
+    }
+
+    /**
+     * Retrieves the set of values associated with a particular metric in a data object
+     *
+     * @param dataset    ArrayList of data objects containing the desired metric
+     * @param metricName The name of the metric
+     * @param metricType Class type of the metric (e.g. boolean, int, double)
+     * @return A double array of values for that metric from <code>dataset</code>
+     */
+    public static double[] getDoubleArray(ArrayList<Object> dataset, String metricName, Class metricType) {
+        double[] resultArray = new double[dataset.size()];
+
+        int shiftIndex = 3;
+
+        if (metricType.equals(boolean.class)) {
+            shiftIndex = 2;
+        }
+
+        Method correctMethod = getCorrectGetter(dataset.get(0).getClass(), metricName, shiftIndex);
+
+        for (int i = 0; i < dataset.size(); i++) {
+            try {
+                if (metricType.equals(boolean.class)) {
+                    resultArray[i] = (boolean) correctMethod.invoke(dataset.get(i)) ? 1.0 : 0.0;
+                } else if (metricType.equals(int.class)) {
+                    resultArray[i] = ((Integer) correctMethod.invoke(dataset.get(i))).doubleValue();
+                } else if (metricType.equals(double.class)) {
+                    resultArray[i] = (Double) correctMethod.invoke(dataset.get(i));
+                }
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return resultArray;
     }
 }

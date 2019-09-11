@@ -1,13 +1,9 @@
 package org.usfirst.frc.team25.scouting.data;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.TDistribution;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -15,7 +11,13 @@ import java.util.Random;
  */
 public class Stats {
 
-
+    /**
+     * Rounds a value to the specified number of decimal places
+     *
+     * @param value  Double value to be rounded
+     * @param places Number of decimal places to round the value. Must be a non-negative integer.
+     * @return Value rounded to the number of places
+     */
     public static double round(double value, int places) {
         if (places < 0) {
             throw new IllegalArgumentException();
@@ -27,51 +29,32 @@ public class Stats {
     }
 
     /**
-     * Calculates the sum of an array of numbers
+     * Calculates the sample standard deviation of an attempt-success metric or proportion
      *
-     * @param dataset Array of numbers to be summed
-     * @return Sum of the elements in <code>dataset</code>
-     */
-    public static double sum(double[] dataset) {
-        double sum = 0;
-        for (double num : dataset) {
-            sum += num;
-        }
-
-        return sum;
-    }
-
-    /**
-     * Calculates the standard deviations of sets of data from independent events
-     *
-     * @param datasets An array of <code>double</code> arrays that contain sample data points of a metric
-     * @return The standard deviation of the data
-     */
-    public static double standardDeviation(double[][] datasets) {
-        double totalVariance = 0.0;
-
-        for (double[] dataset : datasets) {
-            totalVariance += Math.pow(standardDeviation(dataset), 2);
-        }
-
-        return Math.sqrt(totalVariance);
-    }
-
-    /**
-     * @param attempts
-     * @param successes
-     * @return
+     * @param attempts  Number of attempts for a task
+     * @param successes Number of successes for a task
+     * @return The standard deviation of the attempt-success metric
      */
     public static double standardDeviation(int attempts, int successes) {
         if (attempts < 2) {
             return 0.0;
         }
 
-        return Math.sqrt(((double) successes * (attempts - successes)) / (attempts * (attempts - 1)));
+        return Math.sqrt((successes * (1 - ((double) successes) / attempts)) / (attempts - 1));
     }
 
     /**
-     * Calculates the uncorrected standard deviation of an event
+     * Calculates the standard error for a sample dataset of a metric
+     *
+     * @param dataset Array of sample values
+     * @return Standard error of those values
+     */
+    public static double standardError(double[] dataset) {
+        return standardError(standardDeviation(dataset), dataset.length);
+    }
+
+    /**
+     * Calculates the uncorrected sample standard deviation of an event
      *
      * @param dataset Array with data points
      * @return Uncorrected standard deviation
@@ -84,121 +67,11 @@ public class Stats {
             sumSquareDev += Math.pow(num - average, 2);
         }
 
-
         if (dataset.length == 1) {
             return 0;
         }
 
         return Math.sqrt(sumSquareDev / (dataset.length - 1));
-    }
-
-    /**
-     *
-     * @param dataset
-     * @return
-     */
-    public static double standardError(double[] dataset) {
-        return standardError(standardDeviation(dataset), dataset.length);
-    }
-
-    /**
-     *
-     * @param standardDeviation
-     * @param sampleSize
-     * @return
-     */
-    public static double standardError(double standardDeviation, double sampleSize) {
-
-        return standardDeviation / Math.sqrt(sampleSize);
-    }
-
-    /**
-     *
-     * @param constant
-     * @param standardDeviation
-     * @return
-     */
-    public static double multiplyVariance(double constant, double standardDeviation) {
-        return Math.pow(constant, 2) * Math.pow(standardDeviation, 2);
-    }
-
-    /**
-     *
-     * @param percentile
-     * @param mean
-     * @param standardDeviation
-     * @return
-     */
-    public static double inverseZValue(double percentile, double mean, double standardDeviation) {
-        double zScore = inverseZScore(percentile);
-
-        return zScore * standardDeviation + mean;
-
-    }
-
-    /**
-     * @param area
-     * @return
-     */
-    public static double inverseZScore(double area) {
-        NormalDistribution normalDistribution = new NormalDistribution();
-        return normalDistribution.inverseCumulativeProbability(area);
-    }
-
-    /**
-     *
-     * @param mean
-     * @param standardDeviation
-     * @return
-     */
-    public static double randomNormalValue(double mean, double standardDeviation) {
-        Random r = new Random();
-        return Math.max(r.nextGaussian() * standardDeviation + mean, 0);
-    }
-
-    /**
-     * @param value
-     * @param mean
-     * @param standardDeviation
-     * @return
-     */
-    public static double rightTailNormalProbability(double value, double mean, double standardDeviation) {
-        return normalCumulativeDistribution(value, Double.MAX_VALUE, mean, standardDeviation);
-    }
-
-    /**
-     *
-     * @param lowerBound
-     * @param upperBound
-     * @param mean
-     * @param standardDeviation
-     * @return
-     */
-    public static double normalCumulativeDistribution(double lowerBound, double upperBound, double mean,
-                                                      double standardDeviation) {
-        NormalDistribution normalDistribution = new NormalDistribution(mean, standardDeviation);
-        return normalDistribution.probability(lowerBound, upperBound);
-    }
-
-    /**
-     * Cumulative distribution function of Student's t-distribution centered at 0.
-     *
-     * @param degreesOfFreedom The number of degrees of freedom of the model, where 0 <= <code>degreesOfFreedom</code>
-     * @param tScore           The upper limit of the cumulative distribution function
-     * @return The cumulative distribution of the model from -infinity to <code>tScore</code>
-     */
-    public static double tCumulativeDistribution(double degreesOfFreedom, double tScore) {
-        TDistribution tDistribution = new TDistribution(degreesOfFreedom);
-        return tDistribution.cumulativeProbability(tScore);
-    }
-
-    /**
-     * @param percentile
-     * @param dataset
-     * @return
-     */
-    public static double inverseTValue(double percentile, double[] dataset) {
-        return inverseTValue(percentile, dataset.length - 1, mean(dataset), standardDeviation(dataset));
     }
 
     /**
@@ -216,38 +89,63 @@ public class Stats {
     }
 
     /**
-     * @param percentile
-     * @param degreesOfFreedom
-     * @param mean
-     * @param standardDeviation
-     * @return
+     * Calculates the sum of an array of doubles
+     *
+     * @param dataset Array of numbers to be summed
+     * @return Sum of the elements in <code>dataset</code>
      */
-    public static double inverseTValue(double percentile, double degreesOfFreedom, double mean,
-                                       double standardDeviation) {
-        double tScore = inverseTScore(percentile, degreesOfFreedom);
-        double standardError = standardError(standardDeviation, (int) degreesOfFreedom + 1);
-        return tScore * standardError + mean;
+    public static double sum(double[] dataset) {
+        double sum = 0;
+        for (double num : dataset) {
+            sum += num;
+        }
 
+        return sum;
     }
 
     /**
+     * Calculates the standard error of a metric, given its standard deviation and sample size
      *
-     * @param area
-     * @param degreesOfFreedom
-     * @return
+     * @param standardDeviation Metric's standard deviation
+     * @param sampleSize        Metric's sample size (or average sample size)
+     * @return Standard error of the metric
      */
-    public static double inverseTScore(double area, double degreesOfFreedom) {
-        TDistribution tDistribution = new TDistribution(degreesOfFreedom);
-        return tDistribution.inverseCumulativeProbability(area);
+    public static double standardError(double standardDeviation, double sampleSize) {
+        return standardDeviation / Math.sqrt(sampleSize);
     }
 
     /**
+     * Multiplies a standard deviation by a constant, than returns its variance
+     * Equal to the variance of c * SD(metric)
      *
-     * @param confidenceLevel
-     * @param degreesOfFreedom
-     * @param mean
-     * @param standardDeviation
-     * @return
+     * @param constant          Constant that the standard deviation is multiplied by (e.g. for point values of a level)
+     * @param standardDeviation Standard deviation that is multiplied
+     * @return The variance of the standard deviation multiplied by a constant
+     */
+    public static double multiplyVariance(double constant, double standardDeviation) {
+        return Math.pow(constant, 2) * Math.pow(standardDeviation, 2);
+    }
+
+    /**
+     * Generates a pseudorandom value from the specified Normal probability distribution
+     *
+     * @param mean              Center of the probability distribution
+     * @param standardDeviation Standard deviation of the distribution
+     * @return A random value along a Normal probability distribution with the given parameters
+     */
+    public static double randomNormalValue(double mean, double standardDeviation) {
+        Random r = new Random();
+        return Math.max(r.nextGaussian() * standardDeviation + mean, 0);
+    }
+
+    /**
+     * Retrieves the upper bound of a t confidence interval with the specified confidence level
+     *
+     * @param confidenceLevel   Confidence level of the interval, must be between 0.0 and 1.0
+     * @param degreesOfFreedom  Degrees of freedom of the t distribution
+     * @param mean              Center value of the t distribution
+     * @param standardDeviation Standard deviation of the t distribution
+     * @return Greatest upper bound of the generated t confidence interval
      */
     public static double getUpperBoundTConfidenceInverval(double confidenceLevel, double degreesOfFreedom,
                                                           double mean, double standardDeviation) {
@@ -255,13 +153,56 @@ public class Stats {
         return inverseTValue(percentile, degreesOfFreedom, mean, standardDeviation);
     }
 
+
     /**
+     * Cumulative distribution function of Student's t-distribution centered at 0.
      *
-     * @param confidenceLevel
-     * @param degreesOfFreedom
-     * @param mean
-     * @param standardDeviation
-     * @return
+     * @param degreesOfFreedom The number of degrees of freedom of the model, where 0 <= <code>degreesOfFreedom</code>
+     * @param tScore           The upper limit of the cumulative distribution function
+     * @return The cumulative distribution of the model from -infinity to <code>tScore</code>
+     */
+    public static double tCumulativeDistribution(double degreesOfFreedom, double tScore) {
+        TDistribution tDistribution = new TDistribution(degreesOfFreedom);
+        return tDistribution.cumulativeProbability(tScore);
+    }
+
+    /**
+     * Calculates the value for a particular percentile score in a t distributions with the specified parameters
+     *
+     * @param percentile        Percentile to retrieve the value for
+     * @param degreesOfFreedom  Degrees of freedom of the t distribution
+     * @param mean              Center value of the t distribution
+     * @param standardDeviation Standard deviation of the t distribution
+     * @return The value for the specified percentile in the distribution
+     */
+    public static double inverseTValue(double percentile, double degreesOfFreedom, double mean,
+                                       double standardDeviation) {
+        double tScore = inverseTScore(percentile, degreesOfFreedom);
+        double standardError = standardError(standardDeviation, (int) degreesOfFreedom + 1);
+        return tScore * standardError + mean;
+    }
+
+    /**
+     * Calculates the t score at which the specified area in a t cumulative distribution function is reached in a t
+     * probability distribution with the specified degrees of freedom
+     *
+     * @param area             Area or percentile for the desired t score
+     * @param degreesOfFreedom Degrees of freedom of the t distribution
+     * @return The t score for the given area, computed via an inverse probability function
+     */
+    public static double inverseTScore(double area, double degreesOfFreedom) {
+        TDistribution tDistribution = new TDistribution(degreesOfFreedom);
+        return tDistribution.inverseCumulativeProbability(area);
+    }
+
+    /**
+     * Retrieves the lower bound of a t confidence interval with the specified confidence level
+     *
+     * @param confidenceLevel   Confidence level of the interval, must be between 0.0 and 1.0
+     * @param degreesOfFreedom  Degrees of freedom of the t distribution
+     * @param mean              Center value of the t distribution
+     * @param standardDeviation Standard deviation of the t distribution
+     * @return Lower bound of the generated t confidence interval
      */
     public static double getLowerBoundTConfidenceInverval(double confidenceLevel, double degreesOfFreedom,
                                                           double mean, double standardDeviation) {
@@ -270,13 +211,14 @@ public class Stats {
     }
 
     /**
-     * Calculates the t-score of a two-sample t-test with two independent random variables
+     * Calculates the t-score of a two-sample t-test of the difference of two independent
+     * random variables
      *
      * @param meanOne          The sample mean of the first variable
      * @param standardErrorOne The standard error of the first variable
      * @param meanTwo          The sample mean of the second variable
      * @param standardErrorTwo The standard error of the second variable
-     * @return The t statistic of the two sample means, based on Welch's t-test
+     * @return The t statistic of the difference of the two sample means, based on Welch's t-test
      */
     public static double twoSampleMeanTScore(double meanOne, double standardErrorOne, double meanTwo,
                                              double standardErrorTwo) {
@@ -284,9 +226,11 @@ public class Stats {
     }
 
     /**
+     * Computes the standard deviation of a random variable that is the sum of several independent random variables
+     * e.g. Returns SD(X) where X = Y + Z and {SD(Y), SD(Z)} is the argument
      *
-     * @param standardDeviations
-     * @return
+     * @param standardDeviations The standard deviations of the random variables that make up the larger random variable
+     * @return The standard deviation of the composite random variable
      */
     public static double sumStandardDeviation(double[] standardDeviations) {
         double totalVariance = 0.0;
@@ -299,7 +243,8 @@ public class Stats {
     }
 
     /**
-     * Calculates the degrees of freedom in a two-sample t-test with two independent random variables
+     * Calculates the degrees of freedom in the distribution of a two-sample t-test with two independent random
+     * variables, as given by the Welch-Satterthwaite equation
      *
      * @param standardErrorOne The standard error of the first variable
      * @param sampleSizeOne    The sample size of the first variable
@@ -311,45 +256,8 @@ public class Stats {
                                                    double standardErrorTwo, double sampleSizeTwo) {
         double numerator = Math.pow(Math.pow(standardErrorOne, 2) + Math.pow(standardErrorTwo, 2), 2);
         double denominator =
-                Math.pow(standardErrorOne, 4) * 1 / (sampleSizeOne - 1) + Math.pow(standardErrorTwo, 4) * 1 / (sampleSizeTwo - 1);
+                Math.pow(standardErrorOne, 4) / (sampleSizeOne - 1) + Math.pow(standardErrorTwo, 4) / (sampleSizeTwo - 1);
         return numerator / denominator;
     }
-
-    /**
-     *
-     * @param dataset
-     * @param metricName
-     * @param metricType
-     * @return
-     */
-    public static double[] getDoubleArray(ArrayList<Object> dataset, String metricName, Class metricType) {
-        double[] resultArray = new double[dataset.size()];
-
-        int shiftIndex = 3;
-
-        if (metricType.equals(boolean.class)) {
-            shiftIndex = 2;
-        }
-
-        Method correctMethod = SortersFilters.getCorrectGetter(dataset.get(0).getClass(), metricName, shiftIndex);
-
-        for (int i = 0; i < dataset.size(); i++) {
-            try {
-                if (metricType.equals(boolean.class)) {
-                    resultArray[i] = (boolean) correctMethod.invoke(dataset.get(i)) ? 1.0 : 0.0;
-                } else if (metricType.equals(int.class)) {
-                    resultArray[i] = ((Integer) correctMethod.invoke(dataset.get(i))).doubleValue();
-                } else if (metricType.equals(double.class)) {
-                    resultArray[i] = (Double) correctMethod.invoke(dataset.get(i));
-                }
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return resultArray;
-    }
-
-
 }
  

@@ -656,7 +656,7 @@ public class AllianceReport {
             }
         }
 
-        // Replace simulatioon values with the actual ones
+        // Replace simulation values with the actual ones
         calculateExpectedValues();
         calculatePredictedTeleOpPoints();
 
@@ -732,7 +732,8 @@ public class AllianceReport {
         double optimisticCargoShipHatches = averageCargoShipHatches;
 
         if (avgSampleSize > 1) {
-            optimisticCargoShipHatches = Stats.inverseTValue(confidenceLevel, avgSampleSize, averageCargoShipHatches,
+            optimisticCargoShipHatches = Stats.inverseTValue(confidenceLevel, avgSampleSize - 1,
+                    averageCargoShipHatches,
                     standardDeviation);
         }
 

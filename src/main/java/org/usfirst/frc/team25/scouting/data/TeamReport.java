@@ -198,15 +198,15 @@ public class TeamReport {
         ArrayList<Object> overallList = new ArrayList<>(entries);
 
         for (String metric : autoMetricNames) {
-            double[] values = Stats.getDoubleArray(autoList, metric, int.class);
+            double[] values = SortersFilters.getDoubleArray(autoList, metric, int.class);
             averages.put("auto" + metric, Stats.mean(values));
         }
         for (String metric : teleMetricNames) {
-            double[] values = Stats.getDoubleArray(teleList, metric, int.class);
+            double[] values = SortersFilters.getDoubleArray(teleList, metric, int.class);
             averages.put("tele" + metric, Stats.mean(values));
         }
         for (String metric : overallMetricNames) {
-            double[] values = Stats.getDoubleArray(overallList, metric, int.class);
+            double[] values = SortersFilters.getDoubleArray(overallList, metric, int.class);
             averages.put(metric, Stats.mean(values));
         }
     }
@@ -319,15 +319,15 @@ public class TeamReport {
         ArrayList<Object> overallList = new ArrayList<>(entries);
 
         for (String metric : autoMetricNames) {
-            double[] values = Stats.getDoubleArray(autoList, metric, int.class);
+            double[] values = SortersFilters.getDoubleArray(autoList, metric, int.class);
             standardDeviations.put("auto" + metric, Stats.standardDeviation(values));
         }
         for (String metric : teleMetricNames) {
-            double[] values = Stats.getDoubleArray(teleList, metric, int.class);
+            double[] values = SortersFilters.getDoubleArray(teleList, metric, int.class);
             standardDeviations.put("tele" + metric, Stats.standardDeviation(values));
         }
         for (String metric : overallMetricNames) {
-            double[] values = Stats.getDoubleArray(overallList, metric, int.class);
+            double[] values = SortersFilters.getDoubleArray(overallList, metric, int.class);
             standardDeviations.put(metric, Stats.standardDeviation(values));
         }
     }

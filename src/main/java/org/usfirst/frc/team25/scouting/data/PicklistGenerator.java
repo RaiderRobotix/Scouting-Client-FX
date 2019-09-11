@@ -11,7 +11,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-class PicklistGenerator {
+/**
+ * Class to create various picklists with different methodologies
+ * Note: This class contains many expermental methods for generating picklists that are no longer used
+ */
+public class PicklistGenerator {
 
     /**
      * An ArrayList containing all scout entries, deserialized from JSON files
@@ -57,7 +61,7 @@ class PicklistGenerator {
 
         this.eventName = eventName;
 
-        //Create list of all comparisons from the scout entries
+        // Create list of all comparisons from the scout entries
         for (ScoutEntry entry : scoutEntries) {
 
             int t1 = entry.getPostMatch().getTeamOneCompare(), t2 = entry.getPostMatch().getTeamTwoCompare();
@@ -82,7 +86,14 @@ class PicklistGenerator {
             }
         }
 
-        //Create a second comparison list to iterate through; you can't modify an array list
+        removeComparisonContradictions();
+    }
+
+    /**
+     * Removes the comparisons that equally contradict each other in <code>comparisons</code>
+     */
+    private void removeComparisonContradictions() {
+        // Create a second comparison list to iterate through; you can't modify an array list
         // that you're currently iterating through
         @SuppressWarnings("unchecked") ArrayList<Comparison> dupComparisonList =
                 (ArrayList<Comparison>) comparisons.clone();
@@ -111,9 +122,295 @@ class PicklistGenerator {
                 compLookup.get(comp.getHigherTeam()).add(comp);
             }
         }
+    }
 
-        //That's it for processing the scout entries; the rest of the methods in the class
-        //will make use of the ArrayLists and HashMaps we created
+    /**
+     * Formats two teams as a tuple string, with the lower-numbered team listed first
+     *
+     * @param team1 First team's number
+     * @param team2 Second team's number
+     * @return Formatted string
+     */
+    private static String getTeamTupleString(int team1, int team2) {
+        if (team1 > team2) {
+            return "(" + team2 + ", " + team1 + ")";
+        }
+        return "(" + team1 + ", " + team2 + ")";
+    }
+
+    /**
+     * Generates a list where a recommended (better) team gets +1 point for every comparison,
+     * while the worse team gets -1 point. Equal teams receive zero points.
+     * May be inaccurate due to one team playing consistently adjacent to better teams, etc.
+     * Not recommended for serious analysis.
+     */
+    public void generateComparePointList() {
+        HashMap<Integer, Double> compareList = new HashMap<>();
+        for (Comparison comp : comparisons) {
+            int better = comp.getBetterTeam();
+            int worse = comp.getWorseTeam();
+            if (!compareList.containsKey(better)) {
+                compareList.put(better, (double) 1);
+            } else {
+                compareList.put(better, compareList.get(better) + 1);
+            }
+
+            if (!compareList.containsKey(worse)) {
+                compareList.put(worse, (double) -1);
+            } else {
+                compareList.put(worse, compareList.get(worse) - 1);
+            }
+        }
+
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Compare Points - " + eventName, "txt",
+                    hashMapToStringList(compareList));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Formats a hash map into a printable string, with team numbers as keys
+     * and points as values. More points indicate a better team.
+     *
+     * @param teamPointsMap HashMap of team numbers and their ranking points to process
+     * @return Formatted list of team numbers and their picklist point values
+     */
+    private String hashMapToStringList(HashMap<Integer, Double> teamPointsMap) {
+        teamPointsMap = SortersFilters.sortByComparatorDouble(teamPointsMap, false);
+        StringBuilder result = new StringBuilder();
+        int rank = 1;
+        for (Map.Entry<Integer, Double> entry : teamPointsMap.entrySet()) {
+            result.append(rank).append(". ").append(entry.getKey()).append(": ");
+            result.append(entry.getValue()).append(" pts\n");
+            rank++;
+        }
+        return result.toString();
+    }
+
+    /**
+     * Generates a list that is the summation of all given pick points
+     * May be inaccurate due to some teams receiving more entries than others
+     * and the different rating scales of each scouts (some may tend to give higher ratings, etc.)
+     * Generally representative of robot ability.
+     */
+    public void generatePickPointList() {
+        // Extract raw values for each team
+        HashMap<Integer, ArrayList<Integer>> pickPointSets = new HashMap<>();
+
+        for (ScoutEntry entry : scoutEntries) {
+            try {
+                Integer teamNum = entry.getPreMatch().getTeamNum();
+
+                if (!pickPointSets.containsKey(teamNum)) {
+                    pickPointSets.put(teamNum, new ArrayList<>());
+                }
+
+                pickPointSets.get(teamNum).add(entry.getPostMatch().getPickNumber());
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+
+        HashMap<Integer, Double> pickPoints = new HashMap<>();
+
+        for (int key : pickPointSets.keySet()) {
+            double[] pickPointArray = new double[pickPointSets.get(key).size()];
+
+            for (int i = 0; i < pickPointSets.get(key).size(); i++) {
+                pickPointArray[i] = pickPointSets.get(key).get(i);
+            }
+
+            pickPoints.put(key, Stats.round(Stats.mean(pickPointArray), 2));
+        }
+
+
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Pick Points - " + eventName, "txt",
+                    hashMapToStringList(pickPoints));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Generates a list based on a calculated ability to be a good first pick alliance partner
+     * Calculated ability derived from collected metrics (e.g. climbs, cargo, hatches)
+     * Calculated ability takes the difference between an alliance's predicted point contribution with a particular
+     * team compared to not having that team. Also a function of a team's dysfunctional percentage.
+     *
+     * @param knownPartners A list of teams reports representing teams that each team is always allied with, to be
+     *                      used as a baseline value for point contribution
+     */
+    public void generateCalculatedPickAbilityList(ArrayList<TeamReport> knownPartners) {
+        double baselineScore = 0.0;
+        if (knownPartners.size() != 0) {
+            baselineScore = new AllianceReport(knownPartners).getPredictedValue("totalPoints");
+        }
+
+        HashMap<Integer, Double> pickPoints = new HashMap<>();
+
+        for (int team : teamNums) {
+            TeamReport currentTeamReport = teamReports.get(team);
+
+            if (knownPartners.contains(currentTeamReport)) {
+                continue;
+            }
+
+            ArrayList<TeamReport> potentialAllianceTeams = new ArrayList<>(knownPartners);
+
+            potentialAllianceTeams.add(currentTeamReport);
+
+            double dysfunctionalPercent =
+                    (double) currentTeamReport.getCount("dysfunctional") / (currentTeamReport.getCount("noShow") + currentTeamReport.getEntries().size());
+
+            double pointValue =
+                    (1 - dysfunctionalPercent) * (new AllianceReport(potentialAllianceTeams).getPredictedValue(
+                            "totalPoints") - baselineScore);
+
+            pickPoints.put(team, Stats.round(pointValue, 2));
+        }
+
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Point Contributions - " + eventName, "txt",
+                    hashMapToStringList(pickPoints));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Randomly generates many trees , then averages the ranks of teams in trees above a certain compliance
+     * percentage (threshold is a function of the number of teams).
+     * Needs many iterations, but the final result is 80-90% compliant, depending on the number of transitive
+     * contradictions.
+     * Running the method multiple times will lead to different lists, but the top and bottom tiers are generally
+     * consistent.
+     * Note, however, that we may already be reaching the best possible trees
+     */
+    public void generateBogoCompareList() {
+
+        RankingTree bestTree = new RankingTree(teamNums);
+        double bestCompPer = 0;
+
+
+        HashMap<Integer, Integer> bestRanks = new HashMap<>();
+
+        //Derived through experimentation
+        double goodThreshPercent = 98.8 * Math.pow(0.988, teamNums.size());
+        int maxIterations = 1000;
+
+
+        for (int k = 0; k < 100; k++) {
+
+            int goodIterations = 0;
+            HashMap<Integer, Integer> totalRanks = new HashMap<>();
+            for (int i = 0; i < maxIterations; i++) {
+
+                //Randomly shuffles teamNums
+                Collections.shuffle(teamNums);
+
+                RankingTree tree1 = new RankingTree(teamNums);
+                double compPer = tree1.getCompliancePercent(comparisons);
+                if (compPer > bestCompPer) {
+                    bestTree = new RankingTree(tree1.getTreeHashMap());
+                    bestCompPer = compPer;
+                }
+
+                //Add the levels from a decent generated tree
+                if (compPer > goodThreshPercent) {
+                    for (int j = 0; j < teamNums.size(); j++) {
+                        if (!totalRanks.containsKey(teamNums.get(j))) {
+                            totalRanks.put(teamNums.get(j), teamNums.size() - teamNums.indexOf(j));
+                        } else {
+                            totalRanks.put(teamNums.get(j), totalRanks.get(teamNums.get(j)) + teamNums.size() - j);
+                        }
+
+                    }
+                    goodIterations++;
+                }
+
+            }
+            for (Integer teamNum : teamNums) {
+                if (goodIterations < 10) {
+                    goodIterations = 10;
+                }
+                if (!bestRanks.containsKey(teamNum)) {
+                    bestRanks.put(teamNum, totalRanks.get(teamNum) / (goodIterations / 10));
+                } else if (totalRanks.containsKey(teamNum)) {
+                    bestRanks.put(teamNum,
+                            totalRanks.get(teamNum) / (goodIterations / 10) + bestRanks.get(teamNum));
+                }
+            }
+        }
+
+
+        bestTree = new RankingTree(bestRanks);
+
+        //generateHeadToHeadList(bestTree.toArrayList(), "bogo");
+
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Bogo Compare - " + eventName, "txt",
+                    rankTreeStringToStringList(bestTree));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Formats a ranking tree into a printable string
+     * with the best team having the highest level
+     *
+     * @param tree RankingTree to process
+     * @return Formatted list, with tree levels not clamped down
+     */
+    private String rankTreeStringToStringList(RankingTree tree) {
+        String treeString = tree.toString();
+        StringBuilder result = new StringBuilder();
+        int rank = 1;
+        for (String line : treeString.split("\n")) {
+            result.append(rank).append(". ").append(line.split(",")[0]).append(": ");
+            result.append(line.split(",")[1]).append(" pts\n");
+            rank++;
+        }
+        return result.toString();
+    }
+
+    /**
+     * Given a ranked list (generated from any method) of teams, swap teams if there are any
+     * head-to-head conflicts with adjacent teams. Only relies on comparisons, not another metric
+     * Essentially an implementation of bubble sort.
+     *
+     * @param orderedList
+     */
+    public void generateHeadToHeadList(ArrayList<Integer> orderedList, String listTitle) {
+
+        boolean swapsNeeded;
+        do {
+            swapsNeeded = false;
+            for (int i = 0; i < orderedList.size() - 1; i++) {
+                int leftTeam = orderedList.get(i);
+                int rightTeam = orderedList.get(i + 1);
+
+                for (Comparison comp : compLookup.get(leftTeam)) {
+                    if (comp.contains(rightTeam) && comp.getBetterTeam() == rightTeam) {
+                        //Swap values in array
+                        swapsNeeded = true;
+                        Collections.swap(orderedList, i, i + 1);
+                    }
+                }
+            }
+        } while (swapsNeeded);
+
+        try {
+            FileManager.outputFile(outputDirectory, "Picklist - Head to Head - " + eventName, "txt",
+                    arrayListToStringList(orderedList));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static String generateComparisonMatrix(ArrayList<Integer> teamList,
@@ -137,11 +434,20 @@ class PicklistGenerator {
         return compareMatrix.toString();
     }
 
-    private static String getTeamTupleString(int team1, int team2) {
-        if (team1 > team2) {
-            return "(" + team2 + ", " + team1 + ")";
+    /**
+     * Formats an array list into a printable string, with the best team appearing first
+     *
+     * @param teamNums Array of numbers to process
+     * @return Formatted list, with tree levels not clamped down
+     */
+    private String arrayListToStringList(ArrayList<Integer> teamNums) {
+        StringBuilder result = new StringBuilder();
+        int rank = 1;
+        for (int teamNum : teamNums) {
+            result.append(rank).append(". ").append(teamNum).append("\n");
+            rank++;
         }
-        return "(" + team1 + ", " + team2 + ")";
+        return result.toString();
     }
 
     /**
@@ -315,292 +621,6 @@ class PicklistGenerator {
         try {
             FileManager.outputFile(outputDirectory, "Picklist - Topological Sort - " + eventName, "txt",
                     rankTreeStringToStringList(tree));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Formats a ranking tree into a printable string
-     * with the best team having the highest level
-     *
-     * @param tree RankingTree to process
-     * @return Formatted list, with tree levels not clamped down
-     */
-    private String rankTreeStringToStringList(RankingTree tree) {
-        String treeString = tree.toString();
-        StringBuilder result = new StringBuilder();
-        int rank = 1;
-        for (String line : treeString.split("\n")) {
-            result.append(rank).append(". ").append(line.split(",")[0]).append(": ");
-            result.append(line.split(",")[1]).append(" pts\n");
-            rank++;
-        }
-        return result.toString();
-    }
-
-    /**
-     * Given a ranked list (generated from any method) of teams, swap teams if there are any
-     * head-to-head conflicts with adjacent teams. Only relies on comparisons, not another metric
-     * Essentially an implementation of bubble sort.
-     *
-     * @param orderedList
-     */
-    public void generateHeadToHeadList(ArrayList<Integer> orderedList, String listTitle) {
-
-        boolean swapsNeeded;
-        do {
-            swapsNeeded = false;
-            for (int i = 0; i < orderedList.size() - 1; i++) {
-                int leftTeam = orderedList.get(i);
-                int rightTeam = orderedList.get(i + 1);
-
-                for (Comparison comp : compLookup.get(leftTeam)) {
-                    if (comp.contains(rightTeam) && comp.getBetterTeam() == rightTeam) {
-                        //Swap values in array
-                        swapsNeeded = true;
-                        Collections.swap(orderedList, i, i + 1);
-                    }
-                }
-            }
-        } while (swapsNeeded);
-
-        try {
-            FileManager.outputFile(outputDirectory, "Picklist - Head to Head - " + eventName, "txt",
-                    arrayListToStringList(orderedList));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * Formats an array list into a printable string, with the best team appearing first
-     *
-     * @param teamNums Array of numbers to process
-     * @return Formatted list, with tree levels not clamped down
-     */
-    private String arrayListToStringList(ArrayList<Integer> teamNums) {
-        StringBuilder result = new StringBuilder();
-        int rank = 1;
-        for (int teamNum : teamNums) {
-            result.append(rank).append(". ").append(teamNum).append("\n");
-            rank++;
-        }
-        return result.toString();
-    }
-
-    /**
-     * Randomly generates many trees , then averages the ranks of teams in trees above a certain compliance
-     * percentage (threshold is a function of the number of teams).
-     * Needs many iterations, but the final result is 80-90% compliant, depending on the number of transitive
-     * contradictions.
-     * Running the method multiple times will lead to different lists, but the top and bottom tiers are generally
-     * consistent.
-     * Note, however, that we may already be reaching the best possible trees
-     */
-    public void generateBogoCompareList() {
-
-        RankingTree bestTree = new RankingTree(teamNums);
-        double bestCompPer = 0;
-
-
-        HashMap<Integer, Integer> bestRanks = new HashMap<>();
-
-        //Derived through experimentation
-        double goodThreshPercent = 98.8 * Math.pow(0.988, teamNums.size());
-        int maxIterations = 1000;
-
-
-        for (int k = 0; k < 100; k++) {
-
-            int goodIterations = 0;
-            HashMap<Integer, Integer> totalRanks = new HashMap<>();
-            for (int i = 0; i < maxIterations; i++) {
-
-                //Randomly shuffles teamNums
-                Collections.shuffle(teamNums);
-
-                RankingTree tree1 = new RankingTree(teamNums);
-                double compPer = tree1.getCompliancePercent(comparisons);
-                if (compPer > bestCompPer) {
-                    bestTree = new RankingTree(tree1.getTreeHashMap());
-                    bestCompPer = compPer;
-                }
-
-                //Add the levels from a decent generated tree
-                if (compPer > goodThreshPercent) {
-                    for (int j = 0; j < teamNums.size(); j++) {
-                        if (!totalRanks.containsKey(teamNums.get(j))) {
-                            totalRanks.put(teamNums.get(j), teamNums.size() - teamNums.indexOf(j));
-                        } else {
-                            totalRanks.put(teamNums.get(j), totalRanks.get(teamNums.get(j)) + teamNums.size() - j);
-                        }
-
-                    }
-                    goodIterations++;
-                }
-
-            }
-            for (Integer teamNum : teamNums) {
-                if (goodIterations < 10) {
-                    goodIterations = 10;
-                }
-                if (!bestRanks.containsKey(teamNum)) {
-                    bestRanks.put(teamNum, totalRanks.get(teamNum) / (goodIterations / 10));
-                } else if (totalRanks.containsKey(teamNum)) {
-                    bestRanks.put(teamNum,
-                            totalRanks.get(teamNum) / (goodIterations / 10) + bestRanks.get(teamNum));
-                }
-            }
-        }
-
-
-        bestTree = new RankingTree(bestRanks);
-
-        //generateHeadToHeadList(bestTree.toArrayList(), "bogo");
-
-        try {
-            FileManager.outputFile(outputDirectory, "Picklist - Bogo Compare - " + eventName, "txt",
-                    rankTreeStringToStringList(bestTree));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Generates a list where a recommended (better) team gets +1 point for every comparison,
-     * while the worse team gets -1 point. Equal teams receive zero points.
-     * May be inaccurate due to one team playing consistently adjacent to better teams, etc.
-     * Not recommended for serious analysis.
-     */
-    public void generateComparePointList() {
-        HashMap<Integer, Double> compareList = new HashMap<>();
-        for (Comparison comp : comparisons) {
-            int better = comp.getBetterTeam(), worse = comp.getWorseTeam();
-            if (!compareList.containsKey(better)) {
-                compareList.put(better, (double) 1);
-            } else {
-                compareList.put(better, compareList.get(better) + 1);
-            }
-
-            if (!compareList.containsKey(worse)) {
-                compareList.put(worse, (double) -1);
-            } else {
-                compareList.put(worse, compareList.get(worse) - 1);
-            }
-        }
-
-        try {
-            FileManager.outputFile(outputDirectory, "Picklist - Compare Points - " + eventName, "txt",
-                    hashMapToStringList(compareList));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Formats a hash map into a printable string, with team numbers as keys
-     * and points as values. More points indicate a better team.
-     *
-     * @param teamPointsMap RankingTree to process
-     * @return Formatted list, with tree levels not clamped down
-     */
-    private String hashMapToStringList(HashMap<Integer, Double> teamPointsMap) {
-        teamPointsMap = SortersFilters.sortByComparatorDouble(teamPointsMap, false);
-        StringBuilder result = new StringBuilder();
-        int rank = 1;
-        for (Map.Entry<Integer, Double> entry : teamPointsMap.entrySet()) {
-            result.append(rank).append(". ").append(entry.getKey()).append(": ");
-            result.append(entry.getValue()).append(" pts\n");
-            rank++;
-        }
-        return result.toString();
-    }
-
-    /**
-     * Generates a list that's the summation of all given pick points
-     * May be inaccurate due to some teams receiving more entries than others
-     * and the different rating scales of each scouts (some may tend to give higher ratings, etc.)
-     * Generally representative of robot ability.
-     */
-    public void generatePickPointList() {
-        HashMap<Integer, ArrayList<Integer>> pickPointSets = new HashMap<>();
-
-        for (ScoutEntry entry : scoutEntries) {
-            try {
-                Integer teamNum = entry.getPreMatch().getTeamNum();
-
-                if (!pickPointSets.containsKey(teamNum)) {
-                    pickPointSets.put(teamNum, new ArrayList<>());
-                }
-
-                pickPointSets.get(teamNum).add(entry.getPostMatch().getPickNumber());
-
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
-
-        HashMap<Integer, Double> pickPoints = new HashMap<>();
-
-        for (int key : pickPointSets.keySet()) {
-            double[] pickPointArray = new double[pickPointSets.get(key).size()];
-
-            for (int i = 0; i < pickPointSets.get(key).size(); i++) {
-                pickPointArray[i] = pickPointSets.get(key).get(i);
-            }
-
-            pickPoints.put(key, Stats.round(Stats.mean(pickPointArray), 2));
-        }
-
-
-        try {
-            FileManager.outputFile(outputDirectory, "Picklist - Pick Points - " + eventName, "txt",
-                    hashMapToStringList(pickPoints));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * Generates a list based on a calculated ability to be a good first pick robot
-     * Calculated ability derived from collected metrics (e.g. climbs, cargo, hatches)
-     */
-    public void generateCalculatedPickAbilityList(ArrayList<TeamReport> knownPartners) {
-        double baselineScore = 0.0;
-        if (knownPartners.size() != 0) {
-            baselineScore = new AllianceReport(knownPartners).getPredictedValue("totalPoints");
-        }
-
-
-        HashMap<Integer, Double> pickPoints = new HashMap<>();
-
-        for (int team : teamNums) {
-            TeamReport currentTeamReport = teamReports.get(team);
-
-            if (knownPartners.contains(currentTeamReport)) {
-                continue;
-            }
-
-            ArrayList<TeamReport> potentialAllianceTeams = new ArrayList<>(knownPartners);
-
-            potentialAllianceTeams.add(currentTeamReport);
-
-            double dysfunctionalPercent =
-                    (double) currentTeamReport.getCount("dysfunctional") / (currentTeamReport.getCount("noShow") + currentTeamReport.getEntries().size());
-
-            double pointValue =
-                    (1 - dysfunctionalPercent) * (new AllianceReport(potentialAllianceTeams).getPredictedValue(
-                            "totalPoints") - baselineScore);
-
-            pickPoints.put(team, Stats.round(pointValue, 2));
-        }
-
-        try {
-            FileManager.outputFile(outputDirectory, "Picklist - Point Contributions - " + eventName, "txt",
-                    hashMapToStringList(pickPoints));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
