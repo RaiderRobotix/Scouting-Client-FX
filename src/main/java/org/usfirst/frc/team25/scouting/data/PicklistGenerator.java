@@ -23,8 +23,8 @@ public class PicklistGenerator {
     private final ArrayList<ScoutEntry> scoutEntries;
 
     /**
-     * A processed list of comparisons, where strict contradictions (A>B and B<A) and equalities (A=B)
-     * are removed. However, transitive contradictions (A>B, B>C, but B>A) may exist
+     * A processed list of comparisons, where strict contradictions (A&gt;B and B&lt;A) and equalities (A=B)
+     * are removed. However, transitive contradictions (A&gt;B, B&gt;C, but B&gt;A) may exist
      * TODO Find a way to resolve transitive contradictions, without removing a lot of data
      * TODO Find a way to deal with equalities in an elegant way
      */
@@ -38,7 +38,7 @@ public class PicklistGenerator {
     /**
      * A HashMap of team numbers as keys and their associated comparisons as values
      * for efficient and easy lookup by methods
-     * e.g. C1 = A<B, C2 = B>C. The HashMap would be {A: [C1], B: [C1, C2], C: [C2]}
+     * e.g. C1 = A&lt;B, C2 = B&gt;C. The HashMap would be {A: [C1], B: [C1, C2], C: [C2]}
      */
     private final HashMap<Integer, ArrayList<Comparison>> compLookup;
 
@@ -385,7 +385,7 @@ public class PicklistGenerator {
      *
      * @param orderedList Ranked list to be processed
      */
-    public void generateHeadToHeadList(ArrayList<Integer> orderedList, String listTitle) {
+    public void generateHeadToHeadList(ArrayList<Integer> orderedList) {
 
         boolean swapsNeeded;
         do {
@@ -456,7 +456,7 @@ public class PicklistGenerator {
      * Currently not very accurate or fast and results should NOT be used for
      * creating an actual picklist.
      * TODO Improve upon this method, possibly creating a way to insert new nodes BETWEEN existing ones
-     * e.g. If C is level 0, A is level 1, and A>B>C, we shouldn't force B to be either level 0 or 1,
+     * e.g. If C is level 0, A is level 1, and A&gt;B&gt;C, we shouldn't force B to be either level 0 or 1,
      * but have B be level 1 and promote all current nodes on level 1.
      */
     public void generateTopologicalSortList() {

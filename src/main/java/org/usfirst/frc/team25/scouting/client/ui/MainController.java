@@ -313,6 +313,7 @@ public class MainController {
      *
      * @param matchNum  Match number to display on the screen
      * @param alliances Array of two AllianceReports containing data on the match's red and blue alliances
+     * @throws IOException If the logo or FXML assets are not present
      */
     private void displayPredictions(int matchNum, AllianceReport[] alliances) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml" +

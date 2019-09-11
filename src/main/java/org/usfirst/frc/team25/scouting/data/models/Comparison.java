@@ -51,7 +51,7 @@ public class Comparison {
 
     /**
      * Compares two comparisons and sees if they contradict each other in a partially ordered list.
-     * e.g. A<B would contradict B>A, but it would not contradict A=B
+     * e.g. A&lt;B would contradict B&gt;A, but it would not contradict A=B
      *
      * @param secondComp The second comparison that you want to compare with this one
      * @return true if secondComp contradicts this one logically, false otherwise

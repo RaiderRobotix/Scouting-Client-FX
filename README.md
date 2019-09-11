@@ -29,3 +29,6 @@ Features:
 
 ## Development
 
+Before beginning development on this project, ensure you have The Blue Alliance API key saved in a text file called `secret.txt` in `/src/main/resources/apikey`. Refer to [the instructions here](https://www.thebluealliance.com/apidocs#apiv3) if you need help obtaining an API key. Your code *will not* compile unless the API key is present!
+
+Refer to the generated Javadoc  

@@ -157,7 +157,8 @@ public class Stats {
     /**
      * Cumulative distribution function of Student's t-distribution centered at 0.
      *
-     * @param degreesOfFreedom The number of degrees of freedom of the model, where 0 <= <code>degreesOfFreedom</code>
+     * @param degreesOfFreedom The number of degrees of freedom of the model, where 0 &lt;=
+     *                         <code>degreesOfFreedom</code>
      * @param tScore           The upper limit of the cumulative distribution function
      * @return The cumulative distribution of the model from -infinity to <code>tScore</code>
      */

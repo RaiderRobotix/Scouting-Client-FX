@@ -37,9 +37,11 @@ public class BlueAlliance {
     }
 
     /**
-     * Downloads all data from events that Team 25 is playing in for the current calendar year
+     * Downloads all data from events that the specified team is playing in for the current calendar year
      *
      * @param outputFolder Output folder for downloaded files
+     * @param teamNum Team number for the team whose event data will be downloaded
+     * @return Status string of the method
      */
     public static String downloadTeamEvents(File outputFolder, int teamNum) {
         int year = Calendar.getInstance().get(Calendar.YEAR);

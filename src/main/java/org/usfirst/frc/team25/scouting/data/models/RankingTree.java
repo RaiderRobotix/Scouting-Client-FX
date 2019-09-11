@@ -212,7 +212,7 @@ public class RankingTree {
     }
 
     /**
-     * Determines if a given comparison (e.g. A>B) is followed in the tree
+     * Determines if a given comparison (e.g. A&gt;B) is followed in the tree
      *
      * @param comparison Comparison to be queried
      * @return true if the comparison is followed in the tree, false otherwise

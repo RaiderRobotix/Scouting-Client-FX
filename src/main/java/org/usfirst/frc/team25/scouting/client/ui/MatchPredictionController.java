@@ -100,7 +100,7 @@ public class MatchPredictionController {
     }
 
     /**
-     * Sets the UI <cdoe>Text</cdoe> component to the specified metric's value
+     * Sets the UI <code>Text</code> component to the specified metric's value
      *
      * @param color      Either <code>red</code> or <code>blue</code>, corresponding to the alliance that the value
      *                   belongs to
