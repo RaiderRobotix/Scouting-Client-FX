@@ -10,6 +10,9 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Collection of static methods to perform statistical computations and operations
+ */
 public class Stats {
 
 

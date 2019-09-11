@@ -247,7 +247,7 @@ public class EventReport {
 
             String[] matches = FileManager.getFileString(matchList).split("\n");
 
-            for (int i = greatestMatchNum + 1; i < matches.length; i++) {
+            for (int i = greatestMatchNum + 1; i < matches.length + 1; i++) {
                 AllianceReport[] allianceReports = getAlliancesInMatch(i);
                 predictions.append("Match ").append(i).append(": ");
 

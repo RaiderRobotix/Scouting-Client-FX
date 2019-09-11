@@ -115,8 +115,6 @@ public class InaccuracyFixer {
             if (!inaccuracyList.isEmpty()) {
                 // Recalculates aggregate stats after correcting errors
                 eventReport.processEntries();
-                FileManager.outputFile(eventReport.getDirectory(), "Inaccuracies - " + eventReport.getEvent(), "txt",
-                        inaccuracyList);
                 return true;
             }
         } catch (Exception e) {
@@ -360,7 +358,7 @@ public class InaccuracyFixer {
     public void saveInaccuracyList(File outputDirectory) {
         try {
             if (!inaccuracyList.isEmpty()) {
-                FileManager.outputFile(new File(outputDirectory.getAbsolutePath() + "/inaccuracies.txt"),
+                FileManager.outputFile(eventReport.getDirectory(), "Inaccuracies - " + eventReport.getEvent(), "txt",
                         inaccuracyList);
             }
         } catch (FileNotFoundException e) {
