@@ -4,6 +4,8 @@ A Java-based desktop client that processes scouting data from JSON files and pul
 
 Built with JavaFX for the 2019 FRC season and beyond.
 
+<img src="/assets/menu.png" width="600" align="center"/>
+
 Features:
  
  * Basic GUI to select input/output folders
@@ -15,8 +17,6 @@ Features:
  * Downloads a spreadsheet of teams and matches for any FRC event from The Blue Alliance
    * Files used for verification in the scouting app
  * Downloads all files for Team 25's events for the current season
-
-<img src="/assets/menu.png" width="500"/>
  
 ## Usage
 
@@ -54,16 +54,16 @@ Select the options you want, then press the "Generate Files" button. Those optio
 
 #### Generating aggregate reports
 
+<img src="/assets/prediction.png" width="600" align="center"/>
+
 Text-based and graphical reports of aggregate stats can be viewed by selecting one of three radio buttons, inputting the desired team or match number(s), then pressing the "Display" button.
 
 - **Team-based**: text-based report of one team's summary stats and abilities
 - **Alliance-based**: text-based report of an alliance's predicted output
 - **Match-based**: graphical display of what both alliances in a match are capable of (see below) 
 
-<img src="/assets/prediction.png" width="500"/>
-
 ## Development
 
 Before beginning development on this project, ensure you have The Blue Alliance API key saved in a text file called `secret.txt` in `/src/main/resources/apikey/secret.txt`. You may need to create the `apikey` folder as well. Refer to [the instructions here](https://www.thebluealliance.com/apidocs#apiv3) if you need help obtaining an API key. Your code *will not* run properly unless the API key is present!
 
-Refer to the generated Javadoc for more information about how classes interact with each other.
+Refer to [the generated Javadoc](https://raiderrobotix.github.io/Scouting-Client-FX/index.html) for more information about how classes interact with each other and available methods.
