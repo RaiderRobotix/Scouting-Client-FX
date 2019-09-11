@@ -17,15 +17,19 @@ import java.util.Calendar;
 
 
 /**
- * Class of static methods used to interface with online data from The Blue Alliance
- *
+ * Class of static methods used to download online data from The Blue Alliance
  */
 public class BlueAlliance {
 
     private static TBA TBA;
 
+    /**
+     * Sets up the class so that the API can be used. Must be run once before calling other methods of the class.
+     *
+     * @param c Handle to the main class
+     * @throws IOException If there is no Internet connection, or the API key file does not exist
+     */
     public static void initializeApi(Class c) throws IOException {
-
         //Note that secret.txt must be created on each client computer
         String apiKey = IOUtils.toString(c.getClassLoader().getResourceAsStream("apikey/secret.txt"),
                 StandardCharsets.UTF_8);
@@ -50,7 +54,6 @@ public class BlueAlliance {
         }
 
         return response.toString();
-
     }
 
     /**
@@ -89,8 +92,11 @@ public class BlueAlliance {
      * Exports a simple comma delimited sorted file of teams playing at an event.
      * Output file intended to be read by Scouting App
      *
-     * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
-     * @param fileName  File name of output file, without extension
+     * @param eventCode       Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
+     * @param outputDirectory Location that the team list is saved in
+     * @param fileName        File name of output file, without extension
+     * @return True if the export was successful, false otherwise
+     * @throws FileNotFoundException if <code>outputDirectory</code> is invalid
      */
     public static boolean exportSimpleTeamList(String eventCode, File outputDirectory, String fileName) throws FileNotFoundException {
 
@@ -117,14 +123,17 @@ public class BlueAlliance {
         return false;
     }
 
+
     /**
      * Exports a comma and line break delimited file of team numbers and names at an event.
      * Each line contains a comma delimited pair of team number and team nickname.
      *
-     * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
-     * @param fileName  File name of output file, without extension
+     * @param eventCode       Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
+     * @param outputDirectory Location that the team list is saved in
+     * @param fileName        File name of output file, without extension
+     * @return True if the export was successful, false otherwise
+     * @throws FileNotFoundException if <code>outputDirectory</code> is invalid
      */
-
     private static boolean exportTeamList(String eventCode, File outputDirectory, String fileName) throws FileNotFoundException {
 
         StringBuilder teamList = new StringBuilder();
@@ -145,15 +154,17 @@ public class BlueAlliance {
         }
 
         return false;
-
     }
 
     /**
      * Generates a file with list of teams playing in each match
      * Each line contains comma delimited match number, then team numbers for red alliance, then blue alliance.
      *
-     * @param eventCode Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
-     * @param fileName  File name of output, without extension
+     * @param eventCode       Fully qualified event key, i.e. "2016pahat" for Hatboro-Horsham in 2016
+     * @param outputDirectory Location that the team list is saved in
+     * @param fileName        File name of output file, without extension
+     * @return True if the export was successful, false otherwise
+     * @throws FileNotFoundException if <code>outputDirectory</code> is invalid
      */
     private static boolean exportMatchList(String eventCode, File outputDirectory, String fileName) throws FileNotFoundException {
         StringBuilder matchList = new StringBuilder();
@@ -187,16 +198,16 @@ public class BlueAlliance {
         }
 
         return false;
-
     }
 
     /**
-     * Downloads all data from events that Team 25 is playing in for the specified year
+     * Downloads all data from events that the specified team is playing in for the specified year
      *
      * @param outputFolder Output folder for downloaded files
+     * @param year Year to download events for
+     * @param teamNum Team number of the team whose data will be downloaded
      */
     public static void downloadTeamEvents(File outputFolder, int year, int teamNum) {
-
         try {
             for (Event event : TBA.teamRequest.getEvents(teamNum, year)) {
                 downloadEventTeamData(outputFolder, event.getKey());
@@ -204,7 +215,6 @@ public class BlueAlliance {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -222,6 +232,4 @@ public class BlueAlliance {
         String jsonString = gson.toJson(matches);
         FileManager.outputFile(outputDirectory, "ScoreBreakdown - " + eventCode, "json", jsonString);
     }
-
-
 }

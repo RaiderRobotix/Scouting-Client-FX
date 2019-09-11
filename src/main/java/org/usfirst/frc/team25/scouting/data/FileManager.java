@@ -17,8 +17,6 @@ import java.util.Date;
 
 /**
  * Class of static methods used for file I/O
- *
- * @author sng
  */
 public class FileManager {
 

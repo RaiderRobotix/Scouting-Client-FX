@@ -211,7 +211,7 @@ public class MainController {
         }
 
         if (generatePicklists.isSelected()) {
-            eventReport.generatePicklists(currentDataDirectory);
+            eventReport.generatePicklists(currentDataDirectory, new int[]{25});
             status += "\nPicklists generated";
         }
 

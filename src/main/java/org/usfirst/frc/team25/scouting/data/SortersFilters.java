@@ -12,7 +12,6 @@ import java.util.*;
 
 /**
  * Collection of static methods to sort and filter ArrayLists of object models
- *
  */
 public class SortersFilters {
 
@@ -100,7 +99,6 @@ public class SortersFilters {
                 return o1.getValue().compareTo(o2.getValue());
             } else {
                 return o2.getValue().compareTo(o1.getValue());
-
             }
         });
 
@@ -124,28 +122,22 @@ public class SortersFilters {
         Method correctGetter = null;
 
         for (Method m : ScoutEntry.class.getMethods()) {
-
             if (m.getName().substring(3).toLowerCase().equals(objectClass.getSimpleName().toLowerCase()) && m.getParameterTypes().length == 0) {
                 correctGetter = m;
                 break;
             }
         }
 
-
         try {
             if (correctGetter != null) {
-
                 for (ScoutEntry entry : scoutEntries) {
                     filteredList.add(correctGetter.invoke(entry));
-
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
         return filteredList;
-
     }
 }

@@ -1,7 +1,6 @@
 package org.usfirst.frc.team25.scouting.data;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.usfirst.frc.team25.scouting.data.models.*;
 
 import java.io.File;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Object model holding all data for an event
+ * Object model holding all data for an event. Responsible for generating event-wide files
  */
 public class EventReport {
 
@@ -37,24 +36,15 @@ public class EventReport {
         this.scoutEntries = entries;
         this.event = event;
         this.directory = directory;
-
     }
 
-
-    public boolean isTeamPlaying(int teamNum) {
-        for (int i : teamReports.keySet()) {
-            if (teamNum == i) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
+    /**
+     * Calculates derived stats of each scout entry, populating team reports, and processing team reports.
+     * Should be called upon populating the event report with all scout entries.
+     */
     public void processEntries() {
 
         for (ScoutEntry entry : scoutEntries) {
-
             entry.calculateDerivedStats();
 
             int teamNum = entry.getPreMatch().getTeamNum();
@@ -66,32 +56,29 @@ public class EventReport {
             teamReports.get(teamNum).addEntry(entry);
         }
 
-
         for (Integer key : teamReports.keySet()) {
-
             TeamReport report = teamReports.get(key);
             if (teamNameList != null) {
-
                 report.autoGetTeamName(teamNameList);
-
             }
-
             report.processReport();
         }
-
-
     }
 
     /**
-     * Generates summary and team Excel spreadsheets
+     * Generates a spreadsheet of all values from scout entries, with one row per entry.
+     * Columns are metric names, and cells contain individual values.
+     * Also creates a spreadsheet with "no show" entries removed.
      *
      * @param outputDirectory Output directory for generated fields
+     * @return True if the method was successfully executed, false otherwise
      */
     public boolean generateRawSpreadsheet(File outputDirectory) {
 
         StringBuilder fileContents = new StringBuilder(generateSpreadsheetHeader() + "\n");
         StringBuilder noShowFileContents = new StringBuilder(fileContents);
 
+        // Create rows of entries inside this loop
         for (ScoutEntry entry : scoutEntries) {
 
             StringBuilder entryContents = new StringBuilder();
@@ -99,28 +86,31 @@ public class EventReport {
             Object[] dataObjects = {entry.getPreMatch(), entry, entry.getAutonomous(), entry.getTeleOp(),
                     entry.getPostMatch()};
 
-
+            // Populates each "block" of values based on the section of the match
             for (Object dataObject : dataObjects) {
-
-                // returns all members including private members but not inherited members.
+                // Returns all members, including private members, but not inherited members
+                // This fetches the metric names from the fields of the four main data models
                 Field[] fields = dataObject.getClass().getDeclaredFields();
 
                 for (Field metric : fields) {
                     Object metricValue = "";
 
-                    //Index to account  for the substring shift from "is" or "get"
+                    // Index to account for the substring shift from "is" or "get"
+                    // The correct getter method is later found with this value
                     int shiftIndex = 3;
 
                     if (metric.getType() == boolean.class) {
                         shiftIndex = 2;
                     }
 
-                    //We'll output the quick comment HashMap separately
+                    // Only the primitives are added to the output entry for now
+                    // Values from HashMaps for quick comments are added later
                     if (metric.getType() != boolean.class && metric.getType() != int.class && metric.getType() != String.class) {
                         continue;
                     }
 
                     try {
+                        // Retrieves the correct getter for the variable, then retrieves its value from the data object
                         metricValue =
                                 Stats.getCorrectMethod(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
                     } catch (Exception e) {
@@ -132,19 +122,17 @@ public class EventReport {
 
             }
 
+            // Adds the true or false values for the robot quick comments
             for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
                 entryContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(",");
             }
 
             entryContents.append('\n');
-
             fileContents.append(entryContents);
 
             if (!entry.getPreMatch().isRobotNoShow()) {
                 noShowFileContents.append(entryContents);
             }
-
-
         }
 
         try {
@@ -152,7 +140,6 @@ public class EventReport {
             FileManager.outputFile(outputDirectory, "Data - No Show Removed - " + event, "csv",
                     noShowFileContents.toString());
         } catch (FileNotFoundException e) {
-
             e.printStackTrace();
             return false;
         }
@@ -160,11 +147,15 @@ public class EventReport {
     }
 
     /**
-     * Automatically generates spreadsheet header based on object model field variables
+     * Automatically generates the spreadsheet header based on object model field variables
+     *
+     * @return The spreadsheet header as a String
      */
     private String generateSpreadsheetHeader() {
         StringBuilder header = new StringBuilder();
 
+        // Prefixes to append to sandstorm and tele-op sections, as metrics like "rocketCargo" may be the same across
+        // data models
         String[] shortNames = {"Pre", "Overall", "Auto", "Tele", "Post"};
         Class[] dataModels = {PreMatch.class, ScoutEntry.class, Autonomous.class, TeleOp.class, PostMatch.class};
 
@@ -176,27 +167,29 @@ public class EventReport {
                     continue;
                 }
 
+                // Only add in prefixes to sandstorm and tele-op
                 if (i == 2 || i == 3) {
                     header.append(shortNames[i]).append(" - ");
                 }
+
+                // Adds the "title case" version of the metric name, rather than the camel case version
                 header.append(StringProcessing.convertCamelToSentenceCase(metric.getName())).append(",");
             }
         }
 
+        // Generates the quick comment portion of the header
         for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
             header.append(StringProcessing.removeCommasBreaks(key)).append(",");
         }
 
-
         return header.toString();
     }
 
-
     /**
-     * Serializes the ArrayList of all ScoutEntrys into a JSON file
+     * Serializes the ArrayList of all scout entries into a JSON file
      *
      * @param outputDirectory The directory to write the combined JSON file to
-     * @return true if operation is successful, false otherwise
+     * @return True if operation is successful, false otherwise
      */
     public boolean generateCombineJson(File outputDirectory) {
         Gson gson = new Gson();
@@ -204,56 +197,43 @@ public class EventReport {
         try {
             FileManager.outputFile(outputDirectory, "Data - All - " + event, "json", jsonString);
         } catch (FileNotFoundException e) {
-
             return false;
         }
         return true;
     }
 
-    public void setTeamNameList(File list) {
-        this.teamNameList = list;
-    }
-
-
     /**
-     * Serializes the HashMap of all TeamReports
+     * Creates a compare points list, a pick points list, and a predicted point contribution list for the teams at
+     * the current event
      *
-     * @param outputDirectory The directory to write the combined TeamReport JSON files to
+     * @param outputDirectory Directory where the picklists are saved to
+     * @param knownPartners   Array of team numbers that are already in the playoff alliance
      */
-    public void generateTeamReportJson(File outputDirectory) {
-
-        Gson gson = new GsonBuilder().serializeSpecialFloatingPointValues().create();
-
-        ArrayList<TeamReport> teamReportList = new ArrayList<>();
-
-        for (int key : teamReports.keySet()) {
-            teamReportList.add(teamReports.get(key));
-        }
-
-        String jsonString = gson.toJson(teamReportList);
-        try {
-            FileManager.outputFile(outputDirectory, "TeamReports - " + event, "json", jsonString);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void generatePicklists(File outputDirectory) {
+    public void generatePicklists(File outputDirectory, int[] knownPartners) {
         PicklistGenerator pg = new PicklistGenerator(scoutEntries, teamReports, outputDirectory, event);
         pg.generateComparePointList();
         pg.generatePickPointList();
 
-        ArrayList<TeamReport> knownAlliancePartners = new ArrayList<>();
-        if (teamReports.containsKey(25)) {
-            knownAlliancePartners.add(teamReports.get(25));
+        ArrayList<TeamReport> knownPartnersArray = new ArrayList<>();
+
+        for (int team : knownPartners) {
+            knownPartnersArray.add(teamReports.get(team));
         }
 
-        pg.generateCalculatedFirstPicklist(knownAlliancePartners);
+        pg.generateCalculatedFirstPicklist(knownPartnersArray);
     }
 
+    /**
+     * Creates a text file of future predicted match scores and ranking points, the teams playing on each alliance in
+     * the match, the predicted winner of the match, and the confidence in that prediction.
+     * Match schedule must be downloaded for this method to work.
+     *
+     * @param outputDirectory Directory to save the prediction text file
+     * @return True if the file was created successfully, false otherwise
+     */
     public boolean generateMatchPredictions(File outputDirectory) {
 
+        // Finds the number of the next qualification match
         int greatestMatchNum = 0;
         for (ScoutEntry entry : scoutEntries) {
             if (entry.getPreMatch().getMatchNum() > greatestMatchNum) {
@@ -263,18 +243,21 @@ public class EventReport {
 
         try {
             StringBuilder predictions = new StringBuilder();
-
             File matchList = FileManager.getMatchList(directory);
 
             String[] matches = FileManager.getFileString(matchList).split("\n");
 
-            for (int i = greatestMatchNum + 1; i < matches.length - 1; i++) {
+            for (int i = greatestMatchNum + 1; i < matches.length; i++) {
                 AllianceReport[] allianceReports = getAlliancesInMatch(i);
                 predictions.append("Match ").append(i).append(": ");
+
+                // Generates values for each alliance
                 for (int j = 0; j < allianceReports.length; j++) {
                     predictions.append(allianceReports[j].getTeamReports()[0].getTeamNum()).append("-");
                     predictions.append(allianceReports[j].getTeamReports()[1].getTeamNum()).append("-");
                     predictions.append(allianceReports[j].getTeamReports()[2].getTeamNum()).append(" (");
+
+                    // THe Math.abs() hack essentially makes the opposing alliance the other value in allianceReports
                     predictions.append(Stats.round(allianceReports[j].calculatePredictedRp(allianceReports[Math.abs(j - 1)]), 1)).append(" RP, ");
                     predictions.append(Stats.round(allianceReports[j].getPredictedValue("totalPoints"), 1)).append(" " +
                             "pts)");
@@ -302,8 +285,16 @@ public class EventReport {
         return false;
     }
 
+    /**
+     * Gets a two-element array of alliance reports representing the alliances playing in the specified match
+     *
+     * @param matchNum Number of the qualification match to be queried
+     * @return An array of alliance reports
+     * @throws FileNotFoundException If the match schedule is not downloaded or scouting data cannot be found
+     */
     public AllianceReport[] getAlliancesInMatch(int matchNum) throws FileNotFoundException {
         AllianceReport[] allianceReports = new AllianceReport[2];
+
         try {
             File matchList = FileManager.getMatchList(directory);
 
@@ -314,7 +305,9 @@ public class EventReport {
                 if (Integer.parseInt(terms[0]) == matchNum) {
                     for (int i = 0; i < 2; i++) {
                         int[] teamNums = new int[3];
+
                         for (int j = 0; j < 3; j++) {
+                            // Multiply by i here to represent the two alliances
                             teamNums[j] = Integer.parseInt(terms[j + 1 + 3 * i]);
                         }
                         allianceReports[i] = getAllianceReport(teamNums);
@@ -329,14 +322,14 @@ public class EventReport {
         }
 
         return allianceReports;
-
     }
 
-
-    public TeamReport getTeamReport(int teamNum) {
-        return teamReports.get(teamNum);
-    }
-
+    /**
+     * Creates an alliance report from the specified team numbers
+     *
+     * @param teamNums Array of integers representing the team numbers on a particular alliance
+     * @return Alliance report object of the specified teams
+     */
     public AllianceReport getAllianceReport(int[] teamNums) {
         ArrayList<TeamReport> teamReports = new ArrayList<>();
         for (int teamNum : teamNums) {
@@ -346,6 +339,34 @@ public class EventReport {
         }
 
         return new AllianceReport(teamReports);
+    }
+
+    public TeamReport getTeamReport(int teamNum) {
+        return teamReports.get(teamNum);
+    }
+
+    /**
+     * Sets the location of the CSV file containing team name and number pairings
+     *
+     * @param list File object representing the team name list file
+     */
+    public void setTeamNameList(File list) {
+        this.teamNameList = list;
+    }
+
+    /**
+     * Determines if the specified team is playing at the event
+     *
+     * @param teamNum Team number to check
+     * @return True if the team is playing at the event, false otherwise
+     */
+    public boolean isTeamPlaying(int teamNum) {
+        for (int i : teamReports.keySet()) {
+            if (teamNum == i) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<ScoutEntry> getScoutEntries() {
@@ -359,6 +380,4 @@ public class EventReport {
     public File getDirectory() {
         return directory;
     }
-
-
 }

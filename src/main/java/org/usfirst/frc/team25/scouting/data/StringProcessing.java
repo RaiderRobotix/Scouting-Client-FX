@@ -1,5 +1,8 @@
 package org.usfirst.frc.team25.scouting.data;
 
+/**
+ * Collection of static methods that manipulate strings
+ */
 public class StringProcessing {
 
     /**

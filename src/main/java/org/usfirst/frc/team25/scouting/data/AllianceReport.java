@@ -102,7 +102,7 @@ public class AllianceReport {
         predictedValues.put("totalPoints", sandstormPoints + teleOpPoints + endgamePoints);
 
         calculateStandardDeviations();
-        calculatePredictedRp();
+        calculatedPredictedBonusRp();
         calculateOptimalNullHatchPanels(NULL_HATCH_CONFIDENCE);
     }
 
@@ -416,7 +416,7 @@ public class AllianceReport {
     private void calculateStandardDeviations() {
 
         double sandstormStdDev = calculateStdDevSandstormPoints();
-        double teleOpStdDev = calculateStdDevTeleOpPoints(generateMonteCarloSet());
+        double teleOpStdDev = calculateStdDevTeleOpPoints(generateMonteCarloSet(MONTE_CARLO_ITERATIONS));
         double endgameStdDev = calculateStdDevEndgamePoints();
 
         double totalPointsStdDev = Stats.sumStandardDeviation(new double[]{sandstormStdDev, teleOpStdDev,
@@ -425,15 +425,23 @@ public class AllianceReport {
         standardDeviations.put("totalPoints", totalPointsStdDev);
     }
 
+    /**
+     * Calculates standard deviations for sandstorm period predictions
+     *
+     * @return The standard deviation of overall predicted sandstorm points
+     */
     private double calculateStdDevSandstormPoints() {
         double sandstormBonusVariance = 0.0;
 
+        // Add the variance for each team, which is a function of their starting level's point value and the
+        // attempt-success rate's standard deviation
         for (int i = 0; i < bestStartingLevels.length; i++) {
             sandstormBonusVariance += Stats.multiplyVariance(bestStartingLevels[i] * 3,
                     teamReports[i].getStandardDeviation("level" + numStrNames[bestStartingLevels[i] - 1] +
                             "Cross"));
         }
 
+        // Recall that standard deviation of a metric is the square root of its variance
         standardDeviations.put("sandstormBonus", Math.sqrt(sandstormBonusVariance));
 
         double sandstormGamePieceVariance = 0.0;
@@ -461,11 +469,17 @@ public class AllianceReport {
     }
 
     /**
-     * @param allianceSimulationValues
-     * @return
+     * Calculates the standard deviation of all tele-op predictions, excluding those found in endgame, through a
+     * simulated and randomized data set
+     *
+     * @param allianceSimulationValues Set of simulated expected values for an alliance, randomly generated from a
+     *                                 Normal distribution. Each element of the set is an ArrayList with three
+     *                                 HashMaps, corresponding to the metric values of a team on the alliance. These
+     *                                 values are used to simulate the standard deviation.
+     * @return The standard deviation in the predicted number of tele-op points, given the input values
      */
     private double calculateStdDevTeleOpPoints(ArrayList<ArrayList<HashMap<String, Double>>> allianceSimulationValues) {
-
+        // Builds a list of all tele-op prediction metrics
         ArrayList<String> metricNames = new ArrayList<>();
 
         metricNames.add("telePoints");
@@ -480,29 +494,33 @@ public class AllianceReport {
             }
         }
 
+        // Stores arrays of raw generated values for each metric
         HashMap<String, double[]> simulationCalculatedValues = new HashMap<>();
 
         for (String metric : metricNames) {
             simulationCalculatedValues.put(metric, new double[MONTE_CARLO_ITERATIONS]);
         }
 
+        // Iterates through each set of randomly generated alliance values
         for (int i = 0; i < allianceSimulationValues.size(); i++) {
 
+            // Temporarily replaces this class's expectedValue HashMap with simulation values
             calculateMonteCarloExpectedValues(allianceSimulationValues.get(i));
+
+            // Recalculate predicted values
             calculatePredictedTeleOpPoints();
 
+            // Stores this iteration's predicted values into the simulated values HashMap
             for (String metric : metricNames) {
-
                 simulationCalculatedValues.get(metric)[i] = predictedValues.get(metric);
             }
-
         }
 
-
+        // Calculates the standard deviation of the predicted metrics, based on the variation in the results of using
+        // the 1,000 simulation values
         for (String metric : metricNames) {
             standardDeviations.put(metric, Stats.standardDeviation(simulationCalculatedValues.get(metric)));
         }
-
 
         //Restores values using the original alliance report
         calculateExpectedValues();
@@ -512,7 +530,62 @@ public class AllianceReport {
     }
 
     /**
-     * @return
+     * Replaces the values of the <code>expectedValues</code> HashMap in this class with those from a Monte
+     * Carlo-simulated alliance of three teams
+     *
+     * @param testSets Set of three HashMaps, representing metric values from an alliance of three teams for a
+     *                 particular match
+     */
+    private void calculateMonteCarloExpectedValues(ArrayList<HashMap<String, Double>> testSets) {
+        // Creates a list of all average value metrics for a team, used to calcuated an alliance expected value
+        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
+                TeamReport.overallMetricNames};
+
+        String[] prefixes = new String[]{"auto", "tele", ""};
+
+        // Iterate through various metric names
+        for (int i = 0; i < metricSets.length; i++) {
+            for (String metric : metricSets[i]) {
+                double value = 0;
+                // Iterate through each team in the alliance
+                for (HashMap<String, Double> testSet : testSets) {
+                    value += testSet.get(prefixes[i] + metric);
+                }
+                expectedValues.put(prefixes[i] + metric, value);
+            }
+        }
+    }
+
+    /**
+     * Generates a specified number of Monte Carlo simulations of match values for the teams in the current alliance
+     *
+     * @param numIterations Number of simulations to create
+     * @return An array with elements representing the result of a Monte Carlo simulation. Each simulation result is
+     * an array of three HashMaps, each representing the values of a team in a match, randomly selected from the
+     * team's Normal distribution for that metric.
+     */
+    private ArrayList<ArrayList<HashMap<String, Double>>> generateMonteCarloSet(int numIterations) {
+
+        ArrayList<ArrayList<HashMap<String, Double>>> simulationValues = new ArrayList<>();
+
+        for (int i = 0; i < numIterations; i++) {
+            // Contains the three alliances and their values in the match
+            ArrayList<HashMap<String, Double>> sampleMatchValues = new ArrayList<>();
+
+            // Generates values based on the teams that make up this AllianceReport
+            for (TeamReport sample : teamReports) {
+                sampleMatchValues.add(sample.generateRandomSample());
+            }
+            simulationValues.add(sampleMatchValues);
+        }
+
+        return simulationValues;
+    }
+
+    /**
+     * Calculates the standard deviation of the predicted number of endgame points
+     *
+     * @return The standard deviation of predicted endgame points
      */
     private double calculateStdDevEndgamePoints() {
 
@@ -520,77 +593,93 @@ public class AllianceReport {
 
         double endgameVariance = 0.0;
 
+        // Adds the variance for each team
         for (int i = 0; i < bestClimbLevels.length; i++) {
-            if (bestClimbLevels[i] != 0) {
-                endgameVariance += Stats.multiplyVariance(climbPointValues[bestClimbLevels[i] - 1],
-                        teamReports[i].getStandardDeviation("level" + numStrNames[bestClimbLevels[i] - 1] +
-                                "Climb"
-                        ));
-            }
+            endgameVariance += Stats.multiplyVariance(climbPointValues[bestClimbLevels[i] - 1],
+                    teamReports[i].getStandardDeviation("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb"));
         }
 
-        standardDeviations.put("endgamePoints", Math.sqrt(endgameVariance));
+        double endgameStdDev = Math.sqrt(endgameVariance);
+        standardDeviations.put("endgamePoints", endgameStdDev);
 
-        return endgameVariance;
+        return endgameStdDev;
     }
 
     /**
-     * @param testSets
+     * Calculates the number of predicted bonus ranking points in a match for the alliance
+     *
+     * @return Predicted number of bonus ranking points
      */
-    private void calculateMonteCarloExpectedValues(ArrayList<HashMap<String, Double>> testSets) {
-        String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
-                TeamReport.overallMetricNames};
-
-        String[] prefixes = new String[]{"auto", "tele", ""};
-
-        for (int i = 0; i < metricSets.length; i++) {
-            for (String metric : metricSets[i]) {
-                double value = 0;
-                for (HashMap<String, Double> testSet : testSets) {
-                    value += testSet.get(prefixes[i] + metric);
-                }
-                expectedValues.put(prefixes[i] + metric, value);
-            }
-        }
-
-    }
-
-    private double calculatePredictedRp() {
-
-        double bonusRp = calculateClimbRpChance() + calculateRocketRpChance(generateMonteCarloSet());
+    private double calculatedPredictedBonusRp() {
+        double bonusRp =
+                calculateClimbRpChance() + calculateRocketRpChance(generateMonteCarloSet(MONTE_CARLO_ITERATIONS));
 
         predictedValues.put("bonusRp", bonusRp);
-
         return bonusRp;
     }
 
-    private void calculateOptimalNullHatchPanels(double confidenceLevel) {
+    /**
+     * Calculates the expected number of ranking points acquired from completing the rocket in a qualification match
+     * for the alliance
+     *
+     * @param allianceSimulationValues Set of Monte Carlo simulation values for the alliance showing its output
+     *                                 during the course of a match
+     * @return The expected number of rocket ranking points
+     */
+    private double calculateRocketRpChance(ArrayList<ArrayList<HashMap<String, Double>>> allianceSimulationValues) {
+        // Counter for the number of simulations in which the RP is attained
+        int rocketRpAttainedCount = 0;
 
-        double averageCargoShipHatches = predictedValues.get("autoCargoShipHatches") + predictedValues.get(
-                "teleCargoShipHatches");
+        for (ArrayList<HashMap<String, Double>> teamReportSet : allianceSimulationValues) {
+            // Simulates placing game pieces on the rocket
+            calculateMonteCarloExpectedValues(teamReportSet);
 
-        double standardDeviation = Stats.sumStandardDeviation(new double[]{
-                standardDeviations.get("autoCargoShipHatches"), standardDeviations.get("teleCargoShipHatches")});
+            calculatePredictedTeleOpHatchPanels(true);
+            calculatePredictedTeleOpCargo(true);
 
+            boolean rpAttained = true;
 
-        double optimisticCargoShipHatches = averageCargoShipHatches;
-        if (avgSampleSize > 1) {
-            optimisticCargoShipHatches = Stats.inverseTValue(confidenceLevel, avgSampleSize, averageCargoShipHatches,
-                    standardDeviation);
+            // Checks if there ISN'T at least two of each type of game pieces placed on the rocket
+            for (int j = 0; j < 3; j++) {
+                for (String gamePiece : new String[]{"Hatches", "Cargo"}) {
+                    double threshold = 2.0 - ((j == 0) ? predictedValues.get("autoRocket" + gamePiece) : 0);
+                    double mean = predictedValues.get("teleRocketLevel" + numStrNames[j] + gamePiece);
 
+                    if (mean < threshold) {
+                        rpAttained = false;
+                    }
+                }
+            }
+
+            if (rpAttained) {
+                rocketRpAttainedCount++;
+            }
         }
 
+        // Replace simulatioon values with the actual ones
+        calculateExpectedValues();
+        calculatePredictedTeleOpPoints();
 
-        double nullHatches = Math.max(Math.min(8 - optimisticCargoShipHatches, 6), 0);
-        predictedValues.put("optimalNullHatches", nullHatches);
+        // Overall this method could be improved by making the threshold less strict, or using probability regardless
+        // of rocket level of placing 6+ of each game piece
+        double rocketRpChance = ((double) rocketRpAttainedCount) / MONTE_CARLO_ITERATIONS;
+        predictedValues.put("rocketRp", rocketRpChance);
 
+        return rocketRpChance;
     }
 
+    /**
+     * Calculates the chance of attaining the HAB docking ranking point for the alliance
+     *
+     * @return The expected value of the HAB docking ranking point
+     */
     private double calculateClimbRpChance() {
         double climbRpChance = 0.0;
 
         final int[] climbPointValues = new int[]{3, 6, 12};
 
+        // Generates a probability tree for the best climb combination in which each team either does or doesn't
+        // climb to their assigned level of the HAB
         for (int teamOneClimb = 0; teamOneClimb < 2; teamOneClimb++) {
             for (int teamTwoClimb = 0; teamTwoClimb < 2; teamTwoClimb++) {
                 for (int teamThreeClimb = 0; teamThreeClimb < 2; teamThreeClimb++) {
@@ -601,6 +690,9 @@ public class AllianceReport {
                     }
                     if (points >= 15) {
                         double probabilityIteration = 1.0;
+
+                        // Determines the exact probability of this combination occurring, based on attempt-success
+                        // rates
                         for (int i = 0; i < 3; i++) {
                             if (climbStatus[i] == 1) {
                                 probabilityIteration *= teamReports[i].getAttemptSuccessRate("level" + numStrNames[bestClimbLevels[i] - 1] + "Climb");
@@ -619,14 +711,51 @@ public class AllianceReport {
         return climbRpChance;
     }
 
-    public double calculatePredictedRp(AllianceReport opposingAlliance) {
+    /**
+     * Calculates the optimal number of null hatch panels to place on the cargo ship, based on the alliance's average
+     * hatch panel output and its variability. Skews towards the optimistic estimate of hatch panels placed, so it is
+     * unlikely that a point "cap" is reached by the alliance if it only scores hatch panels on the cargo ship.
+     *
+     * @param confidenceLevel The confidence level of the t confidence interval created. A higher confidence results
+     *                        in a higher optimistic prediction and lower cap, at the expense of not having enough
+     *                        hatched bays on the cargo ship to place cargo in. A lower confidence results in a
+     *                        higher cap, which means the alliance may run out of hatch panel scoring opportunities.
+     */
+    private void calculateOptimalNullHatchPanels(double confidenceLevel) {
 
-        return calculateClimbRpChance() + calculateRocketRpChance(generateMonteCarloSet()) + 2 * calculateWinChance(opposingAlliance);
+        double averageCargoShipHatches = predictedValues.get("autoCargoShipHatches") + predictedValues.get(
+                "teleCargoShipHatches");
+        double standardDeviation = Stats.sumStandardDeviation(new double[]{
+                standardDeviations.get("autoCargoShipHatches"), standardDeviations.get("teleCargoShipHatches")});
+
+        // This represents the greater endpoint of a t confidence interval with the specified confidence level
+        double optimisticCargoShipHatches = averageCargoShipHatches;
+
+        if (avgSampleSize > 1) {
+            optimisticCargoShipHatches = Stats.inverseTValue(confidenceLevel, avgSampleSize, averageCargoShipHatches,
+                    standardDeviation);
+        }
+
+        // Number of null hatch panels to place such that a point cap isn't reached
+        double nullHatches = Math.max(Math.min(8 - optimisticCargoShipHatches, 6), 0);
+        predictedValues.put("optimalNullHatches", nullHatches);
     }
 
     /**
-     * @param opposingAlliance
-     * @return
+     * Calculates the number of predicted ranking points in a match against another alliance
+     *
+     * @param opposingAlliance AllianceReport representing the opposing allinace
+     * @return Predicted ranking points for the current alliance
+     */
+    public double calculatePredictedRp(AllianceReport opposingAlliance) {
+        return calculatedPredictedBonusRp() + 2 * calculateWinChance(opposingAlliance);
+    }
+
+    /**
+     * Calculates the confidence in the current alliance winning a match against the specified opposing alliance
+     *
+     * @param opposingAlliance An <code>AllianceReport</code> representing the other alliance
+     * @return The confidence in the current alliance winning the match
      */
     public double calculateWinChance(AllianceReport opposingAlliance) {
 
@@ -634,71 +763,14 @@ public class AllianceReport {
         double opposingStandardError = Stats.standardError(opposingAlliance.getStandardDeviation("totalPoints"),
                 opposingAlliance.getAvgSampleSize());
 
+        // Calculate the t-score of the win statistic (difference in predicted score for the alliance)
         double tScore = Stats.twoSampleMeanTScore(predictedValues.get("totalPoints"), thisStandardError,
                 opposingAlliance.getPredictedValue("totalPoints"), opposingStandardError);
         double degreesOfFreedom = Stats.twoSampleDegreesOfFreedom(thisStandardError, avgSampleSize,
                 opposingStandardError, opposingAlliance.getAvgSampleSize());
 
-
+        // Integrate along the t-distribution, based on the calculated score
         return Stats.tCumulativeDistribution(degreesOfFreedom, tScore);
-    }
-
-    private ArrayList<ArrayList<HashMap<String, Double>>> generateMonteCarloSet() {
-
-        ArrayList<ArrayList<HashMap<String, Double>>> simulationValues = new ArrayList<>();
-
-        for (int i = 0; i < MONTE_CARLO_ITERATIONS; i++) {
-            ArrayList<HashMap<String, Double>> sampleMatchValues = new ArrayList<>();
-            for (TeamReport sample : teamReports) {
-                sampleMatchValues.add(sample.generateRandomSample());
-            }
-            simulationValues.add(sampleMatchValues);
-        }
-
-        return simulationValues;
-    }
-
-    /**
-     * @param allianceSimulationValues
-     * @return
-     */
-    private double calculateRocketRpChance(ArrayList<ArrayList<HashMap<String, Double>>> allianceSimulationValues) {
-
-        int rocketRpAttainedCount = 0;
-
-        for (ArrayList<HashMap<String, Double>> teamReportSet : allianceSimulationValues) {
-
-            calculateMonteCarloExpectedValues(teamReportSet);
-
-            calculatePredictedTeleOpHatchPanels(true);
-            calculatePredictedTeleOpCargo(true);
-
-            boolean rpAttained = true;
-
-            for (int j = 0; j < 3; j++) {
-                for (String gamePiece : new String[]{"Hatches", "Cargo"}) {
-                    double threshold = 2.0 - ((j == 0) ? predictedValues.get("autoRocket" + gamePiece) : 0);
-                    double mean = predictedValues.get("teleRocketLevel" + numStrNames[j] + gamePiece);
-
-                    if (mean < threshold) {
-                        rpAttained = false;
-                    }
-                }
-            }
-
-            if (rpAttained) {
-                rocketRpAttainedCount++;
-            }
-
-        }
-
-        calculateExpectedValues();
-        calculatePredictedTeleOpPoints();
-
-        double rocketRpChance = ((double) rocketRpAttainedCount) / MONTE_CARLO_ITERATIONS;
-        predictedValues.put("rocketRp", rocketRpChance);
-
-        return rocketRpChance;
     }
 
     /**
@@ -729,16 +801,20 @@ public class AllianceReport {
     }
 
     /**
-     * @param metric
-     * @return
+     * Retrieves the value of a predicted metric for the alliance
+     *
+     * @param metric The metric to retrieve
+     * @return The metric's predicted value in this alliance
      */
     public double getPredictedValue(String metric) {
         return predictedValues.get(metric);
     }
 
     /**
-     * @param metric
-     * @return
+     * Retrieves the value of the standard deviation of a metric for the alliance
+     *
+     * @param metric The metric to retrieve
+     * @return The metric's standard deviation in this alliance
      */
     public double getStandardDeviation(String metric) {
         return standardDeviations.get(metric);
