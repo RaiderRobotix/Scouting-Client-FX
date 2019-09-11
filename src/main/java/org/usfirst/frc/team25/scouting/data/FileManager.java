@@ -32,7 +32,7 @@ public class FileManager {
      * @param fileName      String name of the output file
      * @param extension     String extension of the output file, without the period
      * @param fileContents  String contents of the output file
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if the output directory is invalid
      */
     public static void outputFile(File rootDirectory, String fileName, String extension, String fileContents) throws FileNotFoundException {
         outputFile(new File(rootDirectory.getAbsolutePath() + "//" + fileName + "." + extension), fileContents);

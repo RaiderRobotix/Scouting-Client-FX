@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class TeamReport {
 
-    private transient ArrayList<ScoutEntry> entries;
+    private final transient ArrayList<ScoutEntry> entries;
     private final int teamNum;
 
     // Metric names defined to assist with iterating over values
@@ -37,7 +37,7 @@ public class TeamReport {
     private final HashMap<String, Boolean> abilities;
 
     /**
-     * An empty constructor that creates an TeamReport based on the metrics calculated in the model team report
+     * An copy constructor that creates an empty TeamReport based on the metrics calculated in the model team report
      * Used to simulate additional alliance members that contribute no points
      *
      * @param model A team report with calculations performed on a real set of scouting entries

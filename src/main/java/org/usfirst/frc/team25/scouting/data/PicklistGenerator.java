@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Class to create various picklists with different methodologies
- * Note: This class contains many expermental methods for generating picklists that are no longer used
+ * Note: This class contains many experimental methods for generating picklists that are no longer used
  */
 public class PicklistGenerator {
 
@@ -383,7 +383,7 @@ public class PicklistGenerator {
      * head-to-head conflicts with adjacent teams. Only relies on comparisons, not another metric
      * Essentially an implementation of bubble sort.
      *
-     * @param orderedList
+     * @param orderedList Ranked list to be processed
      */
     public void generateHeadToHeadList(ArrayList<Integer> orderedList, String listTitle) {
 

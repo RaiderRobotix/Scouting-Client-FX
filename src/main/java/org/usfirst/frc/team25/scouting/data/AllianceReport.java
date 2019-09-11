@@ -537,7 +537,7 @@ public class AllianceReport {
      *                 particular match
      */
     private void calculateMonteCarloExpectedValues(ArrayList<HashMap<String, Double>> testSets) {
-        // Creates a list of all average value metrics for a team, used to calcuated an alliance expected value
+        // Creates a list of all average value metrics for a team, used to calculated an alliance expected value
         String[][] metricSets = new String[][]{TeamReport.autoMetricNames, TeamReport.teleMetricNames,
                 TeamReport.overallMetricNames};
 
@@ -745,7 +745,7 @@ public class AllianceReport {
     /**
      * Calculates the number of predicted ranking points in a match against another alliance
      *
-     * @param opposingAlliance AllianceReport representing the opposing allinace
+     * @param opposingAlliance AllianceReport representing the opposing alliance
      * @return Predicted ranking points for the current alliance
      */
     public double calculatePredictedRp(AllianceReport opposingAlliance) {
