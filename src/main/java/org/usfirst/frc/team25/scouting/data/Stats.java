@@ -328,7 +328,7 @@ public class Stats {
             shiftIndex = 2;
         }
 
-        Method correctMethod = getCorrectMethod(dataset.get(0).getClass(), metricName, shiftIndex);
+        Method correctMethod = SortersFilters.getCorrectGetter(dataset.get(0).getClass(), metricName, shiftIndex);
 
         for (int i = 0; i < dataset.size(); i++) {
             try {
@@ -345,25 +345,6 @@ public class Stats {
         }
 
         return resultArray;
-    }
-
-    /**
-     * @param dataObjectClass
-     * @param metricName
-     * @param shiftIndex
-     * @return
-     */
-    public static Method getCorrectMethod(Class dataObjectClass, String metricName, int shiftIndex) {
-        Method correctGetter = null;
-
-        for (Method m : dataObjectClass.getMethods()) {
-            if (m.getName().substring(shiftIndex).equalsIgnoreCase(metricName) && m.getParameterTypes().length == 0) {
-                correctGetter = m;
-                break;
-            }
-        }
-
-        return correctGetter;
     }
 
 

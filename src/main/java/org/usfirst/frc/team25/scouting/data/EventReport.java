@@ -112,7 +112,7 @@ public class EventReport {
                     try {
                         // Retrieves the correct getter for the variable, then retrieves its value from the data object
                         metricValue =
-                                Stats.getCorrectMethod(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
+                                SortersFilters.getCorrectGetter(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
