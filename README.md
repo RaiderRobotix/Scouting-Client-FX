@@ -6,7 +6,7 @@ Built with JavaFX for the 2019 FRC season and beyond.
 
 <img src="/assets/menu.png" width="600" align="center"/>
 
-Features:
+## Features
  
  * Basic GUI to select input/output folders
  * Merges all scouting JSON files into a master file JSON file for export
@@ -54,13 +54,13 @@ Select the options you want, then press the "Generate Files" button. Those optio
 
 #### Generating aggregate reports
 
-<img src="/assets/prediction.png" width="600" align="center"/>
-
 Text-based and graphical reports of aggregate stats can be viewed by selecting one of three radio buttons, inputting the desired team or match number(s), then pressing the "Display" button.
 
 - **Team-based**: text-based report of one team's summary stats and abilities
 - **Alliance-based**: text-based report of an alliance's predicted output
 - **Match-based**: graphical display of what both alliances in a match are capable of (see below) 
+
+<img src="/assets/prediction.png" width="600" align="center"/>
 
 ## Development
 
