@@ -1,72 +1,49 @@
-buildscript {
-    dependencies {
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-    }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-
-
-    }
+plugins {
+    id 'java'
+    id 'application'
+    id "org.openjfx.javafxplugin" version "0.0.8"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
 }
-
-allprojects {
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-}
-
-
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'javafx-gradle-plugin'
-
-group 'org.usfirst.frc.team25.scouting'
-
-sourceCompatibility = 1.8
 
 repositories {
-    mavenLocal()
     mavenCentral()
-
+    maven { url 'https://jitpack.io' }
 }
 
-task createJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'Raider Robotix Scouting Client',
-                'Implementation-Version': 3.12,
-                'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
-    }
-    baseName = 'Deep Space'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-}
+//group 'org.usfirst.frc.team25.scouting'
 
+
+//manifest {
+//    attributes 'Implementation-Title': 'Raider Robotix Scouting Client',
+//            'Implementation-Version': 3.12,
+//            'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
+//}
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile 'com.google.code.gson:gson:2.7'
 
-    compile group: 'commons-io', name: 'commons-io', version: '2.5'
-    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6'
-    compile files('libs/TBA-APIv3-Java-Library.jar')
+    implementation 'com.google.code.gson:gson:2.7'
+    implementation "commons-io:commons-io:2.5"
+    implementation 'org.apache.commons:commons-math3:3.6'
+    implementation 'com.github.RaiderRobotix:blue-alliance-api-java-library:2.1'
 
 }
 
-jfx {
-    mainClass = 'org.usfirst.frc.team25.scouting.client.ui.Main'
-    vendor = 'Raider Robotix'
-    jfxMainAppJarName = "raider-deep-space-client-v3.XX.jar"
-    nativeReleaseVersion = "v3.12"
-    appName = "Raider Robotix Scouting Client"
+//jfx {
+//    mainClass = 'org.usfirst.frc.team25.scouting.client.ui.Main'
+//    vendor = 'Raider Robotix'
+//    jfxMainAppJarName = "raider-deep-space-client-v4.XX.jar"
+//    nativeReleaseVersion = "v4.0.0"
+//    appName = "Raider Robotix Scouting Client"
+//}
+
+javafx {
+    modules = ['javafx.base', 'javafx.graphics',  'javafx.controls', 'javafx.fxml']
 }
 
-jar {
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+application {
+    mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
 }
 
-mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
+wrapper {
+    version = '6.0'
+}

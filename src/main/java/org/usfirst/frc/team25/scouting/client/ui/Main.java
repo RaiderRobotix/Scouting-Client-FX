@@ -24,24 +24,29 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/main.fxml"));
-
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/team_25_logo.png")));
-        primaryStage.setTitle("Raider Robotix Scouting Client");
-        primaryStage.setScene(new Scene(root, 820, 400));
-        primaryStage.setResizable(false);
-        primaryStage.show();
-
-        primaryStage.setOnCloseRequest(event -> {
-            Platform.exit();
-            System.exit(0);
-        });
-
         try {
-            BlueAlliance.initializeApi(getClass());
-        } catch (IOException e) {
-            e.printStackTrace();
+            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/main.fxml"));
+
+            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/img/team_25_logo.png")));
+            primaryStage.setTitle("Raider Robotix Scouting Client");
+            primaryStage.setScene(new Scene(root, 820, 400));
+            primaryStage.setResizable(false);
+            primaryStage.show();
+
+            primaryStage.setOnCloseRequest(event -> {
+                Platform.exit();
+                System.exit(0);
+            });
+
+            try {
+                BlueAlliance.initializeApi(getClass());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (NullPointerException np) {
+            np.printStackTrace();
         }
+
 
     }
 }
