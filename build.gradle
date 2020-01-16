@@ -45,5 +45,5 @@ application {
 }
 
 wrapper {
-    version = '6.0'
+    gradleVersion = '6.0'
 }
