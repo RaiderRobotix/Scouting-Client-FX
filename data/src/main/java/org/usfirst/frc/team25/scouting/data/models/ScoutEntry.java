@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class ScoutEntry implements Serializable {
 
     private final PreMatch preMatch;
-    private final Autonomous sandstorm;
+    private final Autonomous autonomous;
     private final TeleOp teleOp;
     private final PostMatch postMatch;
 

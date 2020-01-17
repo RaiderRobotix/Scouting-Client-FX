@@ -26,7 +26,7 @@ public class TeleOp {
 
     private boolean attemptHang;
     private boolean successHang;
-    private boolean climbAssisted;
+    private boolean hangAssisted;
     private int assistingClimbTeamNum;
     private int numPartnerClimbAssists;
 

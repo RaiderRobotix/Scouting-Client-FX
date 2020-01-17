@@ -101,7 +101,7 @@ public class TeamReport {
      */
     private void filterNoShow() {
         for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getPreMatch().isRobotNoShow()) {
+            if (entries.get(i).preMatch().robotNoShow()) {
                 entries.remove(i);
 
                 // Decrement counter to prevent skipping over entries
@@ -159,12 +159,12 @@ public class TeamReport {
     private void findFrequentComments() {
         HashMap<String, Integer> commentFrequencies = new HashMap<>();
         if (entries.size() > 0) {
-            for (String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+            for (String key : entries.get(0).postMatch().robotQuickCommentSelections().keySet()) {
 
                 commentFrequencies.put(key, 0);
 
                 for (ScoutEntry entry : entries) {
-                    if (entry.getPostMatch().getRobotQuickCommentSelections().get(key)) {
+                    if (entry.postMatch().robotQuickCommentSelections().containsKey(key)) {
                         commentFrequencies.put(key, commentFrequencies.get(key) + 1);
                     }
                 }
@@ -183,8 +183,8 @@ public class TeamReport {
 
         allComments = "";
         for (ScoutEntry entry : entries) {
-            if (!entry.getPostMatch().getRobotComment().equals("")) {
-                allComments += entry.getPostMatch().getRobotComment() + "; ";
+            if (!entry.postMatch().robotComment().equals("")) {
+                allComments += entry.postMatch().robotComment() + "; ";
             }
         }
     }
@@ -220,33 +220,10 @@ public class TeamReport {
         abilities.put("hatchPanelFloorIntake", frequentComments.contains("Hatch panel floor intake"));
 
         for (ScoutEntry entry : entries) {
-            if (entry.getAutonomous().isFrontCargoShipHatchCapable()) {
-                abilities.put("frontCargoShipHatchSandstorm", true);
-            }
-            if (entry.getAutonomous().isSideCargoShipHatchCapable()) {
-                abilities.put("sideCargoShipHatchSandstorm", true);
-            }
-            if (entry.getAutonomous().getRocketHatches() >= 1) {
-                abilities.put("rocketHatchSandstorm", true);
-            }
-            if (entry.getAutonomous().getCargoShipCargo() >= 1) {
-                abilities.put("cargoShipCargoSandstorm", true);
-            }
-            if (entry.getAutonomous().getRocketCargo() >= 1) {
-                abilities.put("rocketCargoSandstorm", true);
-            }
-            if (entry.getTeleOp().getNumPartnerClimbAssists() == 1) {
-                abilities.put("singleBuddyClimb", true);
-            }
-            if (entry.getTeleOp().getNumPartnerClimbAssists() == 2) {
-                abilities.put("doubleBuddyClimb", true);
-            }
-            if (entry.getTeleOp().getPartnerClimbAssistEndLevel() == 2) {
-                abilities.put("levelTwoBuddyClimb", true);
-            }
-            if (entry.getTeleOp().getPartnerClimbAssistEndLevel() == 3) {
-                abilities.put("levelThreeBuddyClimb", true);
-            }
+//            if (entry.autonomous().isSkillCapable()) {
+//                abilities.put(SkillCapable,true)
+//            }
+
         }
     }
 
@@ -255,58 +232,6 @@ public class TeamReport {
      * and the number of HAB climb attempts/successes
      */
     private void calculateCounts() {
-
-        for (ScoutEntry entry : entries) {
-
-            incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Start");
-
-            if (entry.getPreMatch().getStartingGamePiece().equals("Cargo")) {
-                incrementCount("cargoStart");
-                if (entry.getSandstormCargo() >= 1) {
-                    incrementCount("cargoAutoSuccess");
-                }
-            }
-
-            if (entry.getPreMatch().getStartingGamePiece().equals("Hatch panel")) {
-                incrementCount("hatchStart");
-                if (entry.getSandstormHatches() >= 1) {
-                    incrementCount("hatchAutoSuccess");
-                }
-            }
-
-            // Increase level one count if the robot crosses on either level 1 or 2
-            if (entry.getAutonomous().isCrossHabLine()) {
-                if (entry.getPreMatch().getStartingLevel() == 2) {
-                    incrementCount("levelOneCross");
-                    incrementCount("levelOneStart");
-                }
-                incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
-                incrementCount("totalCross");
-            }
-
-            if (entry.getTeleOp().isAttemptHabClimb()) {
-                incrementCount(levelPrefixes[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
-                        "ClimbAttempt");
-                incrementCount("totalClimbAttempt");
-            }
-
-            if (entry.getTeleOp().isSuccessHabClimb()) {
-                incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
-                        "ClimbSuccess");
-
-                // For cases in which a robot attempts level 3, but only manages to get level 2
-                if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
-                    incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
-                            "ClimbAttempt");
-                }
-
-                incrementCount("totalClimbSuccess");
-            }
-
-            if (entry.getPostMatch().getRobotQuickCommentSelections().get("Lost communications") || entry.getPostMatch().getRobotQuickCommentSelections().get("Tipped over")) {
-                incrementCount("dysfunctional");
-            }
-        }
     }
 
     /**
@@ -507,8 +432,7 @@ public class TeamReport {
      * @param entry <code>ScoutEntry</code> to be added to this team report
      */
     public void addEntry(ScoutEntry entry) {
-        entry.getPostMatch().setRobotComment(StringProcessing.removeCommasBreaks(entry.getPostMatch().getRobotComment
-                ()));
+        entry.postMatch().robotComment(StringProcessing.removeCommasBreaks(entry.postMatch().robotComment()));
 
         entries.add(entry);
     }

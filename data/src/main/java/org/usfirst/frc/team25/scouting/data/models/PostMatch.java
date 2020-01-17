@@ -1,8 +1,10 @@
 package org.usfirst.frc.team25.scouting.data.models;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -16,16 +18,16 @@ public class PostMatch {
     private final int teamOneCompare;
     private final int teamTwoCompare;
     private final int pickNumber;
-    private final String comparison;
-    private final HashSet<String> robotQuickCommentSelections = new HashSet<>();
+    private final char comparison;
+    private final HashMap<String,Boolean> robotQuickCommentSelections = new HashMap<>();
     private transient String robotQuickCommentStr = createCommentStr();
-    private final String robotComment;
+    private String robotComment;
     private final String focus;
 
     String createCommentStr() {
         var ret = new StringBuilder(12*robotQuickCommentSelections.size());
         robotQuickCommentSelections().forEach(
-                it -> ret.append(it + "; ")
+                (k, v) -> { if (v) ret.append(k + "; "); }
         );
         return ret.toString();
     }

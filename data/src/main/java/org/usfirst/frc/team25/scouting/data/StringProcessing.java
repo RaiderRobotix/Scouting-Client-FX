@@ -13,15 +13,7 @@ public class StringProcessing {
      * @return String without commas
      */
     public static String removeCommasBreaks(String s) {
-        StringBuilder newString = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) != ',' && s.charAt(i) != '\n') {
-                newString.append(s.charAt(i));
-            } else {
-                newString.append("; ");
-            }
-        }
-        return newString.toString();
+        return s.replaceAll("[\n,]","; ");
     }
 
 

@@ -12,13 +12,13 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class PreMatch {
 
-    private final String scoutName;
-    private final int matchNum;
-    private final String scoutPos;
-    private final int teamNum;
-    private final boolean robotNoShow;
-    private final int startingLevel;
-    private final String startingPos;
-    private final String startingGamePiece;
+    private String scoutName;
+    private int matchNum;
+    private String scoutPos;
+    private int teamNum;
+    private boolean robotNoShow;
+    private int startingLevel;
+    private String startingPos;
+    private String startingGamePiece;
 
  }

@@ -47,7 +47,7 @@ public class EventReport {
         for (ScoutEntry entry : scoutEntries) {
             entry.calculateDerivedStats();
 
-            int teamNum = entry.getPreMatch().getTeamNum();
+            int teamNum = entry.preMatch().teamNum();
 
             if (!teamReports.containsKey(teamNum)) {
                 teamReports.put(teamNum, new TeamReport(teamNum));
@@ -83,8 +83,8 @@ public class EventReport {
 
             StringBuilder entryContents = new StringBuilder();
 
-            Object[] dataObjects = {entry.getPreMatch(), entry, entry.getAutonomous(), entry.getTeleOp(),
-                    entry.getPostMatch()};
+            Object[] dataObjects = {entry.preMatch(), entry, entry.autonomous(), entry.teleOp(),
+                    entry.postMatch()};
 
             // Populates each "block" of values based on the section of the match
             for (Object dataObject : dataObjects) {
@@ -123,14 +123,14 @@ public class EventReport {
             }
 
             // Adds the true or false values for the robot quick comments
-            for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-                entryContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(",");
+            for (String key : scoutEntries.get(0).postMatch().robotQuickCommentSelections().keySet()) {
+                entryContents.append(entry.postMatch().robotQuickCommentSelections().get(key)).append(",");
             }
 
             entryContents.append('\n');
             fileContents.append(entryContents);
 
-            if (!entry.getPreMatch().isRobotNoShow()) {
+            if (!entry.preMatch().robotNoShow()) {
                 noShowFileContents.append(entryContents);
             }
         }
@@ -178,7 +178,7 @@ public class EventReport {
         }
 
         // Generates the quick comment portion of the header
-        for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+        for (String key : scoutEntries.get(0).postMatch().robotQuickCommentSelections().keySet()) {
             header.append(StringProcessing.removeCommasBreaks(key)).append(",");
         }
 
@@ -236,8 +236,8 @@ public class EventReport {
         // Finds the number of the next qualification match
         int greatestMatchNum = 0;
         for (ScoutEntry entry : scoutEntries) {
-            if (entry.getPreMatch().getMatchNum() > greatestMatchNum) {
-                greatestMatchNum = entry.getPreMatch().getMatchNum();
+            if (entry.preMatch().matchNum() > greatestMatchNum) {
+                greatestMatchNum = entry.preMatch().matchNum();
             }
         }
 

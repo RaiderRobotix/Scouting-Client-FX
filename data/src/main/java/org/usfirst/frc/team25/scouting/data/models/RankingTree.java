@@ -18,6 +18,9 @@ public class RankingTree {
     private HashMap<Integer, Integer> ranks = new HashMap<>();
     private int maxLevel = 0;
 
+    public RankingTree() {
+    }
+
     /**
      * Initializes a RankingTree in which the each element of teamOrder is a numbered node,
      * where the first element has the highest level and the last element has the lowest
@@ -29,6 +32,10 @@ public class RankingTree {
             ranks.put(teamOrder.get(i), teamOrder.size() - i);
         }
 
+    }
+
+    public RankingTree(HashMap<Integer, Integer> ranks) {
+        this.ranks = ranks;
     }
 
     /**

@@ -64,8 +64,8 @@ public class PicklistGenerator {
         // Create list of all comparisons from the scout entries
         for (ScoutEntry entry : scoutEntries) {
 
-            int t1 = entry.getPostMatch().getTeamOneCompare(), t2 = entry.getPostMatch().getTeamTwoCompare();
-            String comparison = entry.getPostMatch().getComparison();
+            int t1 = entry.postMatch().teamOneCompare(), t2 = entry.postMatch().teamTwoCompare();
+            char comparison = entry.postMatch().comparison();
 
             if (t1 != 0 && t2 != 0 && t1 != t2) { //At the beginning of a shift, one team may be set to 0
                 Comparison currentComp = new Comparison(t1, t2, comparison);
@@ -201,13 +201,13 @@ public class PicklistGenerator {
 
         for (ScoutEntry entry : scoutEntries) {
             try {
-                Integer teamNum = entry.getPreMatch().getTeamNum();
+                Integer teamNum = entry.preMatch().teamNum();
 
                 if (!pickPointSets.containsKey(teamNum)) {
                     pickPointSets.put(teamNum, new ArrayList<>());
                 }
 
-                pickPointSets.get(teamNum).add(entry.getPostMatch().getPickNumber());
+                pickPointSets.get(teamNum).add(entry.postMatch().pickNumber());
 
             } catch (NullPointerException e) {
                 e.printStackTrace();
