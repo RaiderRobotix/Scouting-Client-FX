@@ -1,49 +1,48 @@
 plugins {
-    id 'java'
-    id 'application'
-    id "org.openjfx.javafxplugin" version "0.0.8"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+	id 'java'
+	id 'application'
+	id "org.openjfx.javafxplugin" version "0.0.8"
+	id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
 repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
-//group 'org.usfirst.frc.team25.scouting'
+jar {
+	manifest {
+		attributes (
+			'Implementation-Title': 'Raider Robotix Scouting Client',
+			'Implementation-Version': 3.12,
+			'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
+		)
 
-
-//manifest {
-//    attributes 'Implementation-Title': 'Raider Robotix Scouting Client',
-//            'Implementation-Version': 3.12,
-//            'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
-//}
+	}
+}
 
 dependencies {
 
-    implementation 'com.google.code.gson:gson:2.7'
-    implementation "commons-io:commons-io:2.5"
-    implementation 'org.apache.commons:commons-math3:3.6'
-    implementation 'com.github.RaiderRobotix:blue-alliance-api-java-library:2.1'
+	implementation 'com.google.code.gson:gson:2.+'
+	implementation "commons-io:commons-io:2.+"
+	implementation 'org.apache.commons:commons-math3:3.+'
+	implementation 'com.github.RaiderRobotix:blue-alliance-api-java-library:2.+'
 
 }
 
-//jfx {
-//    mainClass = 'org.usfirst.frc.team25.scouting.client.ui.Main'
-//    vendor = 'Raider Robotix'
-//    jfxMainAppJarName = "raider-deep-space-client-v4.XX.jar"
-//    nativeReleaseVersion = "v4.0.0"
-//    appName = "Raider Robotix Scouting Client"
-//}
-
 javafx {
-    modules = ['javafx.base', 'javafx.graphics',  'javafx.controls', 'javafx.fxml']
+	modules = [
+		'javafx.base',
+		'javafx.graphics',
+		'javafx.controls',
+		'javafx.fxml',
+	]
 }
 
 application {
-    mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
+	mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
 }
 
 wrapper {
-    gradleVersion = '6.0'
+	gradleVersion = '6.0'
 }
