@@ -7,7 +7,6 @@ plugins {
 
 repositories {
 	mavenCentral()
-	maven { url 'https://jitpack.io' }
 }
 
 jar {
@@ -23,10 +22,9 @@ jar {
 
 dependencies {
 
-	implementation 'com.google.code.gson:gson:2.+'
-	implementation "commons-io:commons-io:2.+"
-	implementation 'org.apache.commons:commons-math3:3.+'
-	implementation 'com.github.RaiderRobotix:blue-alliance-api-java-library:2.+'
+	implementation 'org.projectlombok:lombok:1.18.10'
+	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+	implementation project(':models')
 
 }
 

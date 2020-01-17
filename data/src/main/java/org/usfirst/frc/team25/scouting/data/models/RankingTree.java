@@ -15,18 +15,8 @@ import java.util.stream.Collectors;
  */
 public class RankingTree {
 
-    private HashMap<Integer, Integer> ranks;
+    private HashMap<Integer, Integer> ranks = new HashMap<>();
     private int maxLevel = 0;
-
-    public RankingTree() {
-        this.ranks = new HashMap<>();
-
-    }
-
-    //Initializes a RankingTree with the structure of an old one
-    public RankingTree(HashMap<Integer, Integer> ranks) {
-        this.ranks = ranks;
-    }
 
     /**
      * Initializes a RankingTree in which the each element of teamOrder is a numbered node,
@@ -35,7 +25,6 @@ public class RankingTree {
      * @param teamOrder An ArrayList that determines the levels and nodes of a new RankingTree
      */
     public RankingTree(ArrayList<Integer> teamOrder) {
-        this.ranks = new HashMap<>();
         for (int i = 0; i < teamOrder.size(); i++) {
             ranks.put(teamOrder.get(i), teamOrder.size() - i);
         }
@@ -96,13 +85,9 @@ public class RankingTree {
      * @param level   The desired level of the node
      */
     private void setLevel(int teamNum, int level) {
-        if (level < 0) {
-            level = 0;
-        }
+        level = Math.max(level, 0);
         this.ranks.put(teamNum, level);
-        if (level > this.maxLevel) {
-            this.maxLevel = level;
-        }
+        this.maxLevel = Math.max(maxLevel, level);
 
     }
 
