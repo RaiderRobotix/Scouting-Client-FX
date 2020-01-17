@@ -6,7 +6,8 @@ plugins {
 }
 
 repositories {
-	mavenCentral()
+	maven { url 'https://jitpack.io' }
+	jcenter()
 }
 
 jar {
@@ -24,7 +25,7 @@ dependencies {
 
 	implementation 'org.projectlombok:lombok:1.18.10'
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
-	implementation project(':models')
+	implementation project(':data')
 
 }
 
