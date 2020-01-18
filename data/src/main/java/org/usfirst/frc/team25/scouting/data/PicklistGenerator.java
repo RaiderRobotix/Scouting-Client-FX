@@ -1,5 +1,6 @@
 package org.usfirst.frc.team25.scouting.data;
 
+import org.jetbrains.annotations.NotNull;
 import org.usfirst.frc.team25.scouting.data.models.Comparison;
 import org.usfirst.frc.team25.scouting.data.models.RankingTree;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
@@ -177,6 +178,7 @@ public class PicklistGenerator {
      * @param teamPointsMap HashMap of team numbers and their ranking points to process
      * @return Formatted list of team numbers and their picklist point values
      */
+    @NotNull
     private String hashMapToStringList(HashMap<Integer, Double> teamPointsMap) {
         teamPointsMap = SortersFilters.sortByComparatorDouble(teamPointsMap, false);
         StringBuilder result = new StringBuilder();
