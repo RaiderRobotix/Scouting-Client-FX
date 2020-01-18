@@ -34,7 +34,6 @@ public class SortersFilters {
      * @return Same list, sorted by ascending team number
      */
     static ArrayList<Team> sortByTeamNum(ArrayList<Team> events) {
-
         events.sort(Comparator.comparingInt(SimpleTeam::getTeamNumber));
         return events;
     }
@@ -60,7 +59,6 @@ public class SortersFilters {
                 return o2.getValue().compareTo(o1.getValue());
             }
         });
-
         // Maintaining insertion order with the help of LinkedList
         HashMap<Integer, Double> sortedMap = new LinkedHashMap<>();
         for (Map.Entry<Integer, Double> entry : list) {

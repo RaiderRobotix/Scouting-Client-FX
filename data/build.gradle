@@ -1,6 +1,7 @@
 plugins {
 	id 'java-library'
 	id "org.openjfx.javafxplugin"
+	id 'org.jetbrains.kotlin.jvm'
 }
 
 repositories {
@@ -23,6 +24,7 @@ dependencies {
 
 	// Use JUnit Jupiter Engine for testing.
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.1'
+	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 javafx {
@@ -36,4 +38,14 @@ javafx {
 
 test {
 	useJUnitPlatform()
+}
+compileKotlin {
+	kotlinOptions {
+		jvmTarget = "11"
+	}
+}
+compileTestKotlin {
+	kotlinOptions {
+		jvmTarget = "11"
+	}
 }
