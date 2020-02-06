@@ -3,6 +3,7 @@ package org.usfirst.frc.team25.scouting.client.ui;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.text.Text;
+import lombok.val;
 import org.usfirst.frc.team25.scouting.data.AllianceReport;
 import org.usfirst.frc.team25.scouting.data.Stats;
 import org.usfirst.frc.team25.scouting.data.TeamReport;
@@ -24,37 +25,37 @@ public class MatchPredictionController {
      * @param blueAlliance Blue alliance data for the current match
      */
     public void initialize(AllianceReport redAlliance, AllianceReport blueAlliance) {
-
+    
         // Arrays to help iterate over common words used in ID names
-        final String[] locations = new String[]{"rocketLevelOne", "teleRocketLevelTwo", "teleRocketLevelThree",
-                "cargoShip"};
-        final String[] pieces = new String[]{"Hatches", "Cargo"};
-
+        val locations = new String[]{"rocketLevelOne", "teleRocketLevelTwo", "teleRocketLevelThree",
+            "cargoShip"};
+        val pieces = new String[]{"Hatches", "Cargo"};
+    
         // Hard-coded overall metrics that don't correspond to a location
-        final String[] predictedMetrics = new String[]{"totalPoints", "rocketRp", "climbRp",
-                "sandstormBonus", "sandstormGamePiecePoints", "teleHatchPoints", "teleCargoPoints", "endgamePoints"};
-        final String[] numStrNames = new String[]{"One", "Two", "Three"};
-
-        for (String color : new String[]{"red", "blue"}) {
+        val predictedMetrics = new String[]{"totalPoints", "rocketRp", "climbRp",
+            "sandstormBonus", "sandstormGamePiecePoints", "teleHatchPoints", "teleCargoPoints", "endgamePoints"};
+        val numStrNames = new String[]{"One", "Two", "Three"};
+    
+        for (val color : new String[]{"red", "blue"}) {
             // This is a ternary operator - easy replacement for a single-line if/else statement
             AllianceReport alliance = color.equals("red") ? redAlliance : blueAlliance;
             AllianceReport otherAlliance = color.equals("red") ? blueAlliance : redAlliance;
-
-            for (String location : locations) {
+        
+            for (val location : locations) {
                 for (String piece : pieces) {
                     setText(color, location + piece, displayDouble(alliance.getPredictedValue(location + piece)));
                 }
             }
-
+        
             for (String predictedMetric : predictedMetrics) {
                 setText(color, predictedMetric, displayDouble(alliance.getPredictedValue(predictedMetric)));
             }
-
+        
             setText(color, "optimalNullHatches", displayDouble(alliance.getPredictedValue("optimalNullHatches")) + " " +
                     "NULL");
 
             // Miscellaneous metrics dependent on winPercent
-            double winPercent = alliance.calculateWinChance(otherAlliance) * 100;
+            val winPercent = alliance.calculateWinChance(otherAlliance) * 100;
 
             setText(color, "winChance", displayDouble(winPercent) + "%");
             setText(color, "winRp", displayDouble(2 * winPercent / 100));
@@ -63,27 +64,27 @@ public class MatchPredictionController {
             // Begin displaying individual team metric values
             for (int i = 0; i < 3; i++) {
                 TeamReport currentTeam = alliance.getTeamReports()[i];
-
+    
                 setText(color, "team" + numStrNames[i] + "Num",
-                        Integer.toString(alliance.getTeamReports()[i].getTeamNum()));
-
+                    Integer.toString(alliance.getTeamReports()[i].getTeamNum()));
+    
                 setText(color, "team" + numStrNames[i] + "Hatches",
-                    displayDouble(currentTeam.getStats().get("totalHatches").getMean()));
+                    displayDouble(currentTeam.getStatistics().get("totalHatches").getMean()));
                 setText(color, "team" + numStrNames[i] + "Cargo",
-                    displayDouble(currentTeam.getStats().get("totalCargo").getMean()));
-
+                    displayDouble(currentTeam.getStatistics().get("totalCargo").getMean()));
+    
                 // Generate display string for starting position and HAB crossing percentage
-                String startString = "";
-                char assignedGamePiece = alliance.getBestSandstormGamePieceCombo().charAt(i);
+                var startString = "";
+                val assignedGamePiece = alliance.getBestSandstormGamePieceCombo().charAt(i);
                 startString += alliance.getBestStartingLevels()[i] + Character.toString(assignedGamePiece) + " (";
-
+    
                 if (assignedGamePiece == 'H') {
-                    startString += (int) Math.round(100 * currentTeam.getStats().get("hatchAutoSuccess").getMean());
+                    startString += (int) Math.round(100 * currentTeam.getStatistics().get("hatchAutoSuccess").getMean());
                 } else {
-                    startString += (int) Math.round(100 * currentTeam.getStats().get("cargoAutoSuccess").getMean());
+                    startString += (int) Math.round(100 * currentTeam.getStatistics().get("cargoAutoSuccess").getMean());
                 }
                 startString += "%)";
-
+    
                 setText(color, "team" + numStrNames[i] + "Start", startString);
     
     
@@ -102,8 +103,8 @@ public class MatchPredictionController {
      * @param text       String to display in the specified field
      */
     private void setText(String color, String metricName, String text) {
-        String modifiedMetricName = Character.toUpperCase(metricName.charAt(0)) + metricName.substring(1);
-        String idName = color + modifiedMetricName;
+        val modifiedMetricName = Character.toUpperCase(metricName.charAt(0)) + metricName.substring(1);
+        val idName = color + modifiedMetricName;
         ((Text) scene.lookup("#" + idName)).setText(text);
     }
 
