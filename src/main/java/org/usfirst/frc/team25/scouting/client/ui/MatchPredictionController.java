@@ -68,9 +68,9 @@ public class MatchPredictionController {
                         Integer.toString(alliance.getTeamReports()[i].getTeamNum()));
 
                 setText(color, "team" + numStrNames[i] + "Hatches",
-                        displayDouble(currentTeam.getAverage("totalHatches")));
+                    displayDouble(currentTeam.getStats().get("totalHatches").getMean()));
                 setText(color, "team" + numStrNames[i] + "Cargo",
-                        displayDouble(currentTeam.getAverage("totalCargo")));
+                    displayDouble(currentTeam.getStats().get("totalCargo").getMean()));
 
                 // Generate display string for starting position and HAB crossing percentage
                 String startString = "";
@@ -78,21 +78,15 @@ public class MatchPredictionController {
                 startString += alliance.getBestStartingLevels()[i] + Character.toString(assignedGamePiece) + " (";
 
                 if (assignedGamePiece == 'H') {
-                    startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("hatchAutoSuccess"));
+                    startString += (int) Math.round(100 * currentTeam.getStats().get("hatchAutoSuccess").getMean());
                 } else {
-                    startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("cargoAutoSuccess"));
+                    startString += (int) Math.round(100 * currentTeam.getStats().get("cargoAutoSuccess").getMean());
                 }
                 startString += "%)";
 
                 setText(color, "team" + numStrNames[i] + "Start", startString);
-
-                // Generate display string for HAB climbing
-                int bestLevel = alliance.getTeamReports()[i].findBestClimbLevel();
-                String climbString = bestLevel + " (";
-                climbString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("level" + numStrNames[bestLevel - 1] + "Climb"));
-                climbString += "%)";
-
-                setText(color, "team" + numStrNames[i] + "Climb", climbString);
+    
+    
             }
         }
 
