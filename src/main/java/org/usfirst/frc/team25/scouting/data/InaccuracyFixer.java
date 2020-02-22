@@ -2,6 +2,7 @@ package org.usfirst.frc.team25.scouting.data;
 
 import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.MatchScoreBreakdown2019Allliance;
+import com.thebluealliance.api.v3.models.MatchScoreBreakdown2020Alliance;
 import lombok.Data;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
@@ -47,7 +48,7 @@ public class InaccuracyFixer {
 							entry.getPreMatch().getScoutName() + ": ";
 					String inaccuracies = "";
 					
-					MatchScoreBreakdown2019Allliance sb = getMatchScoreBreakdown(matchData, entry);
+					MatchScoreBreakdown2020Alliance sb = getMatchScoreBreakdown(matchData, entry);
 					
 					if (sb != null) {
 						
@@ -84,23 +85,23 @@ public class InaccuracyFixer {
 	 * @param entry     Scout entry that contains a match and team number
 	 * @return The appropriate match score breakdown object for the entry
 	 */
-	private MatchScoreBreakdown2019Allliance getMatchScoreBreakdown(ArrayList<Match> matchData, ScoutEntry entry) {
+	private MatchScoreBreakdown2020Alliance getMatchScoreBreakdown(ArrayList<Match> matchData, ScoutEntry entry) {
 		Match match = matchData.get(entry.getPreMatch().getMatchNum() - 1);
 		
 		// Validates if the team in the scout entry matches with the one in a match object
 		int positionIndex = Integer.parseInt(entry.getPreMatch().getScoutPos().split(" ")[1]) - 1;
 		
 		boolean correctTeamRed = entry.getPreMatch().getScoutPos().contains("Red") && match.getRedAlliance()
-			.getTeamKeys()[positionIndex].equals("frc" + entry.getPreMatch().getTeamNum());
+			.getTeam_keys()[positionIndex].equals("frc" + entry.getPreMatch().getTeamNum());
 		boolean correctTeamBlue =
 			entry.getPreMatch().getScoutPos().contains("Blue") && match.getBlueAlliance()
-				.getTeamKeys()[positionIndex].equals("frc" + entry.getPreMatch().getTeamNum());
+				.getTeam_keys()[positionIndex].equals("frc" + entry.getPreMatch().getTeamNum());
 		
 		if (correctTeamBlue || correctTeamRed) {
 			if (entry.getPreMatch().getScoutPos().contains("Red")) {
-				return match.getScoreBreakdown().getRed();
+				return match.getScore_breakdown().getRed();
 			} else {
-				return match.getScoreBreakdown().getBlue();
+				return match.getScore_breakdown().getBlue();
 			}
 		}
 		

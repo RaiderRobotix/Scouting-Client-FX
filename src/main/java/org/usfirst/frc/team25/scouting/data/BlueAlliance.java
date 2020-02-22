@@ -110,8 +110,8 @@ public class BlueAlliance {
 		Arrays.sort(teams, SortersFilters.byTeamNum);
 		
 		StringJoiner joiner = new StringJoiner(",");
-		for (val team : teams) {
-			joiner.add(Integer.toString(team.getTeamNumber()));
+		for (Team team : teams) {
+			joiner.add(Integer.toString(team.getTeam_number()));
 		}
 		
 		FileManager.outputFile(outputDirectory, fileName, "csv", joiner.toString());
@@ -142,8 +142,8 @@ public class BlueAlliance {
 		}
 		Arrays.sort(teams, SortersFilters.byTeamNum);
 		StringJoiner joiner = new StringJoiner(", \n");
-		for (val team : teams) {
-			joiner.add(team.getTeamNumber() + "," + team.getNickname());
+		for (Team team : teams) {
+			joiner.add(team.getTeam_number() + "," + team.getNickname());
 		}
 		
 		FileManager.outputFile(outputDirectory, fileName, "csv", joiner.toString());
@@ -165,7 +165,7 @@ public class BlueAlliance {
 		final List<Match> matches;
 		try {
 			matches = Arrays.stream(TBA.eventRequest.getMatches(eventCode))
-				.filter(m -> !m.getCompLevel().equals("qm"))
+				.filter(m -> !m.getComp_level().equals("qm"))
 				.sorted(SortersFilters.byMatchNum)
 				.collect(Collectors.toList());
 		} catch (IOException e) {
@@ -176,12 +176,12 @@ public class BlueAlliance {
 		for (Match match : matches) {
 			val commaJoiner = new StringJoiner(",");
 			
-			commaJoiner.add(Integer.toString(match.getMatchNumber()));
-			for (var team : match.getRedAlliance().getTeamKeys()) {
+			commaJoiner.add(Integer.toString(match.getMatch_number()));
+			for (val team : match.getRedAlliance().getTeam_keys()) {
 				team = team.split("frc")[1];
 				commaJoiner.add(team);
 			}
-			for (var team : match.getBlueAlliance().getTeamKeys()) {
+			for (var team : match.getBlueAlliance().getTeam_keys()) {
 				team = team.split("frc")[1];
 				commaJoiner.add(team);
 			}
@@ -204,7 +204,7 @@ public class BlueAlliance {
 	 */
 	public static void downloadQualificationMatchData(String eventCode, File outputDirectory) throws IOException {
 		val matches = Arrays.stream(TBA.eventRequest.getMatches(eventCode))
-			.filter(m -> !m.getCompLevel().equals("qm"))
+			.filter(m -> !m.getComp_level().equals("qm"))
 			.sorted(SortersFilters.byMatchNum)
 			.collect(Collectors.toList());
 		Gson gson = new Gson();

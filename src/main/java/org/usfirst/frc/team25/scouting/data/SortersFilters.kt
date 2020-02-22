@@ -10,9 +10,9 @@ import java.util.function.Consumer
  */
 object SortersFilters {
 	@JvmField
-	val byMatchNum: Comparator<SimpleMatch> = Comparator.comparingInt { obj: SimpleMatch -> obj.matchNumber }
+	val byMatchNum: Comparator<SimpleMatch> = Comparator.comparingInt { obj: SimpleMatch -> obj.match_number }
 	@JvmField
-	val byTeamNum: Comparator<SimpleTeam> = Comparator.comparingInt { obj: SimpleTeam -> obj.teamNumber }
+	val byTeamNum: Comparator<SimpleTeam> = Comparator.comparingInt { obj: SimpleTeam -> obj.team_number }
 	
 	@JvmStatic
 	fun <K, V : Comparable<V>?> Map<K, V>.sortByValue(): LinkedHashMap<K, V> {

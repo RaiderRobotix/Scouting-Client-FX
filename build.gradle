@@ -34,7 +34,7 @@ jar {
 
 dependencies {
 	implementation 'com.github.hybras:Scouting-Models-2020:master-SNAPSHOT'
-	implementation 'com.github.RaiderRobotix:blue-alliance-api-java-library:master-SNAPSHOT'
+	implementation 'com.github.RaiderRobotix:blue-alliance-api-java-library:3.0.0'
 
 	implementation 'org.projectlombok:lombok:1.18.10'
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
