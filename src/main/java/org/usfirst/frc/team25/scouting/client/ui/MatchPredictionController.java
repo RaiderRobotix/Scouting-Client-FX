@@ -74,8 +74,8 @@ public class MatchPredictionController {
                     displayDouble(currentTeam.getStats().get("totalCargo").getMean()));
     
                 // Generate display string for starting position and HAB crossing percentage
-                var startString = "";
-                val assignedGamePiece = alliance.getBestSandstormGamePieceCombo().charAt(i);
+                String startString = "";
+                char assignedGamePiece = alliance.getBestSandstormGamePieceCombo().charAt(i);
                 startString += alliance.getBestStartingLevels()[i] + Character.toString(assignedGamePiece) + " (";
     
                 if (assignedGamePiece == 'H') {
