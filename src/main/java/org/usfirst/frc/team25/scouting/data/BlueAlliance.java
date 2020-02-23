@@ -8,6 +8,7 @@ import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.Team;
 import lombok.NonNull;
 import lombok.val;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
