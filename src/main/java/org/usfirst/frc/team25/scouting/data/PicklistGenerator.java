@@ -286,7 +286,7 @@ public class PicklistGenerator {
             potentialAllianceTeams.add(currentTeamReport);
             
             double dysfunctionalPercent =
-                (double) currentTeamReport.getCounts().get("dysfunctional") / (currentTeamReport.getCounts().get(
+                (double) currentTeamReport.getCount("dysfunctional") / (currentTeamReport.getCount(
                     "noShow") + currentTeamReport.getEntries().size());
             
             double pointValue =

@@ -69,9 +69,9 @@ public class MatchPredictionController {
                     Integer.toString(alliance.getTeamReports()[i].getTeamNum()));
     
                 setText(color, "team" + numStrNames[i] + "Hatches",
-                    displayDouble(currentTeam.getStatistics().get("totalHatches").getMean()));
+                    displayDouble(currentTeam.getStats().get("totalHatches").getMean()));
                 setText(color, "team" + numStrNames[i] + "Cargo",
-                    displayDouble(currentTeam.getStatistics().get("totalCargo").getMean()));
+                    displayDouble(currentTeam.getStats().get("totalCargo").getMean()));
     
                 // Generate display string for starting position and HAB crossing percentage
                 var startString = "";
@@ -79,9 +79,9 @@ public class MatchPredictionController {
                 startString += alliance.getBestStartingLevels()[i] + Character.toString(assignedGamePiece) + " (";
     
                 if (assignedGamePiece == 'H') {
-                    startString += (int) Math.round(100 * currentTeam.getStatistics().get("hatchAutoSuccess").getMean());
+                    startString += (int) Math.round(100 * currentTeam.getStats().get("hatchAutoSuccess").getMean());
                 } else {
-                    startString += (int) Math.round(100 * currentTeam.getStatistics().get("cargoAutoSuccess").getMean());
+                    startString += (int) Math.round(100 * currentTeam.getStats().get("cargoAutoSuccess").getMean());
                 }
                 startString += "%)";
     

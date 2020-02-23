@@ -70,6 +70,9 @@ class TeamReport(val teamNum: Int) {
 		statistics
 	}
 	
+	val stats
+		get() = statistics
+	
 	/**
 	 * Processes the scout entries within the team report by filtering out no shows, calculating stats, and finding
 	 * abilities and frequent comments
@@ -189,6 +192,9 @@ class TeamReport(val teamNum: Int) {
 			}
 		}
 	}
+	
+	fun getCount(name: String): Int = counts[name] ?: error("No such count")
+	
 	
 	/**
 	 * Retrieves the value of the specified ability metric
