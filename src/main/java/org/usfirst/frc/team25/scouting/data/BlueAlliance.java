@@ -177,7 +177,7 @@ public class BlueAlliance {
 			val commaJoiner = new StringJoiner(",");
 			
 			commaJoiner.add(Integer.toString(match.getMatch_number()));
-			for (val team : match.getRedAlliance().getTeam_keys()) {
+			for (var team : match.getRedAlliance().getTeam_keys()) {
 				team = team.split("frc")[1];
 				commaJoiner.add(team);
 			}
