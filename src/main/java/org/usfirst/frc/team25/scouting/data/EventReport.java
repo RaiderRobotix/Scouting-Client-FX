@@ -67,7 +67,7 @@ public class EventReport {
 		// Create rows of entries inside this loop
 		for (ScoutEntry entry : scoutEntries) {
 			
-			StringBuilder entryContents = new StringBuilder();
+			StringBuilder entryContents = new StringBuilder(1000);
 			
 			Object[] dataObjects = {entry, entry.getPreMatch(), entry.getAutonomous(), entry.getTeleOp(),
 				entry.getPostMatch()};
@@ -80,6 +80,7 @@ public class EventReport {
 				
 				for (Field metric : fields) {
 					Object metricValue = "";
+					metric.setAccessible(true);
 					
 					// Only the primitives are added to the output entry for now
 					// Values from HashMaps for quick comments are added later
