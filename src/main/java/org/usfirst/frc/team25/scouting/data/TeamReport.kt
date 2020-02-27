@@ -34,7 +34,7 @@ class TeamReport(val teamNum: Int) {
 		)
 		
 		for (entry in entries) {
-			if (entry.autonomous.crossInitLine) // Example code to calculate if a skill is present
+			if (entry.autonomous!!.crossInitLine) // Example code to calculate if a skill is present
 				abilities["crossInitLine"] = true
 		}
 		abilities.toMap()
@@ -104,10 +104,10 @@ class TeamReport(val teamNum: Int) {
 	private fun findFrequentComments() {
 		val commentFrequencies = HashMap<String, Int>()
 		if (entries.size > 0) {
-			for (key in entries[0].postMatch.robotQuickCommentSelections.keys) {
+			for (key in entries[0].postMatch!!.robotQuickCommentSelections.keys) {
 				commentFrequencies[key] = 0
 				for (entry in entries) {
-					if (entry.postMatch.robotQuickCommentSelections.containsKey(key)) {
+					if (entry.postMatch!!.robotQuickCommentSelections.containsKey(key)) {
 						commentFrequencies[key] = commentFrequencies[key]!! + 1
 					}
 				}
@@ -123,8 +123,8 @@ class TeamReport(val teamNum: Int) {
 		}
 		allComments = ""
 		for (entry in entries) {
-			if (entry.postMatch.robotComment != "") {
-				allComments += entry.postMatch.robotComment + "; "
+			if (entry.postMatch!!.robotComment != "") {
+				allComments += entry.postMatch!!.robotComment + "; "
 			}
 		}
 	}
@@ -165,12 +165,12 @@ class TeamReport(val teamNum: Int) {
 	 * @param entry `ScoutEntry` to be added to this team report
 	 */
 	fun addEntry(entry: ScoutEntry) {
-		if (!entry.preMatch.noShow) {
+		if (!entry.preMatch!!.noShow) {
 			// sanitize user input before adding entry
 			entries.add(
 				entry.copy( // All the data classes are intentionally immutable!
-					postMatch = entry.postMatch.copy(
-						robotComment = entry.postMatch.robotComment.removeCommasBreaks()
+					postMatch = entry.postMatch!!.copy(
+						robotComment = entry.postMatch!!.robotComment.removeCommasBreaks()
 					)
 				)
 			)
