@@ -1,5 +1,6 @@
 package org.usfirst.frc.team25.scouting.client.ui;
 
+import com.raiderrobotix.BuildConfig;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,21 +20,21 @@ import java.util.ArrayList;
  * Controller for main.fxml
  */
 public class MainController {
-
+    
     @FXML
     private Button chooseDataFolderButton, generateFilesButton, downloadDataButton, displayReportButton;
     @FXML
     private TextArea statusTextBox;
     @FXML
-    private Text dataDirectoryDisplay;
+    private Text dataDirectoryDisplay, headerLabel;
     @FXML
     private CheckBox combineJson, generatePicklists, generateCsv, fixErrors, backupJson, generatePredictions;
     @FXML
     private RadioButton teamBasedReport, allianceBasedReport, teamEventsDownload, eventDownload, matchBasedReport;
     @FXML
     private TextField analysisTeamOne, analysisTeamTwo, analysisTeamThree, teamNumEventCode, analysisOppTeamOne,
-            analysisOppTeamTwo, analysisOppTeamThree, analysisMatchNum;
-
+        analysisOppTeamTwo, analysisOppTeamThree, analysisMatchNum;
+    
     private TextField[] allianceBasedGroup, matchBasedGroup;
 
     private EventReport eventReport;
@@ -53,8 +54,9 @@ public class MainController {
         RadioButton[] reportButtons = new RadioButton[]{teamBasedReport, allianceBasedReport, matchBasedReport};
         addToToggleGroup(reportButtons, new ToggleGroup());
         addToToggleGroup(new RadioButton[]{teamEventsDownload, eventDownload}, new ToggleGroup());
-
+    
         dataDirectoryDisplay.setText("");
+        headerLabel.setText(headerLabel.getText() + BuildConfig.VERSION);
 
         chooseDataFolderButton.setOnAction(event -> chooseDataFolder());
         generateFilesButton.setOnAction(event -> generateFiles());

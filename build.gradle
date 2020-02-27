@@ -9,6 +9,7 @@ plugins {
 }
 
 group = "com.github.RaiderRobotix"
+version = "v4.0.0-alpha"
 
 repositories {
 	maven { url 'https://jitpack.io' }
@@ -24,16 +25,16 @@ jar {
 	manifest {
 		attributes (
 			'Implementation-Title': 'Raider Robotix Scouting Client',
-			'Implementation-Version': 3.12,
+			'Implementation-Version': project.version,
 			'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
 		)
-
+		from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	}
 }
 
 
 dependencies {
-	implementation 'com.github.hybras:Scouting-Models-2020:master-SNAPSHOT'
+	implementation 'com.github.RaiderRobotix:Scouting-Models:97a5a1d8d0'
 	implementation 'com.github.RaiderRobotix:blue-alliance-api-java-library:3.0.0'
 
 	implementation 'org.projectlombok:lombok:1.18.10'
@@ -51,6 +52,8 @@ dependencies {
 buildConfig {
 	packageName "com.raiderrobotix"
 	buildConfigField 'String', 'TBA_API_KEY', project['TBA_API_KEY']
+	// The escaped quotes here are NEEDED. The plugin copies the TEXT LITERAL given to it. The quotes are part of this.
+	buildConfigField 'String', 'VERSION', "\"$version\""
 }
 
 javafx {
@@ -67,7 +70,7 @@ application {
 }
 
 wrapper {
-	gradleVersion = '6.0'
+	gradleVersion = '6.1'
 }
 
 compileKotlin {
