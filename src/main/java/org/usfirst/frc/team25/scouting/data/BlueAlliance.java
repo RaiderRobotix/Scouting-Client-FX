@@ -8,7 +8,6 @@ import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.Team;
 import lombok.NonNull;
 import lombok.val;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -178,13 +177,13 @@ public class BlueAlliance {
 			val commaJoiner = new StringJoiner(",");
 			
 			commaJoiner.add(Integer.toString(match.getMatch_number()));
-			for (var team : match.getRedAlliance().getTeam_keys()) {
-				team = team.split("frc")[1];
-				commaJoiner.add(team);
+			for (val team : match.getRedAlliance().getTeam_keys()) {
+				val teamNum = team.split("frc")[1];
+				commaJoiner.add(teamNum);
 			}
-			for (var team : match.getBlueAlliance().getTeam_keys()) {
-				team = team.split("frc")[1];
-				commaJoiner.add(team);
+			for (val team : match.getBlueAlliance().getTeam_keys()) {
+				val teamNum = team.split("frc")[1];
+				commaJoiner.add(teamNum);
 			}
 			
 			nlJoiner.add(commaJoiner.toString());
