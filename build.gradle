@@ -28,8 +28,8 @@ jar {
 			'Implementation-Version': project.version,
 			'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
 		)
-		from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	}
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 
@@ -70,7 +70,7 @@ application {
 }
 
 wrapper {
-	gradleVersion = '6.1'
+	gradleVersion = '6.0.1'
 }
 
 compileKotlin {
