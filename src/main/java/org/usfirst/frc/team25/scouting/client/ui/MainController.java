@@ -56,7 +56,7 @@ public class MainController {
         addToToggleGroup(new RadioButton[]{teamEventsDownload, eventDownload}, new ToggleGroup());
     
         dataDirectoryDisplay.setText("");
-        headerLabel.setText(headerLabel.getText() + BuildConfig.VERSION);
+        headerLabel.setText(headerLabel.getText() + " - " + BuildConfig.VERSION);
 
         chooseDataFolderButton.setOnAction(event -> chooseDataFolder());
         generateFilesButton.setOnAction(event -> generateFiles());
