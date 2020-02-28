@@ -73,21 +73,21 @@ jlink {
 }
 
 application {
-	mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
+	mainClassName = 'org.raiderrobotix.scouting.client/org.raiderrobotix.scouting.client.ui.Main'
 }
 
 wrapper {
-	gradleVersion = '6.0.1'
+	gradleVersion = '6.1.1'
 }
 
 compileKotlin {
 	kotlinOptions {
-		jvmTarget = "1.8"
+		jvmTarget = "11"
 	}
 }
 
 compileTestKotlin {
 	kotlinOptions {
-		jvmTarget = "1.8"
+		jvmTarget = "11"
 	}
 }
