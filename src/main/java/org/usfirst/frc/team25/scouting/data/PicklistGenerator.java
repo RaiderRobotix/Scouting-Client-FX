@@ -1,4 +1,4 @@
-package org.raiderrobotix.scouting.data;
+package org.usfirst.frc.team25.scouting.data;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;

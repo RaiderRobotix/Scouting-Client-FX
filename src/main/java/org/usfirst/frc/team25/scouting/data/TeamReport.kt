@@ -1,8 +1,8 @@
-package org.raiderrobotix.scouting.data
+package org.usfirst.frc.team25.scouting.data
 
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics
-import org.raiderrobotix.scouting.data.StringProcessing.removeCommasBreaks
+import org.usfirst.frc.team25.scouting.data.StringProcessing.removeCommasBreaks
 import org.usfirst.frc.team25.scouting.data.models.Autonomous
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry
 import org.usfirst.frc.team25.scouting.data.models.TeleOp

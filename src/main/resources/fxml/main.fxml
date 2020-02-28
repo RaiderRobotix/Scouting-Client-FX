@@ -9,7 +9,7 @@
 <?import javafx.scene.text.*?>
 <GridPane xmlns:fx="http://javafx.com/fxml/1" minHeight="400.0" minWidth="820.0" prefHeight="400.0" prefWidth="820.0"
           xmlns="http://javafx.com/javafx/8.0.172-ea"
-          fx:controller="org.raiderrobotix.scouting.client.ui.MainController">
+          fx:controller="org.usfirst.frc.team25.scouting.client.ui.MainController">
 
     <Pane prefHeight="105.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <ImageView fitHeight="88.0" fitWidth="76.0" layoutX="-86.0" layoutY="16.0" pickOnBounds="true"

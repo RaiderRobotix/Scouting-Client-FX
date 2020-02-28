@@ -1,4 +1,4 @@
-package org.raiderrobotix.scouting.client.ui;
+package org.usfirst.frc.team25.scouting.client.ui;
 
 import com.raiderrobotix.BuildConfig;
 import javafx.fxml.FXML;
@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.raiderrobotix.scouting.data.*;
+import org.usfirst.frc.team25.scouting.data.*;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;

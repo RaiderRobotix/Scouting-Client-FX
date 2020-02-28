@@ -1,4 +1,4 @@
-package org.raiderrobotix.scouting.data;
+package org.usfirst.frc.team25.scouting.data;
 
 import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.MatchScoreBreakdown2019Allliance;

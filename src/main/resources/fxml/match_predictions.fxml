@@ -6,7 +6,7 @@
 <?import javafx.scene.text.*?>
 <Pane xmlns:fx="http://javafx.com/fxml/1" maxHeight="483.0" maxWidth="968.0" minHeight="483.0" minWidth="968.0"
       prefHeight="483.0" prefWidth="968.0" xmlns="http://javafx.com/javafx/8.0.172-ea"
-      fx:controller="org.raiderrobotix.scouting.client.ui.MatchPredictionController">
+      fx:controller="org.usfirst.frc.team25.scouting.client.ui.MatchPredictionController">
     <ImageView fitHeight="484.0" fitWidth="992.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true">
         <Image url="@../img/match_predictions_notext.png"/>
     </ImageView>

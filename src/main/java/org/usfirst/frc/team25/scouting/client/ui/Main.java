@@ -1,4 +1,4 @@
-package org.raiderrobotix.scouting.client.ui;
+package org.usfirst.frc.team25.scouting.client.ui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -7,6 +7,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.usfirst.frc.team25.scouting.data.BlueAlliance;
+
+import java.io.IOException;
 
 /**
  * Entry point to the program

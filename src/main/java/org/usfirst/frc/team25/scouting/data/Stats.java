@@ -1,4 +1,4 @@
-package org.raiderrobotix.scouting.data;
+package org.usfirst.frc.team25.scouting.data;
 
 import org.apache.commons.math3.distribution.TDistribution;
 
@@ -262,3 +262,4 @@ public class Stats {
 		return numerator / denominator;
 	}
 }
+ 

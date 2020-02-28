@@ -1,4 +1,4 @@
-package org.raiderrobotix.scouting.data;
+package org.usfirst.frc.team25.scouting.data;
 
 import com.google.gson.Gson;
 import com.raiderrobotix.BuildConfig;
