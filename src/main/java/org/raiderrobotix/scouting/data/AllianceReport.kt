@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.data
+package org.raiderrobotix.scouting.data
 
 import java.util.*
 import kotlin.math.pow
@@ -95,9 +95,9 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
      */
     private fun calculateExpectedValues() {
         val metricSets = arrayOf(
-            TeamReport.autoMetrics,
-            TeamReport.teleMetrics,
-            TeamReport.overallMetrics
+			TeamReport.autoMetrics,
+			TeamReport.teleMetrics,
+			TeamReport.overallMetrics
         )
         val prefixes = arrayOf("auto", "tele", "")
         for (i in metricSets.indices) {
@@ -319,7 +319,7 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
         val teleOpStdDev = calculateStdDevTeleOpPoints(generateMonteCarloSet(MONTE_CARLO_ITERATIONS))
         val endgameStdDev = calculateStdDevEndgamePoints()
         val totalPointsStdDev = Stats.sumStandardDeviation(doubleArrayOf(sandstormStdDev, teleOpStdDev,
-            endgameStdDev))
+			endgameStdDev))
         standardDeviations["totalPoints"] = totalPointsStdDev
     }
     
@@ -334,8 +334,8 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
 // attempt-success rate's standard deviation
         for (i in bestStartingLevels.indices) {
             sandstormBonusVariance += Stats.multiplyVariance(bestStartingLevels[i] * 3.toDouble(),
-                teamReports[i].statistics["level" + numStrNames[bestStartingLevels[i] - 1] +
-                    "Cross"]!!.standardDeviation)
+				teamReports[i].statistics["level" + numStrNames[bestStartingLevels[i] - 1] +
+					"Cross"]!!.standardDeviation)
         }
         // Recall that standard deviation of a metric is the square root of its variance
         standardDeviations["sandstormBonus"] = sqrt(sandstormBonusVariance)
@@ -344,11 +344,11 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
         for (i in bestSandstormGamePieceCombo!!.indices) {
             if (bestSandstormGamePieceCombo!![i] == 'H') {
                 sandstormGamePieceVariance += Stats.multiplyVariance(5.0, teamReports[i].statistics[
-                    "hatchAutoSuccess"]!!.standardDeviation)
+					"hatchAutoSuccess"]!!.standardDeviation)
                 sandstormHatchVariance += teamReports[i].statistics["hatchAutoSuccess"]!!.standardDeviation.pow(2)
             } else {
                 sandstormGamePieceVariance += Stats.multiplyVariance(3.0, teamReports[i].statistics[
-                    "cargoAutoSuccess"]!!.standardDeviation)
+					"cargoAutoSuccess"]!!.standardDeviation)
             }
         }
         standardDeviations["autoCargoShipHatches"] = sqrt(sandstormHatchVariance)
@@ -414,9 +414,9 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
      */
     private fun calculateMonteCarloExpectedValues(testSets: ArrayList<HashMap<String, Double>>) { // Creates a list of all average value metrics for a team, used to calculated an alliance expected value
         val metricSets = arrayOf(
-            TeamReport.autoMetrics,
-            TeamReport.teleMetrics,
-            TeamReport.overallMetrics
+			TeamReport.autoMetrics,
+			TeamReport.teleMetrics,
+			TeamReport.overallMetrics
         )
         val prefixes = arrayOf("auto", "tele", "")
         // Iterate through various metric names
@@ -464,7 +464,7 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
         // Adds the variance for each team
         for (i in bestClimbLevels.indices) {
             endgameVariance += Stats.multiplyVariance(climbPointValues[bestClimbLevels[i] - 1].toDouble(),
-                teamReports[i].statistics["level" + numStrNames[bestClimbLevels[i] - 1] + "Climb"]!!.standardDeviation)
+				teamReports[i].statistics["level" + numStrNames[bestClimbLevels[i] - 1] + "Climb"]!!.standardDeviation)
         }
         val endgameStdDev = sqrt(endgameVariance)
         standardDeviations["endgamePoints"] = endgameStdDev
@@ -574,13 +574,13 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
     private fun calculateOptimalNullHatchPanels(confidenceLevel: Double) {
         val averageCargoShipHatches = predictedValues["autoCargoShipHatches"]!! + predictedValues["teleCargoShipHatches"]!!
         val standardDeviation = Stats.sumStandardDeviation(doubleArrayOf(
-            standardDeviations["autoCargoShipHatches"]!!, standardDeviations["teleCargoShipHatches"]!!))
+			standardDeviations["autoCargoShipHatches"]!!, standardDeviations["teleCargoShipHatches"]!!))
         // This represents the greater endpoint of a t confidence interval with the specified confidence level
         var optimisticCargoShipHatches = averageCargoShipHatches
         if (avgSampleSize > 1) {
             optimisticCargoShipHatches = Stats.inverseTValue(confidenceLevel, avgSampleSize - 1,
-                averageCargoShipHatches,
-                standardDeviation)
+				averageCargoShipHatches,
+				standardDeviation)
         }
         // Number of null hatch panels to place such that a point cap isn't reached
         val nullHatches = (8 - optimisticCargoShipHatches).coerceAtMost(6.0).coerceAtLeast(0.0)
@@ -606,12 +606,12 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
     fun calculateWinChance(opposingAlliance: AllianceReport): Double {
         val thisStandardError = Stats.standardError(standardDeviations["totalPoints"]!!, avgSampleSize)
         val opposingStandardError = Stats.standardError(opposingAlliance.getStandardDeviation("totalPoints")!!,
-            opposingAlliance.avgSampleSize)
+			opposingAlliance.avgSampleSize)
         // Calculate the t-score of the win statistic (difference in predicted score for the alliance)
         val tScore = Stats.twoSampleMeanTScore(predictedValues["totalPoints"]!!, thisStandardError,
-            opposingAlliance.getPredictedValue("totalPoints")!!, opposingStandardError)
+			opposingAlliance.getPredictedValue("totalPoints")!!, opposingStandardError)
         val degreesOfFreedom = Stats.twoSampleDegreesOfFreedom(thisStandardError, avgSampleSize,
-            opposingStandardError, opposingAlliance.avgSampleSize)
+			opposingStandardError, opposingAlliance.avgSampleSize)
         // Integrate along the t-distribution, based on the calculated score
         return Stats.tCumulativeDistribution(degreesOfFreedom, tScore)
     }

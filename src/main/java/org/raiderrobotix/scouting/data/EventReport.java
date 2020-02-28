@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.data;
+package org.raiderrobotix.scouting.data;
 
 import com.google.gson.Gson;
 import lombok.Data;

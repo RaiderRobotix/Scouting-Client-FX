@@ -1,12 +1,12 @@
-package org.usfirst.frc.team25.scouting.client.ui;
+package org.raiderrobotix.scouting.client.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.text.Text;
 import lombok.val;
-import org.usfirst.frc.team25.scouting.data.AllianceReport;
-import org.usfirst.frc.team25.scouting.data.Stats;
-import org.usfirst.frc.team25.scouting.data.TeamReport;
+import org.raiderrobotix.scouting.data.AllianceReport;
+import org.raiderrobotix.scouting.data.Stats;
+import org.raiderrobotix.scouting.data.TeamReport;
 
 /**
  * Controller for <code>match_predictions.fxml</code>
