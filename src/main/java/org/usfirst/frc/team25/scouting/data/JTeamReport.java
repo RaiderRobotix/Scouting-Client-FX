@@ -48,7 +48,9 @@ public class JTeamReport {
 	private final String teamName;
 	@Getter
 	private final Map<String, StatisticalSummary> statistics;
+	@Getter
 	private final Map<String, Integer> counts = new HashMap<>();
+	@Getter
 	private final Map<String, Boolean> abilities = new HashMap<>();
 	private String frequentCommentStr;
 	private String allComments;
