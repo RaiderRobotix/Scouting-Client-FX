@@ -90,26 +90,26 @@ public class JTeamReport {
 //	private void findFrequentComments() {
 //		HashMap<String, Integer> commentFrequencies = new HashMap<>();
 //		if (entries.size() > 0) {
-//			for (String key : entries[0].postMatch.robotQuickCommentSelections.keys) {
-//				commentFrequencies.get(key) = 0;
+//			for ( String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+//				commentFrequencies.put(key, 0);
 //				for (ScoutEntry : entries) {
-//					if ((ScoutEntry::getPostMatch).RobotQuickCommentSelections.containsKey(key)) {
-//						commentFrequencies[key] = commentFrequencies[key] + 1;
+//					if (ScoutEntry.getPostMatch().getRobotQuickCommentSelections().containsKey(key)) {
+//						commentFrequencies.put(key, commentFrequencies.get(key)+1);
 //					}
 //				}
 //			}
 //		}
-//		for (key : commentFrequencies.keys) {
+//		for (String key : commentFrequencies.keySet()) {
 //			if (commentFrequencies.get(key) >= entries.size() / 4.0) {
 //				frequentComments.add(key);
 //			}
 //		}
-//		for (comment : frequentComments) {
+//		for (String comment : frequentComments) {
 //			frequentCommentStr += comment.removeCommasBreaks() + " \n";
 //		}
 //		allComments = "";
 //		for (entry : entries) {
-//			if (ScoutEntry.postMatch.robotComment != "") {
+//			if (getPostMatch().robotComment != "") {
 //				allComments += ScoutEntry.postMatch.robotComment + "; ";
 //			}
 //		}
