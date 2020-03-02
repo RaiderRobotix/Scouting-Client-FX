@@ -8,6 +8,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.usfirst.frc.team25.scouting.data.models.Autonomous;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 import org.usfirst.frc.team25.scouting.data.models.TeleOp;
+import org.usfirst.frc.team25.scouting.data.models.PostMatch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,7 +42,7 @@ public class JTeamReport {
 		}
 	}
 	
-	private final transient Set<ScoutEntry> entries;
+	private final transient ArrayList<ScoutEntry> entries;
 	@Getter
 	private final int teamNum;
 	@Getter
@@ -57,7 +58,7 @@ public class JTeamReport {
 	private Set<String> frequentComments = new HashSet<>();
 	
 	public JTeamReport(Collection<ScoutEntry> entries, int teamNum, String teamName) {
-		this.entries = new HashSet<>(entries);
+		this.entries = new ArrayList<>(entries);
 		this.teamNum = teamNum;
 		this.teamName = teamName;
 		//Add abilities
@@ -85,6 +86,34 @@ public class JTeamReport {
 		this.statistics = Collections.unmodifiableMap(statistics);
 		
 	}
+	
+//	private void findFrequentComments() {
+//		HashMap<String, Integer> commentFrequencies = new HashMap<>();
+//		if (entries.size() > 0) {
+//			for (String key : entries[0].postMatch.robotQuickCommentSelections.keys) {
+//				commentFrequencies.get(key) = 0;
+//				for (ScoutEntry : entries) {
+//					if ((ScoutEntry::getPostMatch).RobotQuickCommentSelections.containsKey(key)) {
+//						commentFrequencies[key] = commentFrequencies[key] + 1;
+//					}
+//				}
+//			}
+//		}
+//		for (key : commentFrequencies.keys) {
+//			if (commentFrequencies.get(key) >= entries.size() / 4.0) {
+//				frequentComments.add(key);
+//			}
+//		}
+//		for (comment : frequentComments) {
+//			frequentCommentStr += comment.removeCommasBreaks() + " \n";
+//		}
+//		allComments = "";
+//		for (entry : entries) {
+//			if (ScoutEntry.postMatch.robotComment != "") {
+//				allComments += ScoutEntry.postMatch.robotComment + "; ";
+//			}
+//		}
+//	}
 	
 	@NonNull
 	private static <T> Double toDouble(@NonNull T primitive) {
