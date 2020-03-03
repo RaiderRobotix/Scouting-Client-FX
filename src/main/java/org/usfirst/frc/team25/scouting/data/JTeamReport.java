@@ -8,7 +8,6 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.usfirst.frc.team25.scouting.data.models.Autonomous;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 import org.usfirst.frc.team25.scouting.data.models.TeleOp;
-import org.usfirst.frc.team25.scouting.data.models.PostMatch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -87,33 +86,34 @@ public class JTeamReport {
 		
 	}
 	
-//	private void findFrequentComments() {
-//		HashMap<String, Integer> commentFrequencies = new HashMap<>();
-//		if (entries.size() > 0) {
-//			for ( String key : entries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-//				commentFrequencies.put(key, 0);
-//				for (ScoutEntry : entries) {
-//					if (ScoutEntry.getPostMatch().getRobotQuickCommentSelections().containsKey(key)) {
-//						commentFrequencies.put(key, commentFrequencies.get(key)+1);
-//					}
-//				}
-//			}
-//		}
-//		for (String key : commentFrequencies.keySet()) {
-//			if (commentFrequencies.get(key) >= entries.size() / 4.0) {
-//				frequentComments.add(key);
-//			}
-//		}
-//		for (String comment : frequentComments) {
-//			frequentCommentStr += comment.removeCommasBreaks() + " \n";
-//		}
-//		allComments = "";
-//		for (entry : entries) {
-//			if (getPostMatch().robotComment != "") {
-//				allComments += ScoutEntry.postMatch.robotComment + "; ";
-//			}
-//		}
-//	}
+	private void findFrequentComments() {
+		val commentFrequencies = new HashMap<String, Integer>();
+		if (entries.size() > 0) {
+			for (String key :
+				Objects.requireNonNull(entries.get(0).getPostMatch()).getRobotQuickCommentSelections().keySet()) {
+				commentFrequencies.put(key, 0);
+				for (val sc : entries) {
+					if (Objects.requireNonNull(sc.getPostMatch()).getRobotQuickCommentSelections().containsKey(key)) {
+						commentFrequencies.put(key, commentFrequencies.get(key) + 1);
+					}
+				}
+			}
+		}
+		for (val key : commentFrequencies.keySet()) {
+			if (commentFrequencies.get(key) >= entries.size() / 4.0) {
+				frequentComments.add(key);
+			}
+		}
+		for (val comment : frequentComments) {
+			frequentCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
+		}
+		allComments = "";
+		for (val entry : entries) {
+			if (!Objects.requireNonNull(entry.getPostMatch()).getRobotComment().equals("")) {
+				allComments += entry.getPostMatch().getRobotComment() + "; ";
+			}
+		}
+	}
 	
 	@NonNull
 	private static <T> Double toDouble(@NonNull T primitive) {
