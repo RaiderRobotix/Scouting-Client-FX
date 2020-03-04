@@ -52,7 +52,8 @@ public class JTeamReport {
 	private final Map<String, Integer> counts = new HashMap<>();
 	@Getter
 	private final Map<String, Boolean> abilities = new HashMap<>();
-	private String frequentCommentStr;
+	@Getter(lazy = true)
+	private final String frequentCommentStr = findFrequentComments();
 	private String allComments;
 	private Set<String> frequentComments = new HashSet<>();
 	
@@ -86,7 +87,7 @@ public class JTeamReport {
 		
 	}
 	
-	private void findFrequentComments() {
+	private String findFrequentComments() {
 		val commentFrequencies = new HashMap<String, Integer>();
 		if (entries.size() > 0) {
 			for (String key :
@@ -104,8 +105,9 @@ public class JTeamReport {
 				frequentComments.add(key);
 			}
 		}
+		val frequentCommentBuilder = new StringBuilder(10 * frequentComments.size());
 		for (val comment : frequentComments) {
-			frequentCommentStr += StringProcessing.removeCommasBreaks(comment) + " \n";
+			frequentCommentBuilder.append(StringProcessing.removeCommasBreaks(comment)).append(" \n");
 		}
 		allComments = "";
 		for (val entry : entries) {
@@ -113,6 +115,7 @@ public class JTeamReport {
 				allComments += entry.getPostMatch().getRobotComment() + "; ";
 			}
 		}
+		return null;
 	}
 	
 	@NonNull
