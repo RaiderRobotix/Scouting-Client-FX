@@ -41,7 +41,7 @@ public class JTeamReport {
 		}
 	}
 	
-	private final transient ArrayList<ScoutEntry> entries;
+	private final transient Set<ScoutEntry> entries;
 	@Getter
 	private final int teamNum;
 	@Getter
@@ -58,7 +58,7 @@ public class JTeamReport {
 	private Set<String> frequentComments = new HashSet<>();
 	
 	public JTeamReport(Collection<ScoutEntry> entries, int teamNum, String teamName) {
-		this.entries = new ArrayList<>(entries);
+		this.entries = new HashSet<>(entries);
 		this.teamNum = teamNum;
 		this.teamName = teamName;
 		//Add abilities
@@ -91,7 +91,7 @@ public class JTeamReport {
 		val commentFrequencies = new HashMap<String, Integer>();
 		if (entries.size() > 0) {
 			for (String key :
-				Objects.requireNonNull(entries.get(0).getPostMatch()).getRobotQuickCommentSelections().keySet()) {
+				Objects.requireNonNull(entries.stream().findFirst().get().getPostMatch()).getRobotQuickCommentSelections().keySet()) {
 				commentFrequencies.put(key, 0);
 				for (val sc : entries) {
 					if (Objects.requireNonNull(sc.getPostMatch()).getRobotQuickCommentSelections().containsKey(key)) {
