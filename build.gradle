@@ -39,6 +39,7 @@ dependencies {
 
 	implementation 'org.projectlombok:lombok:1.18.10'
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+	implementation 'org.mapstruct:mapstruct-processor:1.3.0.Final'
 
 	implementation 'com.google.code.gson:gson:2.+'
 	implementation 'commons-io:commons-io:2.+'
@@ -73,7 +74,7 @@ jlink {
 }
 
 application {
-	mainClassName = 'org.raiderrobotix.scouting.client/org.raiderrobotix.scouting.client.ui.Main'
+	mainClassName = 'org.usfirst.frc.team25.scouting.client.ui.Main'
 }
 
 wrapper {
