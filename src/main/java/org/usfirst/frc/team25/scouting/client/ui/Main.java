@@ -37,6 +37,12 @@ public class Main extends Application {
                 Platform.exit();
                 System.exit(0);
             });
+
+            try {
+                BlueAlliance.initializeApi(getClass());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (NullPointerException np) {
             np.printStackTrace();
         }
