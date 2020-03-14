@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.data
+package org.raiderrobotix.scouting.client.data
 
 import com.thebluealliance.api.v3.models.SimpleMatch
 import com.thebluealliance.api.v3.models.SimpleTeam

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.data;
+package org.raiderrobotix.scouting.client.data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

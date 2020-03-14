@@ -1,12 +1,16 @@
 module org.raiderrobotix.scouting.client {
-	requires lombok;
-	requires com.google.gson;
 	requires kotlin.stdlib;
-	requires javafx.fxml;
-	requires javafx.graphics;
+	requires javafx.base;
 	requires javafx.controls;
-	requires annotations;
+	requires javafx.fxml;
+	requires java.logging;
+	requires static lombok;
 	requires blue.alliance.api.java.library;
+	requires com.google.gson;
+	requires annotations;
 	requires commons.math3;
 	requires org.raiderrobotix.scouting.models;
+
+	exports org.raiderrobotix.scouting.client.ui;
+	opens org.raiderrobotix.scouting.client.ui;
 }

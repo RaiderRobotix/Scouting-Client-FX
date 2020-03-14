@@ -1,7 +1,8 @@
-package org.usfirst.frc.team25.scouting.data;
+package org.raiderrobotix.scouting.client.data;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import org.raiderrobotix.scouting.client.data.AllianceReport;
 import org.usfirst.frc.team25.scouting.data.models.Comparison;
 import org.usfirst.frc.team25.scouting.data.models.RankingTree;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;

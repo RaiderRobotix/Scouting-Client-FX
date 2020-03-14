@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.data
+package org.raiderrobotix.scouting.client.data
 
 import java.util.*
 import kotlin.math.pow
@@ -95,9 +95,9 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
      */
     private fun calculateExpectedValues() {
         val metricSets = arrayOf(
-            TeamReport.autoMetrics,
-            TeamReport.teleMetrics,
-            TeamReport.overallMetrics
+	        TeamReport.autoMetrics,
+	        TeamReport.teleMetrics,
+	        TeamReport.overallMetrics
         )
         val prefixes = arrayOf("auto", "tele", "")
         for (i in metricSets.indices) {
@@ -414,9 +414,9 @@ class AllianceReport(teamReports: ArrayList<TeamReport>) {
      */
     private fun calculateMonteCarloExpectedValues(testSets: ArrayList<HashMap<String, Double>>) { // Creates a list of all average value metrics for a team, used to calculated an alliance expected value
         val metricSets = arrayOf(
-            TeamReport.autoMetrics,
-            TeamReport.teleMetrics,
-            TeamReport.overallMetrics
+	        TeamReport.autoMetrics,
+	        TeamReport.teleMetrics,
+	        TeamReport.overallMetrics
         )
         val prefixes = arrayOf("auto", "tele", "")
         // Iterate through various metric names

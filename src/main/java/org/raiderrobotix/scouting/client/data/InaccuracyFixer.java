@@ -1,9 +1,11 @@
-package org.usfirst.frc.team25.scouting.data;
+package org.raiderrobotix.scouting.client.data;
 
 import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.MatchScoreBreakdown2019Allliance;
 import com.thebluealliance.api.v3.models.MatchScoreBreakdown2020Alliance;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
  * Class that fixes the inaccurate scout entries found in an event report and outputs a list of inaccuracies
  */
 @Data
+@RequiredArgsConstructor
 public class InaccuracyFixer {
 	
 	private final EventReport eventReport;

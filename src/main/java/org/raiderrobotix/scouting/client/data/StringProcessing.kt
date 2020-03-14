@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.data
+package org.raiderrobotix.scouting.client.data
 
 import org.jetbrains.annotations.Contract
 

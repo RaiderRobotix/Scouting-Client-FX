@@ -1,4 +1,4 @@
-package org.usfirst.frc.team25.scouting.client.ui;
+package org.raiderrobotix.scouting.client.ui;
 
 import com.raiderrobotix.BuildConfig;
 import javafx.fxml.FXML;
@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.usfirst.frc.team25.scouting.data.*;
+import org.raiderrobotix.scouting.client.data.*;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Controller for main.fxml
  */
 public class MainController {
-    
+
     @FXML
     private Button chooseDataFolderButton, generateFilesButton, downloadDataButton, displayReportButton;
     @FXML
@@ -34,7 +34,7 @@ public class MainController {
     @FXML
     private TextField analysisTeamOne, analysisTeamTwo, analysisTeamThree, teamNumEventCode, analysisOppTeamOne,
         analysisOppTeamTwo, analysisOppTeamThree, analysisMatchNum;
-    
+
     private TextField[] allianceBasedGroup, matchBasedGroup;
 
     private EventReport eventReport;
@@ -54,7 +54,7 @@ public class MainController {
         RadioButton[] reportButtons = new RadioButton[]{teamBasedReport, allianceBasedReport, matchBasedReport};
         addToToggleGroup(reportButtons, new ToggleGroup());
         addToToggleGroup(new RadioButton[]{teamEventsDownload, eventDownload}, new ToggleGroup());
-    
+
         dataDirectoryDisplay.setText("");
         headerLabel.setText(headerLabel.getText() + " - " + BuildConfig.VERSION);
 

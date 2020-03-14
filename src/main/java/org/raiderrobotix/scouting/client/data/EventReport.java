@@ -1,7 +1,10 @@
-package org.usfirst.frc.team25.scouting.data;
+package org.raiderrobotix.scouting.client.data;
 
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.usfirst.frc.team25.scouting.data.models.*;
 
 import java.io.File;
@@ -9,11 +12,13 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Object model holding all data for an event. Responsible for generating event-wide files
  */
 @Data
+@RequiredArgsConstructor
 public class EventReport {
 	
 	/**
@@ -23,6 +28,7 @@ public class EventReport {
 	private final String event;
 	private final File directory;
 	private final HashMap<Integer, TeamReport> teamReports = new HashMap<>();
+	@Nullable
 	private File teamNameList;
 	
 	/**
@@ -33,7 +39,7 @@ public class EventReport {
 		
 		for (ScoutEntry entry : scoutEntries) {
 			
-			int teamNum = entry.getPreMatch().getTeamNum();
+			int teamNum = Objects.requireNonNull(entry.getPreMatch()).getTeamNum();
 			
 			if (!teamReports.containsKey(teamNum)) {
 				teamReports.put(teamNum, new TeamReport(teamNum));
@@ -114,14 +120,14 @@ public class EventReport {
 			}
 			
 			// Adds the true or false values for the robot quick comments
-			for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-				entryContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(",");
+			for (String key : Objects.requireNonNull(scoutEntries.get(0).getPostMatch()).getRobotQuickCommentSelections().keySet()) {
+				entryContents.append(Objects.requireNonNull(entry.getPostMatch()).getRobotQuickCommentSelections().get(key)).append(",");
 			}
 			
 			entryContents.append('\n');
 			fileContents.append(entryContents);
 			
-			if (!entry.getPreMatch().getNoShow()) {
+			if (!Objects.requireNonNull(entry.getPreMatch()).getNoShow()) {
 				noShowFileContents.append(entryContents);
 			}
 		}
@@ -169,7 +175,7 @@ public class EventReport {
 		}
 		
 		// Generates the quick comment portion of the header
-		for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
+		for (String key : Objects.requireNonNull(scoutEntries.get(0).getPostMatch()).getRobotQuickCommentSelections().keySet()) {
 			header.append(StringProcessing.removeCommasBreaks(key)).append(",");
 		}
 		
@@ -227,7 +233,7 @@ public class EventReport {
 		// Finds the number of the next qualification match
 		int greatestMatchNum = 0;
 		for (ScoutEntry entry : scoutEntries) {
-			if (entry.getPreMatch().getMatchNum() > greatestMatchNum) {
+			if (Objects.requireNonNull(entry.getPreMatch()).getMatchNum() > greatestMatchNum) {
 				greatestMatchNum = entry.getPreMatch().getMatchNum();
 			}
 		}
@@ -289,7 +295,7 @@ public class EventReport {
 		
 		try {
 			File matchList = FileManager.getMatchList(directory);
-			
+
 			String[] matches = FileManager.getFileString(matchList).split("\n");
 			for (String match : matches) {
 				String[] terms = match.split(",");
@@ -342,7 +348,7 @@ public class EventReport {
 	 *
 	 * @param list File object representing the team name list file
 	 */
-	public void setTeamNameList(File list) {
+	public void setTeamNameList(@Nullable File list) {
 		this.teamNameList = list;
 	}
 	
