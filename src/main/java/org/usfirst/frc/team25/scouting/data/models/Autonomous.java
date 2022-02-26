@@ -6,160 +6,92 @@ package org.usfirst.frc.team25.scouting.data.models;
 public class Autonomous {
 
 
-    private boolean crossHabLine;
-
-    private int cargoShipHatches;
-    private int rocketHatches;
-
-    private int cargoShipCargo;
-    private int rocketCargo;
-
-    private boolean frontCargoShipHatchCapable;
-    private boolean sideCargoShipHatchCapable;
-
-    private int hatchesDropped;
-    private int cargoDropped;
-
-    private boolean hatchesDroppedCargoShip;
-    private boolean hatchesDroppedRocket;
-    private boolean cargoDroppedCargoShip;
-    private boolean cargoDroppedRocket;
-
-    private boolean opponentCargoShipLineFoul;
+    private int RobotCargoPickedup;
+    private int RobotCargoScoredUpperHub;
+    private int RobotCargoScoredLowerHub;
+    private int robotCargoDropped;
+    private int humanCargoScored;
+    private int humanCargoMissed;
+    private boolean robotPassTarmac;
+    private boolean robotCommitFoul;
 
 
-    public Autonomous(int rocketCargo, int rocketHatches, int cargoShipHatches,
-                      int cargoShipCargo, int hatchesDropped, int cargoDropped,
-                      boolean crossHabLine, boolean opponentCargoShipLineFoul,
-                      boolean sideCargoShipHatchCapable, boolean frontCargoShipHatchCapable,
-                      boolean cargoDroppedCargoShip, boolean cargoDroppedRocket,
-                      boolean hatchesDroppedRocket, boolean hatchesDroppedCargoShip) {
-        this.rocketCargo = rocketCargo;
-        this.rocketHatches = rocketHatches;
-        this.cargoShipHatches = cargoShipHatches;
-        this.cargoShipCargo = cargoShipCargo;
-        this.hatchesDropped = hatchesDropped;
-        this.cargoDropped = cargoDropped;
-        this.crossHabLine = crossHabLine;
-        this.opponentCargoShipLineFoul = opponentCargoShipLineFoul;
-        this.sideCargoShipHatchCapable = sideCargoShipHatchCapable;
-        this.frontCargoShipHatchCapable = frontCargoShipHatchCapable;
-        this.cargoDroppedCargoShip = cargoDroppedCargoShip;
-        this.cargoDroppedRocket = cargoDroppedRocket;
-        this.hatchesDroppedRocket = hatchesDroppedRocket;
-        this.hatchesDroppedCargoShip = hatchesDroppedCargoShip;
+    public Autonomous( int RobotCargoPickedup, int RobotCargoScoredUpperHub,
+                       int RobotCargoScoredLowerHub, int robotCargoDropped,int humanCargoScored, int humanCargoMissed,
+                       boolean robotPassTarmac, boolean robotCommitFoul) {
+        this.robotCommitFoul = robotCommitFoul;
+        this.RobotCargoPickedup = RobotCargoPickedup;
+        this.RobotCargoScoredUpperHub = RobotCargoScoredUpperHub;
+        this.RobotCargoScoredLowerHub = RobotCargoScoredLowerHub;
+        this.robotCargoDropped = robotCargoDropped;
+        this.humanCargoScored = humanCargoScored;
+        this.humanCargoMissed = humanCargoMissed;
+        this.robotPassTarmac = robotPassTarmac;
+
     }
 
-    public int getRocketCargo() {
-        return rocketCargo;
+    public boolean isRobotCommitFoul() {
+        return robotCommitFoul;
     }
 
-    public int getRocketHatches() {
-        return rocketHatches;
+    public int getRobotCargoPickedup() {
+        return RobotCargoPickedup;
     }
 
-    public int getCargoShipHatches() {
-        return cargoShipHatches;
+    public int getRobotCargoScoredUpperHub() {
+        return RobotCargoScoredUpperHub;
     }
 
-    public int getCargoShipCargo() {
-        return cargoShipCargo;
+    public int getRobotCargoScoredLowerHub() {
+        return RobotCargoScoredLowerHub;
     }
 
-    public int getHatchesDropped() {
-        return hatchesDropped;
+    public int getRobotCargoDropped() {
+        return robotCargoDropped;
     }
 
-    public int getCargoDropped() {
-        return cargoDropped;
+    public int getHumanCargoScored() {
+        return humanCargoScored;
     }
 
-    public boolean isCrossHabLine() {
-        return crossHabLine;
+    public int getHumanCargoMissed() {
+        return humanCargoMissed;
     }
 
-    public boolean isOpponentCargoShipLineFoul() {
-        return opponentCargoShipLineFoul;
+    public boolean isRobotPassTarmac() {
+        return robotPassTarmac;
     }
 
-    public boolean isFrontCargoShipHatchCapable() {
-        return frontCargoShipHatchCapable;
+    public void setHumanCargoMissed(int humanCargoMissed) {
+        this.humanCargoMissed = humanCargoMissed;
     }
 
-    public boolean isSideCargoShipHatchCapable() {
-        return sideCargoShipHatchCapable;
+    public void setHumanCargoScored(int humanCargoScored) {
+        this.humanCargoScored = humanCargoScored;
     }
 
-    public boolean isHatchesDroppedRocket() {
-        return hatchesDroppedRocket;
+    public void setRobotCargoPickedup(int robotCargoPickedup) {
+        RobotCargoPickedup = robotCargoPickedup;
     }
 
-    public boolean isHatchesDroppedCargoShip() {
-        return hatchesDroppedCargoShip;
+    public void setRobotCargoDropped(int robotCargoDropped) {
+        this.robotCargoDropped = robotCargoDropped;
     }
 
-    public boolean isCargoDroppedCargoShip() {
-        return cargoDroppedCargoShip;
+    public void setRobotCargoScoredLowerHub(int robotCargoScoredLowerHub) {
+        RobotCargoScoredLowerHub = robotCargoScoredLowerHub;
     }
 
-    public boolean isCargoDroppedRocket() {
-        return cargoDroppedRocket;
+    public void setRobotCargoScoredUpperHub(int robotCargoScoredUpperHub) {
+        RobotCargoScoredUpperHub = robotCargoScoredUpperHub;
     }
 
-    public void setCrossHabLine(boolean crossHabLine) {
-        this.crossHabLine = crossHabLine;
+    public void setRobotCommitFoul(boolean robotCommitFoul) {
+        this.robotCommitFoul = robotCommitFoul;
     }
 
-    public void setSideCargoShipHatchCapable(boolean sideCargoShipHatchCapable) {
-        this.sideCargoShipHatchCapable = sideCargoShipHatchCapable;
-    }
-
-    public void setCargoDroppedCargoShip(boolean cargoDroppedCargoShip) {
-        this.cargoDroppedCargoShip = cargoDroppedCargoShip;
-    }
-
-    public void setCargoDroppedRocket(boolean cargoDroppedRocket) {
-        this.cargoDroppedRocket = cargoDroppedRocket;
-    }
-
-    public void setCargoShipHatches(int cargoShipHatches) {
-        this.cargoShipHatches = cargoShipHatches;
-    }
-
-    public void setRocketHatches(int rocketHatches) {
-        this.rocketHatches = rocketHatches;
-    }
-
-    public void setCargoShipCargo(int cargoShipCargo) {
-        this.cargoShipCargo = cargoShipCargo;
-    }
-
-    public void setRocketCargo(int rocketCargo) {
-        this.rocketCargo = rocketCargo;
-    }
-
-    public void setFrontCargoShipHatchCapable(boolean frontCargoShipHatchCapable) {
-        this.frontCargoShipHatchCapable = frontCargoShipHatchCapable;
-    }
-
-    public void setHatchesDroppedCargoShip(boolean hatchesDroppedCargoShip) {
-        this.hatchesDroppedCargoShip = hatchesDroppedCargoShip;
-    }
-
-    public void setHatchesDropped(int hatchesDropped) {
-        this.hatchesDropped = hatchesDropped;
-    }
-
-    public void setCargoDropped(int cargoDropped) {
-        this.cargoDropped = cargoDropped;
-    }
-
-    public void setHatchesDroppedRocket(boolean hatchesDroppedRocket) {
-        this.hatchesDroppedRocket = hatchesDroppedRocket;
-    }
-
-    public void setOpponentCargoShipLineFoul(boolean opponentCargoShipLineFoul) {
-        this.opponentCargoShipLineFoul = opponentCargoShipLineFoul;
+    public void setRobotPassTarmac(boolean robotPassTarmac) {
+        this.robotPassTarmac = robotPassTarmac;
     }
 
 }

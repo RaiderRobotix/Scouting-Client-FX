@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="client" target="1.8" />
+      <module name="client.main" target="1.8" />
+      <module name="client.test" target="1.8" />
+      <module name="Scouting-Client-FX.Infinite_Recharge_Client" target="13" />
+      <module name="Scouting-Client-FX.Infinite_Recharge_Client.main" target="13" />
+      <module name="Scouting-Client-FX.Infinite_Recharge_Client.test" target="13" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

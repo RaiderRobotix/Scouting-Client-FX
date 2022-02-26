@@ -64,38 +64,17 @@ public class InaccuracyFixer {
                         }
 
                         if (!entry.getPreMatch().isRobotNoShow()) {
-                            if (findActualStartHabLevel(entry, sb) != entry.getPreMatch().getStartingLevel()) {
+                            /*if (findActualStartHabLevel(entry, sb) != entry.getPreMatch().getStartingLevel()) {
                                 inaccuracies += "starting HAB level, ";
                                 entry.getPreMatch().setStartingLevel(findActualStartHabLevel(entry, sb));
-                            }
+                            }*/
 
-                            if (isActualCrossHabLine(entry, sb) != entry.getAutonomous().isCrossHabLine()) {
+                            if (isActualCrossHabLine(entry, sb) != entry.getAutonomous().isRobotPassTarmac()) {
                                 inaccuracies += "auto cross hab line, ";
-                                entry.getAutonomous().setCrossHabLine(isActualCrossHabLine(entry, sb));
+                                entry.getAutonomous().setRobotPassTarmac(isActualCrossHabLine(entry, sb));
                             }
 
-                            // This doesn't check for the case where the scout put 2 assists, but only 1 occurred
-                            if (entry.getTeleOp().getNumPartnerClimbAssists() > 0) {
-                                ScoutEntry[] partnerTeams = findPartnerEntries(entry);
-                                int maxActualHabClimbLevel = 0;
-                                for (ScoutEntry partnerTeam : partnerTeams) {
-                                    if (findActualEndHabLevel(partnerTeam, sb) > maxActualHabClimbLevel) {
-                                        maxActualHabClimbLevel = findActualEndHabLevel(partnerTeam, sb);
-                                    }
-                                }
-                                if (maxActualHabClimbLevel < entry.getTeleOp().getPartnerClimbAssistEndLevel()) {
-                                    inaccuracies += "partner climb assist level, ";
-                                    if (maxActualHabClimbLevel > 1) {
-                                        // Assisted to level 2
-                                        entry.getTeleOp().setPartnerClimbAssistEndLevel(maxActualHabClimbLevel);
-                                    } else {
-                                        // Can't assist to level 1
-                                        entry.getTeleOp().setPartnerClimbAssistEndLevel(0);
-                                        entry.getTeleOp().setNumPartnerClimbAssists(0);
-                                    }
-                                }
 
-                            }
 
                             if (correctHabClimbLevels(entry, sb)) {
                                 inaccuracies += "success climb level ";
@@ -135,21 +114,12 @@ public class InaccuracyFixer {
 
         int actualEndHabLevel = findActualEndHabLevel(entry, sb);
 
-        if (entry.getTeleOp().getSuccessHabClimbLevel() != actualEndHabLevel) {
+        if (entry.getTeleOp().getSuccessRungClimbLevel() != actualEndHabLevel) {
 
             boolean correctionNeeded = true;
 
             // Case 1: Partners assisted to level, correction may not be needed
-            if (entry.getTeleOp().isClimbAssistedByPartner()) {
-                ScoutEntry[] partners = findPartnerEntries(entry);
-                for (ScoutEntry partner : partners) {
-                    if (partner.getPreMatch().getTeamNum() == entry.getTeleOp().getAssistingClimbTeamNum()) {
-                        if (partner.getTeleOp().getNumPartnerClimbAssists() >= 1 && partner.getTeleOp().getPartnerClimbAssistEndLevel() >= actualEndHabLevel) {
-                            correctionNeeded = false;
-                        }
-                    }
-                }
-            }
+
 
             if (correctionNeeded) {
 
@@ -182,20 +152,18 @@ public class InaccuracyFixer {
                 }
 
                 // Manual override does not match with scout's data
-                if (entry.getTeleOp().getSuccessHabClimbLevel() != actualEndHabLevel) {
+                if (entry.getTeleOp().getSuccessRungClimbLevel() != actualEndHabLevel) {
                     inaccuracyFound = true;
 
-                    entry.getTeleOp().setSuccessHabClimbLevel(actualEndHabLevel);
+                    entry.getTeleOp().setSuccessRungClimbLevel(actualEndHabLevel);
                     if (actualEndHabLevel > 0) {
-                        entry.getTeleOp().setSuccessHabClimb(true);
-                        entry.getTeleOp().setAttemptHabClimb(true);
-                        if (entry.getTeleOp().getAttemptHabClimbLevel() < actualEndHabLevel) {
-                            entry.getTeleOp().setAttemptHabClimbLevel(actualEndHabLevel);
+                        entry.getTeleOp().setAttemptRungClimb(true);
+                        if (entry.getTeleOp().getSuccessRungClimbLevel() < actualEndHabLevel) {
+                            entry.getTeleOp().setAttemptRungClimbLevel(actualEndHabLevel);
                         }
                     } else {
-                        entry.getTeleOp().setSuccessHabClimb(false);
-                        entry.getTeleOp().setAttemptHabClimb(false);
-                        entry.getTeleOp().setAttemptHabClimbLevel(0);
+                        entry.getTeleOp().setAttemptRungClimb(false);
+                        entry.getTeleOp().setAttemptRungClimbLevel(0);
                     }
                 }
             }

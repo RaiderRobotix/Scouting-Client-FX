@@ -8,7 +8,7 @@
     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/docs" />
     <option name="OPTION_SCOPE" value="private" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

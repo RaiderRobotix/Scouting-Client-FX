@@ -11,20 +11,21 @@ public class PreMatch {
     private String scoutPos;
     private int teamNum;
     private boolean robotNoShow;
-    private int startingLevel;
     private String startingPos;
-    private String startingGamePiece;
+    private boolean robotStartBall;
 
-    public PreMatch(String scoutName, String scoutPos, String startingPos, int matchNum,
-                    int teamNum, int startingLevel, boolean robotNoShow, String startingGamePiece) {
+
+
+    public PreMatch(String scoutName, String scoutPos, int matchNum,
+                    int teamNum, boolean robotNoShow , boolean robotStartBall ) {
         this.scoutName = scoutName;
         this.scoutPos = scoutPos;
         this.startingPos = startingPos;
         this.matchNum = matchNum;
         this.teamNum = teamNum;
-        this.startingLevel = startingLevel;
         this.robotNoShow = robotNoShow;
-        this.startingGamePiece = startingGamePiece;
+        this.robotStartBall = robotStartBall;
+
     }
 
     public void setScoutName(String scoutName) {
@@ -47,17 +48,15 @@ public class PreMatch {
         this.robotNoShow = robotNoShow;
     }
 
-    public void setStartingLevel(int startingLevel) {
-        this.startingLevel = startingLevel;
+    public void setRobotStartBall(boolean robotStartBall) {
+        this.robotStartBall = robotStartBall;
     }
 
     public void setStartingPos(String startingPos) {
         this.startingPos = startingPos;
     }
 
-    public void setStartingGamePiece(String startingGamePiece) {
-        this.startingGamePiece = startingGamePiece;
-    }
+
 
     public String getScoutName() {
         return scoutName;
@@ -79,15 +78,13 @@ public class PreMatch {
         return startingPos;
     }
 
-    public int getStartingLevel() {
-        return startingLevel;
+    public boolean isRobotStartBall() {
+        return robotStartBall;
     }
 
     public boolean isRobotNoShow() {
         return robotNoShow;
     }
 
-    public String getStartingGamePiece() {
-        return startingGamePiece;
-    }
+
 }
