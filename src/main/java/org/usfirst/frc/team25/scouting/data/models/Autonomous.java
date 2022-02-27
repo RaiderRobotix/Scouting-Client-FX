@@ -2,6 +2,7 @@ package org.usfirst.frc.team25.scouting.data.models;
 
 /**
  * Object model for autonomous (or sandstorm) period of a match
+ * change
  */
 public class Autonomous {
 
