@@ -4,8 +4,6 @@ package org.usfirst.frc.team25.scouting.data.models;
  * Object model for autonomous (or sandstorm) period of a match
  */
 public class Autonomous {
-
-
     private boolean crossInitializationLine;
 
     private int cargoUpperHub;
@@ -21,24 +19,24 @@ public class Autonomous {
     private boolean commitFoul;
 
 
-    public Autonomous(boolean robotPassTarmac, int RobotCargoScoredUpperHub
-                    , int RobotCargoScoredLowerHub, int humanCargoScored, int RobotCargoPickedUp
-                    , int robotCargoDropped, boolean robotCommitFoul) {
-        //TODO rename and add cargopickedup
-        this.crossInitializationLine = robotPassTarmac;
-        this.cargoUpperHub = RobotCargoScoredUpperHub;
-        this.cargoLowerHub = RobotCargoScoredLowerHub;
-        this.playerUpperHub = humanCargoScored;
-        this.cargoDropped = robotCargoDropped;
-        this.commitFoul = robotCommitFoul;
-        this.cargoPickedUp = RobotCargoPickedUp;
+    public Autonomous(boolean crossInitializationLine, int cargoUpperHub
+                    , int cargoLowerHub, int playerLowerHub, int playerUpperHub, int cargoPickedUp
+                    , int cargoDropped, boolean commitFoul) {
+        this.crossInitializationLine = crossInitializationLine;
+        this.cargoUpperHub = cargoUpperHub;
+        this.cargoLowerHub = cargoLowerHub;
+        this.playerUpperHub = playerUpperHub;
+        this.playerLowerHub = playerLowerHub;
+        this.cargoDropped = cargoDropped;
+        this.commitFoul = commitFoul;
+        this.cargoPickedUp = cargoPickedUp;
     }
 
     public int getCargoUpperHub() {
         return cargoUpperHub;
     }
 
-    public int getCargoLowerHub() { return 0; }
+    public void getCargoLowerHub() { }
 
     public int getPlayerUpperHub() {
         return playerUpperHub;

@@ -30,8 +30,10 @@ public class ScoutEntry implements Serializable {
 
     public void calculateDerivedStats() {
         //Auton
-        System.out.println(getAutonomous());
-        autonCargo = getAutonomous().getCargoLowerHub();
+        getAutonomous().getCargoUpperHub();
+//          autonCargo = auton.getCargoLowerHub() + auton.getCargoUpperHub()
+//                    + auton.getPlayerLowerHub() + auton.getPlayerUpperHub();
+
         //Tele-Op
         teleOpCargo = teleOp.getCargoLowerHub() + teleOp.getCargoUpperHub();
 
@@ -76,7 +78,9 @@ public class ScoutEntry implements Serializable {
         return preMatch;
     }
 
-    public Autonomous getAutonomous() { return auton; }
+    public Autonomous getAutonomous() {
+        return auton;
+    }
 
     public TeleOp getTeleOp() {
         return teleOp;
