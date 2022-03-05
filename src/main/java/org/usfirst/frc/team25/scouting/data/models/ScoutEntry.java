@@ -5,12 +5,11 @@ import java.io.Serializable;
 public class ScoutEntry implements Serializable {
 
     private PreMatch preMatch;
-    private Autonomous sandstorm;
+    private Autonomous auton;
     private TeleOp teleOp;
     private PostMatch postMatch;
 
-    private transient int sandstormHatches;
-    private transient int sandstormCargo;
+    private transient int autonCargo;
 
     private transient int teleOpHatches;
     private transient int teleOpRocketHatches;
@@ -23,60 +22,51 @@ public class ScoutEntry implements Serializable {
     private transient int totalCargoDropped;
     private transient int totalCycles;
 
-    private transient int calculatedSandstormPoints;
+    private transient int calculatedAutonPoints;
     private transient int calculatedTeleOpPoints;
     private transient int calculatedClimbPoints;
     private transient int calculatedPointContribution;
 
 
     public void calculateDerivedStats() {
-        //Sandstorm
-        sandstormCargo = sandstorm.getRocketCargo() + sandstorm.getCargoShipCargo();
-
-        sandstormHatches = sandstorm.getRocketHatches() + sandstorm.getCargoShipHatches();
-
-
+        //Auton
+        System.out.println(getAutonomous());
+        autonCargo = getAutonomous().getCargoLowerHub();
         //Tele-Op
-        teleOpRocketHatches = teleOp.getRocketLevelOneHatches() + teleOp.getRocketLevelTwoHatches()
-                + teleOp.getRocketLevelThreeHatches();
-
-        teleOpRocketCargo = teleOp.getRocketLevelOneCargo() + teleOp.getRocketLevelTwoCargo()
-                + teleOp.getRocketLevelThreeCargo();
-
-        teleOpHatches = teleOpRocketHatches + teleOp.getCargoShipHatches();
-        teleOpCargo = teleOpRocketCargo + teleOp.getCargoShipCargo();
+        teleOpCargo = teleOp.getCargoLowerHub() + teleOp.getCargoUpperHub();
 
 
         //Overall
-        totalHatches = teleOpHatches + sandstormHatches;
+        totalCargo = autonCargo + teleOpCargo;
 
-        totalCargo = sandstormCargo + teleOpCargo;
-
-        totalCargoDropped = teleOp.getCargoDropped() + sandstorm.getCargoDropped();
-
-        totalHatchesDropped = teleOp.getHatchesDropped() + sandstorm.getHatchesDropped();
+//        totalCargoDropped = teleOp.getCargoDropped() + auton.getCargoDropped();
 
         totalCycles = totalCargo + totalHatches + totalCargoDropped + totalHatchesDropped;
 
-        calculatedSandstormPoints = sandstorm.getRocketHatches() * 2 + sandstorm.getCargoShipHatches() * 5
-                + sandstormCargo * 3;
+//        calculatedAutonPoints = auton.getCargoLowerHub() * 2 + auton.getCargoUpperHub() * 4
+//                + auton.getPlayerUpperHub() * 4 + auton.getPlayerLowerHub() * 2;
 
-        if (sandstorm.isCrossHabLine()) {
-            calculatedSandstormPoints += preMatch.getStartingLevel() * 3;
+        calculatedAutonPoints += 3;
+//        if (auton.isCrossInitializationLine()) {
+//            calculatedAutonPoints += 3;
+//        }
+
+        calculatedTeleOpPoints = teleOp.getCargoLowerHub() + teleOp.getCargoUpperHub() * 2;
+
+        if (teleOp.getClimbLevel() == 0 && teleOp.isSuccessClimb()){
+            calculatedClimbPoints = 0;
+        }
+        else if (teleOp.getClimbLevel() == 1 && teleOp.isSuccessClimb()){
+            calculatedClimbPoints = 4;
+        }
+        else if (teleOp.getClimbLevel() == 2 && teleOp.isSuccessClimb()){
+            calculatedClimbPoints = 10;
+        }
+        else if (teleOp.getClimbLevel() == 3 && teleOp.isSuccessClimb()){
+            calculatedClimbPoints = 15;
         }
 
-        calculatedTeleOpPoints = teleOpHatches * 2 + teleOpCargo * 3;
-
-        calculatedClimbPoints = 0;
-
-        if ((teleOp.isSuccessHabClimb()) || teleOp.getNumPartnerClimbAssists() > 0) {
-            calculatedClimbPoints += Math.pow(2, (teleOp.getSuccessHabClimbLevel() - 1)) * 3;
-            calculatedClimbPoints += 3 * teleOp.getNumPartnerClimbAssists() * (Math.pow(2,
-                    teleOp.getPartnerClimbAssistEndLevel() - 1) - Math.pow(2,
-                    teleOp.getPartnerClimbAssistStartLevel() - 1));
-        }
-
-        calculatedPointContribution = calculatedSandstormPoints + calculatedClimbPoints + calculatedTeleOpPoints;
+        calculatedPointContribution = calculatedAutonPoints + calculatedClimbPoints + calculatedTeleOpPoints;
 
         postMatch.generateQuickCommentStr();
 
@@ -86,9 +76,7 @@ public class ScoutEntry implements Serializable {
         return preMatch;
     }
 
-    public Autonomous getAutonomous() {
-        return sandstorm;
-    }
+    public Autonomous getAutonomous() { return auton; }
 
     public TeleOp getTeleOp() {
         return teleOp;
@@ -98,40 +86,16 @@ public class ScoutEntry implements Serializable {
         return postMatch;
     }
 
-    public int getSandstormHatches() {
-        return sandstormHatches;
-    }
-
-    public int getSandstormCargo() {
-        return sandstormCargo;
-    }
-
-    public int getTeleOpHatches() {
-        return teleOpHatches;
-    }
-
-    public int getTeleOpRocketHatches() {
-        return teleOpRocketHatches;
+    public int getAutonCargo() {
+        return autonCargo;
     }
 
     public int getTeleOpCargo() {
         return teleOpCargo;
     }
 
-    public int getTeleOpRocketCargo() {
-        return teleOpRocketCargo;
-    }
-
-    public int getTotalHatches() {
-        return totalHatches;
-    }
-
     public int getTotalCargo() {
         return totalCargo;
-    }
-
-    public int getTotalHatchesDropped() {
-        return totalHatchesDropped;
     }
 
     public int getTotalCargoDropped() {
@@ -142,8 +106,8 @@ public class ScoutEntry implements Serializable {
         return totalCycles;
     }
 
-    public int getCalculatedSandstormPoints() {
-        return calculatedSandstormPoints;
+    public int getCalculatedAutonPoints() {
+        return calculatedAutonPoints;
     }
 
     public int getCalculatedTeleOpPoints() {

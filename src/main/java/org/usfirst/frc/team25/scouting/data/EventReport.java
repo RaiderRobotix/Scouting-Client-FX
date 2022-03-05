@@ -90,8 +90,10 @@ public class EventReport {
             for (Object dataObject : dataObjects) {
                 // Returns all members, including private members, but not inherited members
                 // This fetches the metric names from the fields of the four main data models
+                System.out.println(dataObject);
                 Field[] fields = dataObject.getClass().getDeclaredFields();
 
+                System.out.println(fields);
                 for (Field metric : fields) {
                     Object metricValue = "";
 
@@ -113,8 +115,10 @@ public class EventReport {
                         // Retrieves the correct getter for the variable, then retrieves its value from the data object
                         metricValue =
                                 SortersFilters.getCorrectGetter(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
+                        System.out.println(metricValue);
+                        System.out.println(metric.getName());
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
                     }
 
                     entryContents.append(metricValue).append(",");
@@ -231,67 +235,69 @@ public class EventReport {
      * @param outputDirectory Directory to save the prediction text file
      * @return True if the file was created successfully, false otherwise
      */
-    public boolean generateMatchPredictions(File outputDirectory) {
-
-        // Finds the number of the next qualification match
-        int greatestMatchNum = 0;
-        for (ScoutEntry entry : scoutEntries) {
-            if (entry.getPreMatch().getMatchNum() > greatestMatchNum) {
-                greatestMatchNum = entry.getPreMatch().getMatchNum();
-            }
-        }
-
-        try {
-            StringBuilder predictions = new StringBuilder();
-            File matchList = FileManager.getMatchList(directory);
-
-            String[] matches = FileManager.getFileString(matchList).split("\n");
-
-            for (int i = greatestMatchNum + 1; i < matches.length + 1; i++) {
-                AllianceReport[] allianceReports = getAlliancesInMatch(i);
-                predictions.append("Match ").append(i).append(": ");
-
-                // Generates values for each alliance
-                for (int j = 0; j < allianceReports.length; j++) {
-                    predictions.append(allianceReports[j].getTeamReports()[0].getTeamNum()).append("-");
-                    predictions.append(allianceReports[j].getTeamReports()[1].getTeamNum()).append("-");
-                    predictions.append(allianceReports[j].getTeamReports()[2].getTeamNum()).append(" (");
-
-                    // THe Math.abs() hack essentially makes the opposing alliance the other value in allianceReports
-                    predictions.append(Stats.round(allianceReports[j].calculatePredictedRp(allianceReports[Math.abs(j - 1)]), 1)).append(" RP, ");
-                    predictions.append(Stats.round(allianceReports[j].getPredictedValue("totalPoints"), 1)).append(" " +
-                            "pts)");
-                    if (j == 0) {
-                        predictions.append(" vs. ");
-                    }
-                }
-                double redWinChance = allianceReports[0].calculateWinChance(allianceReports[1]);
-                if (redWinChance > 0.5) {
-                    predictions.append(" - Red win, ").append(Stats.round(redWinChance * 100, 2)).append("%\n");
-                } else {
-                    predictions.append(" - Blue win, ").append(Stats.round((1 - redWinChance) * 100, 2)).append("%\n");
-                }
-
-            }
-
-            if (predictions.length() > 0) {
-                FileManager.outputFile(outputDirectory, "MatchPredictions", "txt", predictions.toString());
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    /**
-     * Gets a two-element array of alliance reports representing the alliances playing in the specified match
-     *
-     * @param matchNum Number of the qualification match to be queried
-     * @return An array of alliance reports
-     * @throws FileNotFoundException If the match schedule is not downloaded or scouting data cannot be found
-     */
+//
+//    public boolean generateMatchPredictions(File outputDirectory) {
+//
+//        // Finds the number of the next qualification match
+//        int greatestMatchNum = 0;
+//        for (ScoutEntry entry : scoutEntries) {
+//            if (entry.getPreMatch().getMatchNum() > greatestMatchNum) {
+//                greatestMatchNum = entry.getPreMatch().getMatchNum();
+//            }
+//        }
+//
+//        try {
+//            StringBuilder predictions = new StringBuilder();
+//            File matchList = FileManager.getMatchList(directory);
+//
+//            String[] matches = FileManager.getFileString(matchList).split("\n");
+//
+//            for (int i = greatestMatchNum + 1; i < matches.length + 1; i++) {
+//                AllianceReport[] allianceReports = getAlliancesInMatch(i);
+//                predictions.append("Match ").append(i).append(": ");
+//
+//                // Generates values for each alliance
+//                for (int j = 0; j < allianceReports.length; j++) {
+//                    predictions.append(allianceReports[j].getTeamReports()[0].getTeamNum()).append("-");
+//                    predictions.append(allianceReports[j].getTeamReports()[1].getTeamNum()).append("-");
+//                    predictions.append(allianceReports[j].getTeamReports()[2].getTeamNum()).append(" (");
+//
+//                    // THe Math.abs() hack essentially makes the opposing alliance the other value in allianceReports
+//                    //predictions.append(Stats.round(allianceReports[j].calculatePredictedRp(allianceReports[Math.abs(j - 1)]), 1)).append(" RP, ");
+//                    //predictions.append(Stats.round(allianceReports[j].getPredictedValue("totalPoints"), 1)).append(" " +
+////                            "pts)");
+//                    if (j == 0) {
+//                        predictions.append(" vs. ");
+//                    }
+//                }
+//                double redWinChance = allianceReports[0].calculateWinChance(allianceReports[1]);
+//                if (redWinChance > 0.5) {
+//                    predictions.append(" - Red win, ").append(Stats.round(redWinChance * 100, 2)).append("%\n");
+//                } else {
+//                    predictions.append(" - Blue win, ").append(Stats.round((1 - redWinChance) * 100, 2)).append("%\n");
+//                }
+//
+//            }
+//
+//            if (predictions.length() > 0) {
+//                FileManager.outputFile(outputDirectory, "MatchPredictions", "txt", predictions.toString());
+//                return true;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return false;
+//    }
+//
+//    /**
+//     * Gets a two-element array of alliance reports representing the alliances playing in the specified match
+//     *
+//     * @param matchNum Number of the qualification match to be queried
+//     * @return An array of alliance reports
+//     * @throws FileNotFoundException If the match schedule is not downloaded or scouting data cannot be found
+//     */
+//
     public AllianceReport[] getAlliancesInMatch(int matchNum) throws FileNotFoundException {
         AllianceReport[] allianceReports = new AllianceReport[2];
 

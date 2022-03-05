@@ -92,7 +92,7 @@ public class TeamReport {
     public void processReport() {
         filterNoShow();
         findFrequentComments();
-        calculateStats();
+        //calculateStats();
         findAbilities();
     }
 
@@ -142,14 +142,15 @@ public class TeamReport {
      * Calculates the counts, averages, standard deviations, and attempt-success rates of data in stored scouting
      * entries, provided that data exists
      */
-    private void calculateStats() {
-        if (entries.size() > 0) {
-            calculateCounts();
-            calculateAverages();
-            calculateStandardDeviations();
-            calculateAttemptSuccessRates();
-        }
-    }
+//
+//    private void calculateStats() {
+//        if (entries.size() > 0) {
+//            calculateCounts();
+//            calculateAverages();
+//            calculateStandardDeviations();
+//            calculateAttemptSuccessRates();
+//        }
+//    }
 
     /**
      * Populates the frequent comment array with quick comments that appear at least 25% of the time in a team's
@@ -220,32 +221,38 @@ public class TeamReport {
         abilities.put("hatchPanelFloorIntake", frequentComments.contains("Hatch panel floor intake"));
 
         for (ScoutEntry entry : entries) {
-            if (entry.getAutonomous().isFrontCargoShipHatchCapable()) {
-                abilities.put("frontCargoShipHatchSandstorm", true);
+//            if (entry.getAutonomous().isCrossInitializationLine()) {
+//                abilities.put("crossInitializationLineAuton", true);
+//            }
+//            if (entry.getAutonomous().getPlayerUpperHub() >= 1) {
+//                abilities.put("playerUpperHubAuton", true);
+//            }
+//            if (entry.getAutonomous().getPlayerLowerHub() >= 1) {
+//                abilities.put("playerLowerHubAuton", true);
+//            }
+//            if (entry.getAutonomous().getCargoUpperHub() >= 1) {
+//                abilities.put("cargoUpperHubAuton", true);
+//            }
+            if (entry.getTeleOp().getCargoLowerHub() >= 1) {
+                abilities.put("cargoLowerHubAuton", true);
             }
-            if (entry.getAutonomous().isSideCargoShipHatchCapable()) {
-                abilities.put("sideCargoShipHatchSandstorm", true);
+            if (entry.getTeleOp().getCargoUpperHub() >= 1) {
+                abilities.put("cargoUpperHubTeleOp", true);
             }
-            if (entry.getAutonomous().getRocketHatches() >= 1) {
-                abilities.put("rocketHatchSandstorm", true);
+            if (entry.getTeleOp().getCargoLowerHub() >= 1) {
+                abilities.put("cargoLowerHubTeleOp", true);
             }
-            if (entry.getAutonomous().getCargoShipCargo() >= 1) {
-                abilities.put("cargoShipCargoSandstorm", true);
+            if (entry.getCalculatedClimbPoints() >= 4) {
+                abilities.put("lowRung", true);
             }
-            if (entry.getAutonomous().getRocketCargo() >= 1) {
-                abilities.put("rocketCargoSandstorm", true);
+            if (entry.getCalculatedClimbPoints() >= 6) {
+                abilities.put("midRung", true);
             }
-            if (entry.getTeleOp().getNumPartnerClimbAssists() == 1) {
-                abilities.put("singleBuddyClimb", true);
+            if (entry.getCalculatedClimbPoints() >= 10) {
+                abilities.put("highRung", true);
             }
-            if (entry.getTeleOp().getNumPartnerClimbAssists() == 2) {
-                abilities.put("doubleBuddyClimb", true);
-            }
-            if (entry.getTeleOp().getPartnerClimbAssistEndLevel() == 2) {
-                abilities.put("levelTwoBuddyClimb", true);
-            }
-            if (entry.getTeleOp().getPartnerClimbAssistEndLevel() == 3) {
-                abilities.put("levelThreeBuddyClimb", true);
+            if (entry.getCalculatedClimbPoints() >= 15) {
+                abilities.put("traversalRung", true);
             }
         }
     }
@@ -254,136 +261,137 @@ public class TeamReport {
      * Calculates the number of times a team starts/crosses a particular level of the HAB during the sandstorm period
      * and the number of HAB climb attempts/successes
      */
-    private void calculateCounts() {
-
-        for (ScoutEntry entry : entries) {
-
-            incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Start");
-
-            if (entry.getPreMatch().getStartingGamePiece().equals("Cargo")) {
-                incrementCount("cargoStart");
-                if (entry.getSandstormCargo() >= 1) {
-                    incrementCount("cargoAutoSuccess");
-                }
-            }
-
-            if (entry.getPreMatch().getStartingGamePiece().equals("Hatch panel")) {
-                incrementCount("hatchStart");
-                if (entry.getSandstormHatches() >= 1) {
-                    incrementCount("hatchAutoSuccess");
-                }
-            }
-
-            // Increase level one count if the robot crosses on either level 1 or 2
-            if (entry.getAutonomous().isCrossHabLine()) {
-                if (entry.getPreMatch().getStartingLevel() == 2) {
-                    incrementCount("levelOneCross");
-                    incrementCount("levelOneStart");
-                }
-                incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
-                incrementCount("totalCross");
-            }
-
-            if (entry.getTeleOp().isAttemptHabClimb()) {
-                incrementCount(levelPrefixes[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
-                        "ClimbAttempt");
-                incrementCount("totalClimbAttempt");
-            }
-
-            if (entry.getTeleOp().isSuccessHabClimb()) {
-                incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
-                        "ClimbSuccess");
-
-                // For cases in which a robot attempts level 3, but only manages to get level 2
-                if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
-                    incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
-                            "ClimbAttempt");
-                }
-
-                incrementCount("totalClimbSuccess");
-            }
-
-            if (entry.getPostMatch().getRobotQuickCommentSelections().get("Lost communications") || entry.getPostMatch().getRobotQuickCommentSelections().get("Tipped over")) {
-                incrementCount("dysfunctional");
-            }
-        }
-    }
+//    private void calculateCounts() {
+//
+//        for (ScoutEntry entry : entries) {
+//
+//            incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Start");
+//
+//            if (entry.getPreMatch().getStartingGamePiece().equals("Cargo")) {
+//                incrementCount("cargoStart");
+//                if (entry.getSandstormCargo() >= 1) {
+//                    incrementCount("cargoAutoSuccess");
+//                }
+//            }
+//
+//            if (entry.getPreMatch().getStartingGamePiece().equals("Hatch panel")) {
+//                incrementCount("hatchStart");
+//                if (entry.getSandstormHatches() >= 1) {
+//                    incrementCount("hatchAutoSuccess");
+//                }
+//            }
+//
+//            // Increase level one count if the robot crosses on either level 1 or 2
+//            if (entry.getAutonomous().isCrossHabLine()) {
+//                if (entry.getPreMatch().getStartingLevel() == 2) {
+//                    incrementCount("levelOneCross");
+//                    incrementCount("levelOneStart");
+//                }
+//                incrementCount(levelPrefixes[entry.getPreMatch().getStartingLevel() - 1] + "Cross");
+//                incrementCount("totalCross");
+//            }
+//
+//            if (entry.getTeleOp().isAttemptHabClimb()) {
+//                incrementCount(levelPrefixes[entry.getTeleOp().getAttemptHabClimbLevel() - 1] +
+//                        "ClimbAttempt");
+//                incrementCount("totalClimbAttempt");
+//            }
+//
+//            if (entry.getTeleOp().isSuccessHabClimb()) {
+//                incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+//                        "ClimbSuccess");
+//
+//                // For cases in which a robot attempts level 3, but only manages to get level 2
+//                if (entry.getTeleOp().getSuccessHabClimbLevel() != entry.getTeleOp().getAttemptHabClimbLevel()) {
+//                    incrementCount(levelPrefixes[entry.getTeleOp().getSuccessHabClimbLevel() - 1] +
+//                            "ClimbAttempt");
+//                }
+//
+//                incrementCount("totalClimbSuccess");
+//            }
+//
+//            if (entry.getPostMatch().getRobotQuickCommentSelections().get("Lost communications") || entry.getPostMatch().getRobotQuickCommentSelections().get("Tipped over")) {
+//                incrementCount("dysfunctional");
+//            }
+//        }
+//    }
 
     /**
      * Calculates the sample standard of metrics specified in <code>autoMetricNames</code> and
      * <code>teleMetricNames</code>
      */
-    private void calculateStandardDeviations() {
-        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
-        ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
-        ArrayList<Object> overallList = new ArrayList<>(entries);
-
-        for (String metric : autoMetricNames) {
-            double[] values = SortersFilters.getDoubleArray(autoList, metric, int.class);
-            standardDeviations.put("auto" + metric, Stats.standardDeviation(values));
-        }
-        for (String metric : teleMetricNames) {
-            double[] values = SortersFilters.getDoubleArray(teleList, metric, int.class);
-            standardDeviations.put("tele" + metric, Stats.standardDeviation(values));
-        }
-        for (String metric : overallMetricNames) {
-            double[] values = SortersFilters.getDoubleArray(overallList, metric, int.class);
-            standardDeviations.put(metric, Stats.standardDeviation(values));
-        }
-    }
+//    private void calculateStandardDeviations() {
+//        ArrayList<Object> autoList = SortersFilters.filterDataObject(entries, Autonomous.class);
+//        ArrayList<Object> teleList = SortersFilters.filterDataObject(entries, TeleOp.class);
+//        ArrayList<Object> overallList = new ArrayList<>(entries);
+//
+//        for (String metric : autoMetricNames) {
+//            double[] values = SortersFilters.getDoubleArray(autoList, metric, int.class);
+//            standardDeviations.put("auto" + metric, Stats.standardDeviation(values));
+//        }
+//        for (String metric : teleMetricNames) {
+//            double[] values = SortersFilters.getDoubleArray(teleList, metric, int.class);
+//            standardDeviations.put("tele" + metric, Stats.standardDeviation(values));
+//        }
+//        for (String metric : overallMetricNames) {
+//            double[] values = SortersFilters.getDoubleArray(overallList, metric, int.class);
+//            standardDeviations.put(metric, Stats.standardDeviation(values));
+//        }
+//    }
 
     /**
      * Calculates the attempt-success rates of HAB climb, sandstorm bonus, and/or sandstorm game piece placing for a
      * team
      */
-    private void calculateAttemptSuccessRates() {
-        for (int i = 0; i < 4; i++) {
-            // Calculating HAB line crosses; skips level 3
-            if (i != 2) {
-                double crossRate = 0.0;
-
-                int attempts = 0;
-
-                if (i == 3 && entries.size() != 0) {
-                    attempts = entries.size();
-                    crossRate = (double) getCount(levelPrefixes[i] + "Cross") / attempts;
-                } else if (getCount(levelPrefixes[i] + "Start") != 0) {
-                    attempts = getCount(levelPrefixes[i] + "Start");
-                    crossRate = (double) getCount(levelPrefixes[i] + "Cross") / attempts;
-                }
-
-                // Calculate the standard deviation of a sample proportion
-                standardDeviations.put(levelPrefixes[i] + "Cross", Stats.standardDeviation(attempts,
-                        getCount(levelPrefixes[i] + "Cross")));
-
-                attemptSuccessRates.put(levelPrefixes[i] + "Cross", crossRate);
-            }
-
-            double climbRate = 0.0;
-
-            if (getCount(levelPrefixes[i] + "ClimbAttempt") != 0) {
-                climbRate = (double) getCount(levelPrefixes[i] + "ClimbSuccess") / getCount(levelPrefixes[i] +
-                        "ClimbAttempt");
-            }
-
-            standardDeviations.put(levelPrefixes[i] + "Climb", Stats.standardDeviation(getCount(levelPrefixes[i] +
-                    "ClimbAttempt"), getCount(levelPrefixes[i] + "ClimbSuccess")));
-            attemptSuccessRates.put(levelPrefixes[i] + "Climb", climbRate);
-        }
-
-        for (String prefix : new String[]{"cargo", "hatch"}) {
-
-            double placeRate = 0.0;
-
-            if (getCount(prefix + "Start") != 0) {
-                placeRate = (double) getCount(prefix + "AutoSuccess") / getCount(prefix + "Start");
-            }
-
-            standardDeviations.put(prefix + "AutoSuccess", Stats.standardDeviation(getCount(prefix + "Start"),
-                    getCount(prefix + "AutoSuccess")));
-            attemptSuccessRates.put(prefix + "AutoSuccess", placeRate);
-        }
-    }
+//
+//    private void calculateAttemptSuccessRates() {
+//        for (int i = 0; i < 4; i++) {
+//            // Calculating HAB line crosses; skips level 3
+//            if (i != 2) {
+//                double crossRate = 0.0;
+//
+//                int attempts = 0;
+//
+//                if (i == 3 && entries.size() != 0) {
+//                    attempts = entries.size();
+//                    crossRate = (double) getCount(levelPrefixes[i] + "Cross") / attempts;
+//                } else if (getCount(levelPrefixes[i] + "Start") != 0) {
+//                    attempts = getCount(levelPrefixes[i] + "Start");
+//                    crossRate = (double) getCount(levelPrefixes[i] + "Cross") / attempts;
+//                }
+//
+//                // Calculate the standard deviation of a sample proportion
+//                standardDeviations.put(levelPrefixes[i] + "Cross", Stats.standardDeviation(attempts,
+//                        getCount(levelPrefixes[i] + "Cross")));
+//
+//                attemptSuccessRates.put(levelPrefixes[i] + "Cross", crossRate);
+//            }
+//
+//            double climbRate = 0.0;
+//
+//            if (getCount(levelPrefixes[i] + "ClimbAttempt") != 0) {
+//                climbRate = (double) getCount(levelPrefixes[i] + "ClimbSuccess") / getCount(levelPrefixes[i] +
+//                        "ClimbAttempt");
+//            }
+//
+//            standardDeviations.put(levelPrefixes[i] + "Climb", Stats.standardDeviation(getCount(levelPrefixes[i] +
+//                    "ClimbAttempt"), getCount(levelPrefixes[i] + "ClimbSuccess")));
+//            attemptSuccessRates.put(levelPrefixes[i] + "Climb", climbRate);
+//        }
+//
+//        for (String prefix : new String[]{"cargo", "hatch"}) {
+//
+//            double placeRate = 0.0;
+//
+//            if (getCount(prefix + "Start") != 0) {
+//                placeRate = (double) getCount(prefix + "AutoSuccess") / getCount(prefix + "Start");
+//            }
+//
+//            standardDeviations.put(prefix + "AutoSuccess", Stats.standardDeviation(getCount(prefix + "Start"),
+//                    getCount(prefix + "AutoSuccess")));
+//            attemptSuccessRates.put(prefix + "AutoSuccess", placeRate);
+//        }
+//    }
 
     /**
      * Finds the endgame HAB climb level for this team that results in the greatest expected endgame contribution
@@ -392,22 +400,23 @@ public class TeamReport {
      *
      * @return The HAB climb level that yields the greatest expected contribution, 3 if the team has not climbed before
      */
-    public int findBestClimbLevel() {
-        int bestLevel = 0;
-        double bestClimbPoints = 0.0;
-
-        final int[] climbPointValues = new int[]{3, 6, 12};
-
-        for (int i = 0; i < 3; i++) {
-            double potentialPoints = attemptSuccessRates.get(levelPrefixes[i] + "Climb") * climbPointValues[i];
-            if (potentialPoints >= bestClimbPoints) {
-                bestClimbPoints = potentialPoints;
-                bestLevel = i + 1;
-            }
-        }
-
-        return bestLevel;
-    }
+//
+//    public int findBestClimbLevel() {
+//        int bestLevel = 0;
+//        double bestClimbPoints = 0.0;
+//
+//        final int[] climbPointValues = new int[]{3, 6, 12};
+//
+//        for (int i = 0; i < 3; i++) {
+//            double potentialPoints = attemptSuccessRates.get(levelPrefixes[i] + "Climb") * climbPointValues[i];
+//            if (potentialPoints >= bestClimbPoints) {
+//                bestClimbPoints = potentialPoints;
+//                bestLevel = i + 1;
+//            }
+//        }
+//
+//        return bestLevel;
+//    }
 
     /**
      * Generates a random sample of various metrics computed in <code>averages</code>, assuming a Normal distribution
@@ -548,15 +557,15 @@ public class TeamReport {
         return abilities.get(metric);
     }
 
-    public double getAverage(String metric) {
-        return averages.get(metric);
-    }
-
-    public double getStandardDeviation(String metric) {
-        return standardDeviations.get(metric);
-    }
-
-    public double getAttemptSuccessRate(String metric) {
-        return attemptSuccessRates.get(metric);
-    }
+//    public double getAverage(String metric) {
+//        return averages.get(metric);
+//    }
+//
+//    public double getStandardDeviation(String metric) {
+//        return standardDeviations.get(metric);
+//    }
+//
+//    public double getAttemptSuccessRate(String metric) {
+//        return attemptSuccessRates.get(metric);
+//    }
 }

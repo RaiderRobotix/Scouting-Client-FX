@@ -246,9 +246,9 @@ public class PicklistGenerator {
      */
     public void generateCalculatedPickAbilityList(ArrayList<TeamReport> knownPartners) {
         double baselineScore = 0.0;
-        if (knownPartners.size() != 0) {
-            baselineScore = new AllianceReport(knownPartners).getPredictedValue("totalPoints");
-        }
+//        if (knownPartners.size() != 0) {
+//            baselineScore = new AllianceReport(knownPartners).getPredictedValue("totalPoints");
+//        }
 
         HashMap<Integer, Double> pickPoints = new HashMap<>();
 
@@ -266,11 +266,11 @@ public class PicklistGenerator {
             double dysfunctionalPercent =
                     (double) currentTeamReport.getCount("dysfunctional") / (currentTeamReport.getCount("noShow") + currentTeamReport.getEntries().size());
 
-            double pointValue =
-                    (1 - dysfunctionalPercent) * (new AllianceReport(potentialAllianceTeams).getPredictedValue(
-                            "totalPoints") - baselineScore);
+//            double pointValue =
+//                    (1 - dysfunctionalPercent) * (new AllianceReport(potentialAllianceTeams).getPredictedValue(
+//                            "totalPoints") - baselineScore);
 
-            pickPoints.put(team, Stats.round(pointValue, 2));
+            //pickPoints.put(team, Stats.round(pointValue, 2));
         }
 
         try {

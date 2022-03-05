@@ -35,68 +35,64 @@ public class MatchPredictionController {
                 "sandstormBonus", "sandstormGamePiecePoints", "teleHatchPoints", "teleCargoPoints", "endgamePoints"};
         final String[] numStrNames = new String[]{"One", "Two", "Three"};
 
-        for (String color : new String[]{"red", "blue"}) {
-            // This is a ternary operator - easy replacement for a single-line if/else statement
-            AllianceReport alliance = color.equals("red") ? redAlliance : blueAlliance;
-            AllianceReport otherAlliance = color.equals("red") ? blueAlliance : redAlliance;
+        //        for (String color : new String[]{"red", "blue"}) {
+        //            // This is a ternary operator - easy replacement for a single-line if/else statement
+        //            AllianceReport alliance = color.equals("red") ? redAlliance : blueAlliance;
+        //            AllianceReport otherAlliance = color.equals("red") ? blueAlliance : redAlliance;
+        //
+        //            for (String location : locations) {
+        //                for (String piece : pieces) {
+        //                    setText(color, location + piece, displayDouble(alliance.getPredictedValue(location + piece)));
+        //                }
+        //            }
+        //
+        //            for (String predictedMetric : predictedMetrics) {
+        //                setText(color, predictedMetric, displayDouble(alliance.getPredictedValue(predictedMetric)));
+        //            }
+        //
+        //            setText(color, "optimalNullHatches", displayDouble(alliance.getPredictedValue("optimalNullHatches")) + " " +
+        //                    "NULL");
+        //
+        //            // Miscellaneous metrics dependent on winPercent
+        //            double winPercent = alliance.calculateWinChance(otherAlliance) * 100;
+        //
+        //            setText(color, "winChance", displayDouble(winPercent) + "%");
+        //            setText(color, "winRp", displayDouble(2 * winPercent / 100));
+        //            setText(color, "predictedRp", displayDouble(alliance.calculatePredictedRp(otherAlliance)) + " RP");
+        //
+        //            // Begin displaying individual team metric values
+        //            for (int i = 0; i < 3; i++) {
+        //                TeamReport currentTeam = alliance.getTeamReports()[i];
+        //
+        //                setText(color, "team" + numStrNames[i] + "Num",
+        //                        Integer.toString(alliance.getTeamReports()[i].getTeamNum()));
+        //
+        //                setText(color, "team" + numStrNames[i] + "Hatches",
+        //                        displayDouble(currentTeam.getAverage("totalHatches")));
+        //                setText(color, "team" + numStrNames[i] + "Cargo",
+        //                        displayDouble(currentTeam.getAverage("totalCargo")));
+        //
+        //                // Generate display string for starting position and HAB crossing percentage
+        //                String startString = "";
+        //                char assignedGamePiece = alliance.getBestAutonGamePieceCombo().charAt(i);
+        //                startString += alliance.getBestStartingLevels()[i] + Character.toString(assignedGamePiece) + " (";
+        //
+        //                if (assignedGamePiece == 'H') {
+        //                    startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("hatchAutoSuccess"));
+        //                } else {
+        //                    startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("cargoAutoSuccess"));
+        //                }
+        //                startString += "%)";
+        //
+        //                setText(color, "team" + numStrNames[i] + "Start", startString);
+        //
+        //                // Generate display string for HAB climbing
+        //                int bestLevel = alliance.getTeamReports()[i].findBestClimbLevel();
+        //                String climbString = bestLevel + " (";
+        //                climbString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("level" + numStrNames[bestLevel - 1] + "Climb"));
+        //                climbString += "%)";
 
-            for (String location : locations) {
-                for (String piece : pieces) {
-                    setText(color, location + piece, displayDouble(alliance.getPredictedValue(location + piece)));
-                }
-            }
-
-            for (String predictedMetric : predictedMetrics) {
-                setText(color, predictedMetric, displayDouble(alliance.getPredictedValue(predictedMetric)));
-            }
-
-            setText(color, "optimalNullHatches", displayDouble(alliance.getPredictedValue("optimalNullHatches")) + " " +
-                    "NULL");
-
-            // Miscellaneous metrics dependent on winPercent
-            double winPercent = alliance.calculateWinChance(otherAlliance) * 100;
-
-            setText(color, "winChance", displayDouble(winPercent) + "%");
-            setText(color, "winRp", displayDouble(2 * winPercent / 100));
-            setText(color, "predictedRp", displayDouble(alliance.calculatePredictedRp(otherAlliance)) + " RP");
-
-            // Begin displaying individual team metric values
-            for (int i = 0; i < 3; i++) {
-                TeamReport currentTeam = alliance.getTeamReports()[i];
-
-                setText(color, "team" + numStrNames[i] + "Num",
-                        Integer.toString(alliance.getTeamReports()[i].getTeamNum()));
-
-                setText(color, "team" + numStrNames[i] + "Hatches",
-                        displayDouble(currentTeam.getAverage("totalHatches")));
-                setText(color, "team" + numStrNames[i] + "Cargo",
-                        displayDouble(currentTeam.getAverage("totalCargo")));
-
-                // Generate display string for starting position and HAB crossing percentage
-                String startString = "";
-                char assignedGamePiece = alliance.getBestSandstormGamePieceCombo().charAt(i);
-                startString += alliance.getBestStartingLevels()[i] + Character.toString(assignedGamePiece) + " (";
-
-                if (assignedGamePiece == 'H') {
-                    startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("hatchAutoSuccess"));
-                } else {
-                    startString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("cargoAutoSuccess"));
-                }
-                startString += "%)";
-
-                setText(color, "team" + numStrNames[i] + "Start", startString);
-
-                // Generate display string for HAB climbing
-                int bestLevel = alliance.getTeamReports()[i].findBestClimbLevel();
-                String climbString = bestLevel + " (";
-                climbString += (int) Math.round(100 * currentTeam.getAttemptSuccessRate("level" + numStrNames[bestLevel - 1] + "Climb"));
-                climbString += "%)";
-
-                setText(color, "team" + numStrNames[i] + "Climb", climbString);
-            }
-        }
-
-
+        //                setText(color, "team" + numStrNames[i] + "Climb", climbString);
     }
 
     /**

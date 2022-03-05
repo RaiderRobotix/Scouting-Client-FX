@@ -184,15 +184,15 @@ public class MainController {
             }
         }
 
-        if (fixErrors.isSelected()) {
-            InaccuracyFixer fixer = new InaccuracyFixer(eventReport);
-            if (fixer.fixInaccuraciesTBA()) {
-                fixer.saveInaccuracyList(currentDataDirectory);
-                status += "\nInaccuracies fixed and inaccuracy list generated";
-            } else {
-                status += "\nNo inaccuracies found or Internet unavailable";
-            }
-        }
+//        if (fixErrors.isSelected()) {
+//            InaccuracyFixer fixer = new InaccuracyFixer(eventReport);
+//            if (fixer.fixInaccuraciesTBA()) {
+//                fixer.saveInaccuracyList(currentDataDirectory);
+//                status += "\nInaccuracies fixed and inaccuracy list generated";
+//            } else {
+//                status += "\nNo inaccuracies found or Internet unavailable";
+//            }
+//        }
 
         if (combineJson.isSelected() && eventReport.generateCombineJson(currentDataDirectory)) {
             status += "\nCombined data JSON file generated";
@@ -209,19 +209,19 @@ public class MainController {
                 status += "\nRaw data spreadsheet failed to generate. Is the CSV file currently open?";
             }
         }
-
-        if (generatePicklists.isSelected()) {
-            eventReport.generatePicklists(currentDataDirectory, new int[]{25});
-            status += "\nPicklists generated";
-        }
-
-        if (generatePredictions.isSelected()) {
-            if (eventReport.generateMatchPredictions(currentDataDirectory)) {
-                status += "\nFuture match predictions generated";
-            } else {
-                status += "\nMatch prediction generation failed";
-            }
-        }
+//
+//        if (generatePicklists.isSelected()) {
+//            eventReport.generatePicklists(currentDataDirectory, new int[]{25});
+//            status += "\nPicklists generated";
+//        }
+//
+//        if (generatePredictions.isSelected()) {
+//            if (eventReport.generateMatchPredictions(currentDataDirectory)) {
+//                status += "\nFuture match predictions generated";
+//            } else {
+//                status += "\nMatch prediction generation failed";
+//            }
+//        }
 
         if (status.isEmpty()) {
             addStatus("Please select data processing options!");
@@ -263,9 +263,9 @@ public class MainController {
                         return;
                     }
                 }
-
-                AllianceReport allianceReport = eventReport.getAllianceReport(alliance);
-                addStatus(allianceReport.getQuickAllianceReport());
+//
+//                AllianceReport allianceReport = eventReport.getAllianceReport(alliance);
+//                addStatus(allianceReport.getQuickAllianceReport());
 
             } catch (NumberFormatException e) {
                 addStatus("Invalid or missing team number(s). Please try again.");
@@ -296,8 +296,8 @@ public class MainController {
                         blueAlliance[i] = Integer.parseInt(matchBasedGroup[i].getText());
                     }
 
-                    alliances = new AllianceReport[]{eventReport.getAllianceReport(redAlliance),
-                            eventReport.getAllianceReport(blueAlliance)};
+//                    alliances = new AllianceReport[]{eventReport.getAllianceReport(redAlliance),
+//                            eventReport.getAllianceReport(blueAlliance)};
                 }
 
                 displayPredictions(matchNum, alliances);

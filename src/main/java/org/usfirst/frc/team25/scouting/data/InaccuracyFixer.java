@@ -33,95 +33,96 @@ public class InaccuracyFixer {
      * @return <code>true</code> if inaccuracies are found, <code>false</code> otherwise or if the score breakdown
      * data file does not exist or cannot be downloaded
      */
-    public boolean fixInaccuraciesTBA() {
-
-        try {
-            // Downloads the most recent match data with score breakdowns
-            BlueAlliance.downloadQualificationMatchData(eventReport.getEvent(), eventReport.getDirectory());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            ArrayList<Match> matchData = FileManager.deserializeScoreBreakdown(
-                    new File(eventReport.getDirectory().getAbsoluteFile() + "/ScoreBreakdown - " + eventReport.getEvent() + ".json"));
-
-            for (ScoutEntry entry : eventReport.getScoutEntries()) {
-                try {
-                    // Prefix for the match in the inaccuracy report
-                    String prefix =
-                            "Q" + entry.getPreMatch().getMatchNum() + "-" + entry.getPreMatch().getScoutPos() + "-" +
-                                    entry.getPreMatch().getScoutName() + ": ";
-                    String inaccuracies = "";
-
-                    MatchScoreBreakdown2019Allliance sb = getMatchScoreBreakdown(matchData, entry);
-
-                    if (sb != null) {
-
-                        if (isActualNoShow(entry, sb) != entry.getPreMatch().isRobotNoShow()) {
-                            inaccuracies += "ROBOT NO SHOW, ";
-                            entry.getPreMatch().setRobotNoShow(isActualNoShow(entry, sb));
-                        }
-
-                        if (!entry.getPreMatch().isRobotNoShow()) {
-                            if (findActualStartHabLevel(entry, sb) != entry.getPreMatch().getStartingLevel()) {
-                                inaccuracies += "starting HAB level, ";
-                                entry.getPreMatch().setStartingLevel(findActualStartHabLevel(entry, sb));
-                            }
-
-                            if (isActualCrossHabLine(entry, sb) != entry.getAutonomous().isCrossHabLine()) {
-                                inaccuracies += "auto cross hab line, ";
-                                entry.getAutonomous().setCrossHabLine(isActualCrossHabLine(entry, sb));
-                            }
-
-                            // This doesn't check for the case where the scout put 2 assists, but only 1 occurred
-                            if (entry.getTeleOp().getNumPartnerClimbAssists() > 0) {
-                                ScoutEntry[] partnerTeams = findPartnerEntries(entry);
-                                int maxActualHabClimbLevel = 0;
-                                for (ScoutEntry partnerTeam : partnerTeams) {
-                                    if (findActualEndHabLevel(partnerTeam, sb) > maxActualHabClimbLevel) {
-                                        maxActualHabClimbLevel = findActualEndHabLevel(partnerTeam, sb);
-                                    }
-                                }
-                                if (maxActualHabClimbLevel < entry.getTeleOp().getPartnerClimbAssistEndLevel()) {
-                                    inaccuracies += "partner climb assist level, ";
-                                    if (maxActualHabClimbLevel > 1) {
-                                        // Assisted to level 2
-                                        entry.getTeleOp().setPartnerClimbAssistEndLevel(maxActualHabClimbLevel);
-                                    } else {
-                                        // Can't assist to level 1
-                                        entry.getTeleOp().setPartnerClimbAssistEndLevel(0);
-                                        entry.getTeleOp().setNumPartnerClimbAssists(0);
-                                    }
-                                }
-
-                            }
-
-                            if (correctHabClimbLevels(entry, sb)) {
-                                inaccuracies += "success climb level ";
-                            }
-
-                        }
-                    }
-
-                    if (!inaccuracies.isEmpty()) {
-                        inaccuracyList += prefix + inaccuracies + "\n";
-                    }
-
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (!inaccuracyList.isEmpty()) {
-                // Recalculates aggregate stats after correcting errors
-                eventReport.processEntries();
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//
+//    public boolean fixInaccuraciesTBA() {
+//
+//        try {
+//            // Downloads the most recent match data with score breakdowns
+//            BlueAlliance.downloadQualificationMatchData(eventReport.getEvent(), eventReport.getDirectory());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            ArrayList<Match> matchData = FileManager.deserializeScoreBreakdown(
+//                    new File(eventReport.getDirectory().getAbsoluteFile() + "/ScoreBreakdown - " + eventReport.getEvent() + ".json"));
+//
+//            for (ScoutEntry entry : eventReport.getScoutEntries()) {
+//                try {
+//                    // Prefix for the match in the inaccuracy report
+//                    String prefix =
+//                            "Q" + entry.getPreMatch().getMatchNum() + "-" + entry.getPreMatch().getScoutPos() + "-" +
+//                                    entry.getPreMatch().getScoutName() + ": ";
+//                    String inaccuracies = "";
+//
+//                    MatchScoreBreakdown2019Allliance sb = getMatchScoreBreakdown(matchData, entry);
+//
+//                    if (sb != null) {
+//
+//                        if (isActualNoShow(entry, sb) != entry.getPreMatch().isRobotNoShow()) {
+//                            inaccuracies += "ROBOT NO SHOW, ";
+//                            entry.getPreMatch().setRobotNoShow(isActualNoShow(entry, sb));
+//                        }
+//
+//                        if (!entry.getPreMatch().isRobotNoShow()) {
+//                            if (findActualStartHabLevel(entry, sb) != entry.getPreMatch().getStartingLevel()) {
+//                                inaccuracies += "starting HAB level, ";
+//                                entry.getPreMatch().setStartingLevel(findActualStartHabLevel(entry, sb));
+//                            }
+//
+//                            if (isActualCrossHabLine(entry, sb) != entry.getAutonomous().isCrossHabLine()) {
+//                                inaccuracies += "auto cross hab line, ";
+//                                entry.getAutonomous().setCrossHabLine(isActualCrossHabLine(entry, sb));
+//                            }
+//
+//                            // This doesn't check for the case where the scout put 2 assists, but only 1 occurred
+//                            if (entry.getTeleOp().getNumPartnerClimbAssists() > 0) {
+//                                ScoutEntry[] partnerTeams = findPartnerEntries(entry);
+//                                int maxActualHabClimbLevel = 0;
+//                                for (ScoutEntry partnerTeam : partnerTeams) {
+//                                    if (findActualEndHabLevel(partnerTeam, sb) > maxActualHabClimbLevel) {
+//                                        maxActualHabClimbLevel = findActualEndHabLevel(partnerTeam, sb);
+//                                    }
+//                                }
+//                                if (maxActualHabClimbLevel < entry.getTeleOp().getPartnerClimbAssistEndLevel()) {
+//                                    inaccuracies += "partner climb assist level, ";
+//                                    if (maxActualHabClimbLevel > 1) {
+//                                        // Assisted to level 2
+//                                        entry.getTeleOp().setPartnerClimbAssistEndLevel(maxActualHabClimbLevel);
+//                                    } else {
+//                                        // Can't assist to level 1
+//                                        entry.getTeleOp().setPartnerClimbAssistEndLevel(0);
+//                                        entry.getTeleOp().setNumPartnerClimbAssists(0);
+//                                    }
+//                                }
+//
+//                            }
+//
+//                            if (correctHabClimbLevels(entry, sb)) {
+//                                inaccuracies += "success climb level ";
+//                            }
+//
+//                        }
+//                    }
+//
+//                    if (!inaccuracies.isEmpty()) {
+//                        inaccuracyList += prefix + inaccuracies + "\n";
+//                    }
+//
+//                } catch (IndexOutOfBoundsException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if (!inaccuracyList.isEmpty()) {
+//                // Recalculates aggregate stats after correcting errors
+//                eventReport.processEntries();
+//                return true;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     /**
      * Corrects the HAB climb levels for the specified entry, creating a popup prompt if necessary for manual correction
@@ -130,78 +131,79 @@ public class InaccuracyFixer {
      * @param sb    Score breakdown object associated with the entry
      * @return True if an inaccuracy is found, false otherwise
      */
-    private boolean correctHabClimbLevels(ScoutEntry entry, MatchScoreBreakdown2019Allliance sb) {
-        boolean inaccuracyFound = false;
-
-        int actualEndHabLevel = findActualEndHabLevel(entry, sb);
-
-        if (entry.getTeleOp().getSuccessHabClimbLevel() != actualEndHabLevel) {
-
-            boolean correctionNeeded = true;
-
-            // Case 1: Partners assisted to level, correction may not be needed
-            if (entry.getTeleOp().isClimbAssistedByPartner()) {
-                ScoutEntry[] partners = findPartnerEntries(entry);
-                for (ScoutEntry partner : partners) {
-                    if (partner.getPreMatch().getTeamNum() == entry.getTeleOp().getAssistingClimbTeamNum()) {
-                        if (partner.getTeleOp().getNumPartnerClimbAssists() >= 1 && partner.getTeleOp().getPartnerClimbAssistEndLevel() >= actualEndHabLevel) {
-                            correctionNeeded = false;
-                        }
-                    }
-                }
-            }
-
-            if (correctionNeeded) {
-
-                // Case 2: HAB line foul, which calls for manual inspection; scout may be accurate
-                if (actualEndHabLevel == 3) {
-
-                    Alert alert = new Alert(Alert.AlertType.NONE);
-                    alert.setTitle("Inaccurate HAB Climb Level");
-                    alert.setHeaderText("Team " + entry.getPreMatch().getTeamNum() + "\nMatch " +
-                            "Number " + entry.getPreMatch().getMatchNum());
-                    alert.setContentText("Choose the correct ending level");
-
-                    ButtonType buttonTypeOne = new ButtonType("Level 1");
-                    ButtonType buttonTypeTwo = new ButtonType("Level 2");
-                    ButtonType buttonTypeThree = new ButtonType("Level 3");
-                    ButtonType buttonTypeNone = new ButtonType("No climb");
-
-                    alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeThree, buttonTypeNone);
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == buttonTypeOne) {
-                        actualEndHabLevel = 1;
-                    } else if (result.get() == buttonTypeTwo) {
-                        actualEndHabLevel = 2;
-                    } else if (result.get() == buttonTypeThree) {
-                        actualEndHabLevel = 3;
-                    } else {
-                        actualEndHabLevel = 0;
-                    }
-                }
-
-                // Manual override does not match with scout's data
-                if (entry.getTeleOp().getSuccessHabClimbLevel() != actualEndHabLevel) {
-                    inaccuracyFound = true;
-
-                    entry.getTeleOp().setSuccessHabClimbLevel(actualEndHabLevel);
-                    if (actualEndHabLevel > 0) {
-                        entry.getTeleOp().setSuccessHabClimb(true);
-                        entry.getTeleOp().setAttemptHabClimb(true);
-                        if (entry.getTeleOp().getAttemptHabClimbLevel() < actualEndHabLevel) {
-                            entry.getTeleOp().setAttemptHabClimbLevel(actualEndHabLevel);
-                        }
-                    } else {
-                        entry.getTeleOp().setSuccessHabClimb(false);
-                        entry.getTeleOp().setAttemptHabClimb(false);
-                        entry.getTeleOp().setAttemptHabClimbLevel(0);
-                    }
-                }
-            }
-        }
-        return inaccuracyFound;
-    }
+//
+//    private boolean correctHabClimbLevels(ScoutEntry entry, MatchScoreBreakdown2019Allliance sb) {
+//        boolean inaccuracyFound = false;
+//
+//        int actualEndHabLevel = findActualEndHabLevel(entry, sb);
+//
+//        if (entry.getTeleOp().getSuccessHabClimbLevel() != actualEndHabLevel) {
+//
+//            boolean correctionNeeded = true;
+//
+//            // Case 1: Partners assisted to level, correction may not be needed
+//            if (entry.getTeleOp().isClimbAssistedByPartner()) {
+//                ScoutEntry[] partners = findPartnerEntries(entry);
+//                for (ScoutEntry partner : partners) {
+//                    if (partner.getPreMatch().getTeamNum() == entry.getTeleOp().getAssistingClimbTeamNum()) {
+//                        if (partner.getTeleOp().getNumPartnerClimbAssists() >= 1 && partner.getTeleOp().getPartnerClimbAssistEndLevel() >= actualEndHabLevel) {
+//                            correctionNeeded = false;
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if (correctionNeeded) {
+//
+//                // Case 2: HAB line foul, which calls for manual inspection; scout may be accurate
+//                if (actualEndHabLevel == 3) {
+//
+//                    Alert alert = new Alert(Alert.AlertType.NONE);
+//                    alert.setTitle("Inaccurate HAB Climb Level");
+//                    alert.setHeaderText("Team " + entry.getPreMatch().getTeamNum() + "\nMatch " +
+//                            "Number " + entry.getPreMatch().getMatchNum());
+//                    alert.setContentText("Choose the correct ending level");
+//
+//                    ButtonType buttonTypeOne = new ButtonType("Level 1");
+//                    ButtonType buttonTypeTwo = new ButtonType("Level 2");
+//                    ButtonType buttonTypeThree = new ButtonType("Level 3");
+//                    ButtonType buttonTypeNone = new ButtonType("No climb");
+//
+//                    alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeThree, buttonTypeNone);
+//
+//                    Optional<ButtonType> result = alert.showAndWait();
+//                    if (result.get() == buttonTypeOne) {
+//                        actualEndHabLevel = 1;
+//                    } else if (result.get() == buttonTypeTwo) {
+//                        actualEndHabLevel = 2;
+//                    } else if (result.get() == buttonTypeThree) {
+//                        actualEndHabLevel = 3;
+//                    } else {
+//                        actualEndHabLevel = 0;
+//                    }
+//                }
+//
+//                // Manual override does not match with scout's data
+//                if (entry.getTeleOp().getSuccessHabClimbLevel() != actualEndHabLevel) {
+//                    inaccuracyFound = true;
+//
+//                    entry.getTeleOp().setSuccessHabClimbLevel(actualEndHabLevel);
+//                    if (actualEndHabLevel > 0) {
+//                        entry.getTeleOp().setSuccessHabClimb(true);
+//                        entry.getTeleOp().setAttemptHabClimb(true);
+//                        if (entry.getTeleOp().getAttemptHabClimbLevel() < actualEndHabLevel) {
+//                            entry.getTeleOp().setAttemptHabClimbLevel(actualEndHabLevel);
+//                        }
+//                    } else {
+//                        entry.getTeleOp().setSuccessHabClimb(false);
+//                        entry.getTeleOp().setAttemptHabClimb(false);
+//                        entry.getTeleOp().setAttemptHabClimbLevel(0);
+//                    }
+//                }
+//            }
+//        }
+//        return inaccuracyFound;
+//    }
 
     /**
      * Gets the match score breakdown associated with the team and match recorded in a scouting entry
