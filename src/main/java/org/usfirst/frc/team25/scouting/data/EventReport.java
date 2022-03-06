@@ -90,10 +90,8 @@ public class EventReport {
             for (Object dataObject : dataObjects) {
                 // Returns all members, including private members, but not inherited members
                 // This fetches the metric names from the fields of the four main data models
-                System.out.println(dataObject);
                 Field[] fields = dataObject.getClass().getDeclaredFields();
 
-                System.out.println(fields);
                 for (Field metric : fields) {
                     Object metricValue = "";
 
@@ -115,20 +113,24 @@ public class EventReport {
                         // Retrieves the correct getter for the variable, then retrieves its value from the data object
                         metricValue =
                                 SortersFilters.getCorrectGetter(dataObject.getClass(), metric.getName(), shiftIndex).invoke(dataObject);
-                        System.out.println(metricValue);
-                        System.out.println(metric.getName());
                     } catch (Exception e) {
-                        //e.printStackTrace();
+                        System.out.println(dataObject.getClass());
+                        System.out.println(metric.getName());
+                        System.out.println(shiftIndex);
+                        e.printStackTrace();
                     }
-
-                    entryContents.append(metricValue).append(",");
+                    if (metric.getName().equals("comment")){
+                        entryContents.append(metricValue).append(",");
+                    } else {
+                        entryContents.append(metricValue).append(";");
+                    }
                 }
 
             }
 
             // Adds the true or false values for the robot quick comments
             for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-                entryContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(",");
+                entryContents.append(entry.getPostMatch().getRobotQuickCommentSelections().get(key)).append(";");
             }
 
             entryContents.append('\n');
@@ -177,13 +179,13 @@ public class EventReport {
                 }
 
                 // Adds the "title case" version of the metric name, rather than the camel case version
-                header.append(StringProcessing.convertCamelToSentenceCase(metric.getName())).append(",");
+                header.append(StringProcessing.convertCamelToSentenceCase(metric.getName())).append(";");
             }
         }
 
         // Generates the quick comment portion of the header
         for (String key : scoutEntries.get(0).getPostMatch().getRobotQuickCommentSelections().keySet()) {
-            header.append(StringProcessing.removeCommasBreaks(key)).append(",");
+            header.append(StringProcessing.removeCommasBreaks(key)).append(";");
         }
 
         return header.toString();

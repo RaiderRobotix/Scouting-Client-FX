@@ -64,7 +64,7 @@ public class PostMatch {
         robotQuickCommentStr = "";
         for (String comment : robotQuickCommentSelections.keySet()) {
             if (robotQuickCommentSelections.get(comment)) {
-                robotQuickCommentStr += comment + "; ";
+                robotQuickCommentStr += comment + ", ";
             }
         }
     }

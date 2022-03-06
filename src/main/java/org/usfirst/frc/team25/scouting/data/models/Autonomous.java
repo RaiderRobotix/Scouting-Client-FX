@@ -19,9 +19,10 @@ public class Autonomous {
     private boolean commitFoul;
 
 
-    public Autonomous(boolean crossInitializationLine, int cargoUpperHub
-                    , int cargoLowerHub, int playerLowerHub, int playerUpperHub, int cargoPickedUp
-                    , int cargoDropped, boolean commitFoul) {
+    public Autonomous( int cargoUpperHub, int cargoLowerHub,
+                       int playerLowerHub, int playerUpperHub,
+                       int cargoPickedUp, int cargoDropped,
+                       boolean commitFoul, boolean crossInitializationLine) {
         this.crossInitializationLine = crossInitializationLine;
         this.cargoUpperHub = cargoUpperHub;
         this.cargoLowerHub = cargoLowerHub;
