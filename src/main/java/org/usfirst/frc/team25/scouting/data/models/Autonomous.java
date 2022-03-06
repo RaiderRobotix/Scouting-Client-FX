@@ -32,11 +32,9 @@ public class Autonomous {
         this.cargoPickedUp = cargoPickedUp;
     }
 
-    public int getCargoUpperHub() {
-        return cargoUpperHub;
-    }
+    public int getCargoUpperHub() { return cargoUpperHub; }
 
-    public void getCargoLowerHub() { }
+    public int getCargoLowerHub() { return cargoLowerHub; }
 
     public int getPlayerUpperHub() {
         return playerUpperHub;

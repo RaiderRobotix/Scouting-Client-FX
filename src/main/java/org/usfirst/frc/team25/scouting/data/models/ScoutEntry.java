@@ -30,9 +30,9 @@ public class ScoutEntry implements Serializable {
 
     public void calculateDerivedStats() {
         //Auton
-        getAutonomous().getCargoUpperHub();
-//          autonCargo = auton.getCargoLowerHub() + auton.getCargoUpperHub()
-//                    + auton.getPlayerLowerHub() + auton.getPlayerUpperHub();
+        System.out.println(auton.getCargoUpperHub());
+
+        autonCargo = auton.getCargoLowerHub() + auton.getCargoUpperHub() + auton.getPlayerLowerHub() + auton.getPlayerUpperHub();
 
         //Tele-Op
         teleOpCargo = teleOp.getCargoLowerHub() + teleOp.getCargoUpperHub();

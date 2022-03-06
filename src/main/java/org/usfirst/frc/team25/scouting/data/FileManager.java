@@ -126,8 +126,8 @@ public class FileManager {
      * @return Array of File objects from the directory
      */
     public static File[] getFilesFromDirectory(File directory) {
-        return directory.listFiles();
-    }
+            return directory.listFiles();
+        }
 
     /**
      * Gets the match schedule from a data directory
@@ -183,7 +183,7 @@ public class FileManager {
                     jsonFileList.add(file);
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                e.printStackTrace();
+                ;
             }
         }
         return jsonFileList;
