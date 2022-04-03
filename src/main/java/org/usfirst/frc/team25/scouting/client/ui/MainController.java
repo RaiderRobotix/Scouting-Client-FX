@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class MainController {
 
     @FXML
-    private Button chooseDataFolderButton, generateFilesButton, downloadDataButton, displayReportButton;
+    private Button chooseDataFolderButton, generateFilesButton, pullFilesButton, downloadDataButton, displayReportButton;
     @FXML
     private TextArea statusTextBox;
     @FXML
@@ -57,6 +57,7 @@ public class MainController {
         dataDirectoryDisplay.setText("");
 
         chooseDataFolderButton.setOnAction(event -> chooseDataFolder());
+        pullFilesButton.setOnAction(event -> PullFilesButton());
         generateFilesButton.setOnAction(event -> generateFiles());
         displayReportButton.setOnAction(event -> displayAggregateReport());
         downloadDataButton.setOnAction(event -> tryDownloadData());
@@ -135,6 +136,7 @@ public class MainController {
             generateFilesButton.setDisable(false);
             downloadDataButton.setDisable(false);
             displayReportButton.setDisable(false);
+            pullFilesButton.setDisable(false);
 
         }
         retrieveEventReport();
@@ -168,6 +170,17 @@ public class MainController {
         eventReport.processEntries();
     }
 
+    private void PullFilesButton() {
+        String status = "";
+        retrieveEventReport();
+        if (FileManager.pullFiles(currentDataDirectory)){
+            status += "\nGrabbed Scouting data";
+        } else {
+            status += "\nFailed grabbing Scouting data";
+        }
+        addStatus(status);
+    }
+
     /**
      * Generates picklists, JSON files, inaccuracy lists, etc. in accordance to the user-checked boxes
      */
@@ -175,6 +188,12 @@ public class MainController {
 
         String status = "";
         retrieveEventReport();
+
+        if (FileManager.pullFiles(currentDataDirectory)){
+            status += "\nGrabbed Scouting data";
+        } else {
+            status += "\nFailed grabbing Scouting data";
+        }
 
         if (backupJson.isSelected()) {
             if (FileManager.createBackup(jsonFileList, currentDataDirectory)) {
@@ -210,10 +229,10 @@ public class MainController {
             }
         }
 //
-//        if (generatePicklists.isSelected()) {
-//            eventReport.generatePicklists(currentDataDirectory, new int[]{25});
-//            status += "\nPicklists generated";
-//        }
+        if (generatePicklists.isSelected()) {
+            eventReport.generatePicklists(currentDataDirectory, new int[]{25});
+            status += "\nPicklists generated";
+        }
 //
 //        if (generatePredictions.isSelected()) {
 //            if (eventReport.generateMatchPredictions(currentDataDirectory)) {

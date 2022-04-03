@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ScoutEntry implements Serializable {
 
     private PreMatch preMatch;
-    private Autonomous sandstorm;
+    private Autonomous auton;
     private TeleOp teleOp;
     private PostMatch postMatch;
 
@@ -26,7 +26,8 @@ public class ScoutEntry implements Serializable {
 //        sandstorm.setCargoUpperHub(5);
 //        System.out.println(sandstorm.getCargoUpperHub());
 //
-        autonCargo = sandstorm.getCargoLowerHub() + sandstorm.getCargoUpperHub() + sandstorm.getPlayerLowerHub() + sandstorm.getPlayerUpperHub();
+            autonCargo = auton.getCargoLowerHub() + auton.getCargoUpperHub()
+                + auton.getPlayerLowerHub() + auton.getPlayerUpperHub();
 
         //Tele-Op
         teleOpCargo = teleOp.getCargoLowerHub() + teleOp.getCargoUpperHub();
@@ -35,12 +36,12 @@ public class ScoutEntry implements Serializable {
         //Overall
         totalCargo = autonCargo + teleOpCargo;
 
-        calculatedAutonPoints = sandstorm.getCargoLowerHub() * 2 + sandstorm.getCargoUpperHub() * 4
-                + sandstorm.getPlayerUpperHub() * 4 + sandstorm.getPlayerLowerHub() * 2;
+        calculatedAutonPoints = auton.getCargoLowerHub() * 2 + auton.getCargoUpperHub() * 4
+                + auton.getPlayerUpperHub() * 4 + auton.getPlayerLowerHub() * 2;
 
         calculatedAutonPoints += 3;
 
-        if (sandstorm.isCrossInitializationLine()) {
+        if (auton.isCrossInitializationLine()) {
             calculatedAutonPoints += 3;
         }
 
@@ -53,9 +54,12 @@ public class ScoutEntry implements Serializable {
             calculatedClimbPoints = 4;
         }
         else if (teleOp.getClimbLevel() == 2 && teleOp.isSuccessClimb()){
-            calculatedClimbPoints = 10;
+            calculatedClimbPoints = 6;
         }
         else if (teleOp.getClimbLevel() == 3 && teleOp.isSuccessClimb()){
+            calculatedClimbPoints = 10;
+        }
+        else if (teleOp.getClimbLevel() == 4 && teleOp.isSuccessClimb()){
             calculatedClimbPoints = 15;
         }
 
@@ -70,7 +74,7 @@ public class ScoutEntry implements Serializable {
     }
 
     public Autonomous getAutonomous() {
-        return sandstorm;
+        return auton;
     }
 
     public TeleOp getTeleOp() {

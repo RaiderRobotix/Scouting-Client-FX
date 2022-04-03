@@ -12,8 +12,6 @@ public class Autonomous {
     private int playerLowerHub;
     private int playerUpperHub;
 
-
-    private int cargoDropped;
     private int cargoPickedUp;
 
     private boolean commitFoul;
@@ -21,16 +19,13 @@ public class Autonomous {
 
     public Autonomous( int cargoUpperHub, int cargoLowerHub,
                        int playerLowerHub, int playerUpperHub,
-                       int cargoPickedUp, int cargoDropped,
                        boolean commitFoul, boolean crossInitializationLine) {
         this.crossInitializationLine = crossInitializationLine;
         this.cargoUpperHub = cargoUpperHub;
         this.cargoLowerHub = cargoLowerHub;
         this.playerUpperHub = playerUpperHub;
         this.playerLowerHub = playerLowerHub;
-        this.cargoDropped = cargoDropped;
         this.commitFoul = commitFoul;
-        this.cargoPickedUp = cargoPickedUp;
     }
 
     public int getCargoUpperHub() { return cargoUpperHub; }
@@ -43,19 +38,11 @@ public class Autonomous {
 
     public int getPlayerLowerHub() { return playerLowerHub; }
 
-    public int getCargoDropped() {
-        return cargoDropped;
-    }
-
-    public int getCargoPickedUp() { return cargoPickedUp; }
-
     public boolean isCommitFoul() {
         return commitFoul;
     }
 
     public boolean isCrossInitializationLine() { return crossInitializationLine; }
-
-
 
     public void setCommitFoul(boolean commitFoul) {
         this.commitFoul = commitFoul;
@@ -76,7 +63,4 @@ public class Autonomous {
     public void setPlayerLowerHub(int playerLowerHub) {
         this.playerLowerHub = playerLowerHub;
     }
-
-    public void setCargoDropped(int cargoDropped) { this.cargoDropped = cargoDropped; }
-
 }

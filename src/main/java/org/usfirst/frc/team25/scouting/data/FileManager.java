@@ -3,6 +3,7 @@ package org.usfirst.frc.team25.scouting.data;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thebluealliance.api.v3.models.Match;
+import org.apache.commons.io.FileUtils;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
@@ -10,12 +11,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-
-/**
+import jmtp.*;
+ /**
  * Class of static methods used for file I/O
  */
 public class FileManager {
@@ -119,6 +122,33 @@ public class FileManager {
         return null;
     }
 
+    public static boolean pullFiles(File destination) {
+        File[] rDirs = File.listRoots();
+        PortableDeviceManager  manager = new PortableDeviceManager();
+        for(PortableDevice device : manager) {
+            device.open();
+        }
+
+        for (File rDir : rDirs) {
+            Path path = Path.of(rDir.toString() + "Raider Robotix Scouting");
+//            File source = new File(rDir.toString() + "Raider Robotix Scouting");
+            File source = new File("Fire\\Internal storage\\Raider Robotix Scouting");
+//            System.out.println(rDir.toString());
+//            System.out.println(Files.exists(path));
+//            System.out.println(source);
+            if (Files.exists(path)) {
+                try {
+                    FileUtils.copyDirectory(source, destination);
+                    FileUtils.cleanDirectory(source);
+                    return true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
+            return false;
+    }
     /**
      * Gets list of files from a directory
      *
@@ -126,8 +156,12 @@ public class FileManager {
      * @return Array of File objects from the directory
      */
     public static File[] getFilesFromDirectory(File directory) {
+        try{
             return directory.listFiles();
+        } catch (Exception e) {
+            return null;
         }
+    }
 
     /**
      * Gets the match schedule from a data directory

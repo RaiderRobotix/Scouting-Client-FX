@@ -7,25 +7,21 @@ package org.usfirst.frc.team25.scouting.data.models;
  */
 public class TeleOp {
 
-    private int cargoDropped;
     private int cargoUpperHub;
     private int cargoLowerHub;
     private boolean attemptClimb;
     private int climbLevel;
     private boolean successClimb;
+    private int climbTime;
 
-    public TeleOp(int cargoDropped, int cargoUpperHub, int cargoLowerHub, boolean attemptClimb, int climbLevel,
+    public TeleOp(int cargoUpperHub, int climbTime, int cargoLowerHub, boolean attemptClimb, int climbLevel,
                   boolean successClimb) {
-        this.cargoDropped = cargoDropped;
         this.cargoUpperHub = cargoUpperHub;
-        this.cargoLowerHub = cargoUpperHub;
+        this.cargoLowerHub = cargoLowerHub;
         this.attemptClimb = attemptClimb;
         this.climbLevel = climbLevel;
         this.successClimb = successClimb;
-    }
-
-    public void setCargoDropped(int cargoDropped) {
-        this.cargoDropped = cargoDropped;
+        this.climbTime = climbTime;
     }
 
     public void setCargoUpperHub(int cargoUpperHub) {
@@ -40,6 +36,8 @@ public class TeleOp {
         this.climbLevel = climbLevel;
     }
 
+    public void setClimbTime(int climbTime) { this.climbTime = climbTime;}
+
     public void setSuccessClimb(boolean successClimb) {
         this.successClimb = successClimb;
     }
@@ -47,7 +45,6 @@ public class TeleOp {
     public void setAttemptClimb(boolean attemptClimb) {
         this.attemptClimb = attemptClimb;
     }
-
 
     public int getCargoUpperHub() {
         return cargoUpperHub;
@@ -61,8 +58,8 @@ public class TeleOp {
         return climbLevel;
     }
 
-    public int getCargoDropped() {
-        return cargoDropped;
+    public int getClimbTime() {
+        return climbTime;
     }
 
     public boolean isAttemptClimb() {
