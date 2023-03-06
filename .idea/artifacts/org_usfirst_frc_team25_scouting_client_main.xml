@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="javafx" name="org.usfirst.frc.team25.scouting.client.main">
+  <artifact type="javafx" build-on-make="true" name="org.usfirst.frc.team25.scouting.client.main">
     <output-path>$PROJECT_DIR$/out/artifacts/org_usfirst_frc_team25_scouting_client_main</output-path>
     <properties id="javafx-properties">
       <options>

@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+//        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
     }
 
@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+}
+
 allprojects {
     repositories {
         maven { url 'https://jitpack.io' }
@@ -21,11 +25,11 @@ allprojects {
 
 apply plugin: 'java'
 apply plugin: 'application'
-apply plugin: 'javafx-gradle-plugin'
+
 
 group 'org.usfirst.frc.team25.scouting'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 12
 
 repositories {
     mavenLocal()
@@ -55,15 +59,27 @@ dependencies {
 
 }
 
-jfx {
-    mainClass = 'org.usfirst.frc.team25.scouting.client.ui.Main'
-    vendor = 'Raider Robotix'
-    jfxMainAppJarName = "raider-deep-space-client-v3.XX.jar"
-    nativeReleaseVersion = "v3.12"
-    appName = "Raider Robotix Scouting Client"
+
+
+javafx {
+    version = "19"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
+//jfx {
+//    mainClass = 'org.usfirst.frc.team25.scouting.client.ui.Main'
+//    vendor = 'Raider Robotix'
+//    jfxMainAppJarName = "raider-deep-space-client-v3.XX.jar"
+//    nativeReleaseVersion = "v3.12"
+//    appName = "Raider Robotix Scouting Client"
+//}
+
 jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.usfirst.frc.team25.scouting.client.ui.Main'
+        )
+    }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }

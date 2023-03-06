@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="client:main" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="org.usfirst.frc.team25.scouting" external.system.module.type="sourceSet" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../out/production/classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../src/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../libs/TBA-APIv3-Java-Library.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.7" level="project" />
+    <orderEntry type="library" name="Gradle: commons-io:commons-io:2.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-math3:3.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:19" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:19" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:19" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:19" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:19" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:19" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:19" level="project" />
+  </component>
+</module>
