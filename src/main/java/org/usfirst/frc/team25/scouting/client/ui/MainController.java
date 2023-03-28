@@ -184,15 +184,15 @@ public class MainController {
             }
         }
 
-        if (fixErrors.isSelected()) {
-            InaccuracyFixer fixer = new InaccuracyFixer(eventReport);
-            if (fixer.fixInaccuraciesTBA()) {
-                fixer.saveInaccuracyList(currentDataDirectory);
-                status += "\nInaccuracies fixed and inaccuracy list generated";
-            } else {
-                status += "\nNo inaccuracies found or Internet unavailable";
-            }
-        }
+//        if (fixErrors.isSelected()) {
+//            InaccuracyFixer fixer = new InaccuracyFixer(eventReport);
+//            if (fixer.fixInaccuraciesTBA()) {
+//                fixer.saveInaccuracyList(currentDataDirectory);
+//                status += "\nInaccuracies fixed and inaccuracy list generated";
+//            } else {
+//                status += "\nNo inaccuracies found or Internet unavailable";
+//            }
+//        }
 
         if (combineJson.isSelected() && eventReport.generateCombineJson(currentDataDirectory)) {
             status += "\nCombined data JSON file generated";

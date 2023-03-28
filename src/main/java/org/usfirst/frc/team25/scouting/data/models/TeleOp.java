@@ -7,206 +7,136 @@ package org.usfirst.frc.team25.scouting.data.models;
  */
 public class TeleOp {
 
-    private int cargoShipHatches;
-    private int rocketLevelOneHatches;
-    private int rocketLevelTwoHatches;
-    private int rocketLevelThreeHatches;
-    private int cargoShipCargo;
-    private int rocketLevelOneCargo;
-    private int rocketLevelTwoCargo;
-    private int rocketLevelThreeCargo;
+    private int coneTopTele;
+    private int cubeTopTele;
 
-    private int hatchesDropped;
-    private int cargoDropped;
+    private int coneMidTele;
+    private int cubeMidTele;
 
-    private boolean attemptHabClimb;
-    private int attemptHabClimbLevel;
-    private boolean successHabClimb;
-    private int successHabClimbLevel;
-    private boolean climbAssistedByPartner;
-    private int assistingClimbTeamNum;
-    private int numPartnerClimbAssists;
-    private int partnerClimbAssistStartLevel;
-    private int partnerClimbAssistEndLevel;
+    private int coneBttmTele;
+    private int cubeBttmTele;
 
-    public TeleOp(int cargoShipHatches, int rocketLevelOneHatches, int rocketLevelTwoHatches,
-                  int rocketLevelThreeHatches, int cargoShipCargo, int rocketLevelOneCargo,
-                  int rocketLevelTwoCargo, int rocketLevelThreeCargo, int hatchesDropped,
-                  int cargoDropped, boolean attemptHabClimb, int attemptHabClimbLevel,
-                  boolean successHabClimb, int successHabClimbLevel,
-                  boolean climbAssistedByPartner, int assistingClimbTeamNum,
-                  int numPartnerClimbAssists, int partnerClimbAssistEndLevel,
-                  int partnerClimbAssistStartLevel) {
-        this.cargoShipHatches = cargoShipHatches;
-        this.rocketLevelOneHatches = rocketLevelOneHatches;
-        this.rocketLevelTwoHatches = rocketLevelTwoHatches;
-        this.rocketLevelThreeHatches = rocketLevelThreeHatches;
-        this.cargoShipCargo = cargoShipCargo;
-        this.rocketLevelOneCargo = rocketLevelOneCargo;
-        this.rocketLevelTwoCargo = rocketLevelTwoCargo;
-        this.rocketLevelThreeCargo = rocketLevelThreeCargo;
-        this.hatchesDropped = hatchesDropped;
-        this.cargoDropped = cargoDropped;
-        this.attemptHabClimb = attemptHabClimb;
-        this.attemptHabClimbLevel = attemptHabClimbLevel;
-        this.successHabClimb = successHabClimb;
-        this.successHabClimbLevel = successHabClimbLevel;
-        this.climbAssistedByPartner = climbAssistedByPartner;
-        this.assistingClimbTeamNum = assistingClimbTeamNum;
-        this.numPartnerClimbAssists = numPartnerClimbAssists;
-        this.partnerClimbAssistEndLevel = partnerClimbAssistEndLevel;
-        this.partnerClimbAssistStartLevel = partnerClimbAssistStartLevel;
+    private int coneDroppedTele;
+    private int cubeDroppedTele;
+
+    private boolean dockAttemptTele;
+    private String dockStatusTele;
+
+    private boolean robotCommitedFoulTele;
+    private String foulTypeTele;
+
+    public TeleOp(int coneTop, int cubeTop, int coneMid, int cubeMid, int coneBttm, int cubeBttm, int coneDropped,
+                  int cubeDropped, boolean dockAttempt, String dockStatus, boolean robotCommitedFoul, String foulType
+
+    ) {
+        this.coneTopTele = coneTop;
+        this.cubeTopTele = cubeTop;
+        this.coneMidTele = coneMid;
+        this.cubeMidTele = cubeMid;
+        this.coneBttmTele = coneBttm;
+        this.cubeBttmTele = cubeBttm;
+        this.coneDroppedTele = coneDropped;
+        this.cubeDroppedTele = cubeDropped;
+        this.dockAttemptTele = dockAttempt;
+        this.dockStatusTele = dockStatus;
+        this.robotCommitedFoulTele = robotCommitedFoul;
+        this.foulTypeTele = foulType;
+
     }
 
-    public void setCargoShipHatches(int cargoShipHatches) {
-        this.cargoShipHatches = cargoShipHatches;
+    public void setRobotCommitedFoulTele(boolean robotCommitedFoulTele) {
+        this.robotCommitedFoulTele = robotCommitedFoulTele;
     }
 
-    public void setRocketLevelOneHatches(int rocketLevelOneHatches) {
-        this.rocketLevelOneHatches = rocketLevelOneHatches;
+    public void setFoulTypeTele(String foulTypeTele) {
+        this.foulTypeTele = foulTypeTele;
     }
 
-    public void setRocketLevelTwoHatches(int rocketLevelTwoHatches) {
-        this.rocketLevelTwoHatches = rocketLevelTwoHatches;
+    public void setDockStatusTele(String dockStatusTele) {
+        this.dockStatusTele = dockStatusTele;
     }
 
-    public void setRocketLevelThreeHatches(int rocketLevelThreeHatches) {
-        this.rocketLevelThreeHatches = rocketLevelThreeHatches;
+    public void setDockAttemptTele(boolean dockAttemptTele) {
+        this.dockAttemptTele = dockAttemptTele;
     }
 
-    public void setCargoShipCargo(int cargoShipCargo) {
-        this.cargoShipCargo = cargoShipCargo;
+    public void setCubeTopTele(int cubeTopTele) {
+        this.cubeTopTele = cubeTopTele;
     }
 
-    public void setRocketLevelOneCargo(int rocketLevelOneCargo) {
-        this.rocketLevelOneCargo = rocketLevelOneCargo;
+    public void setCubeMidTele(int cubeMidTele) {
+        this.cubeMidTele = cubeMidTele;
     }
 
-    public void setRocketLevelTwoCargo(int rocketLevelTwoCargo) {
-        this.rocketLevelTwoCargo = rocketLevelTwoCargo;
+    public void setCubeDroppedTele(int cubeDroppedTele) {
+        this.cubeDroppedTele = cubeDroppedTele;
     }
 
-    public void setRocketLevelThreeCargo(int rocketLevelThreeCargo) {
-        this.rocketLevelThreeCargo = rocketLevelThreeCargo;
+    public void setCubeBttmTele(int cubeBttmTele) {
+        this.cubeBttmTele = cubeBttmTele;
     }
 
-    public void setHatchesDropped(int hatchesDropped) {
-        this.hatchesDropped = hatchesDropped;
+    public void setConeTopTele(int coneTopTele) {
+        this.coneTopTele = coneTopTele;
     }
 
-    public void setCargoDropped(int cargoDropped) {
-        this.cargoDropped = cargoDropped;
+    public void setConeMidTele(int coneMidTele) {
+        this.coneMidTele = coneMidTele;
     }
 
-    public void setAttemptHabClimb(boolean attemptHabClimb) {
-        this.attemptHabClimb = attemptHabClimb;
+    public void setConeDroppedTele(int coneDroppedTele) {
+        this.coneDroppedTele = coneDroppedTele;
     }
 
-    public void setAttemptHabClimbLevel(int attemptHabClimbLevel) {
-        this.attemptHabClimbLevel = attemptHabClimbLevel;
+    public void setConeBttmTele(int coneBttmTele) {
+        this.coneBttmTele = coneBttmTele;
     }
 
-    public void setSuccessHabClimb(boolean successHabClimb) {
-        this.successHabClimb = successHabClimb;
+    public boolean isDockAttemptTele() {
+        return dockAttemptTele;
     }
 
-    public void setSuccessHabClimbLevel(int successHabClimbLevel) {
-        this.successHabClimbLevel = successHabClimbLevel;
+    public boolean isRobotCommitedFoulTele() {
+        return robotCommitedFoulTele;
     }
 
-    public void setClimbAssistedByPartner(boolean climbAssistedByPartner) {
-        this.climbAssistedByPartner = climbAssistedByPartner;
+    public int getConeBttmTele() {
+        return coneBttmTele;
     }
 
-    public void setAssistingClimbTeamNum(int assistingClimbTeamNum) {
-        this.assistingClimbTeamNum = assistingClimbTeamNum;
+    public int getConeDroppedTele() {
+        return coneDroppedTele;
     }
 
-    public void setNumPartnerClimbAssists(int numPartnerClimbAssists) {
-        this.numPartnerClimbAssists = numPartnerClimbAssists;
+    public int getConeMidTele() {
+        return coneMidTele;
     }
 
-    public void setPartnerClimbAssistStartLevel(int partnerClimbAssistStartLevel) {
-        this.partnerClimbAssistStartLevel = partnerClimbAssistStartLevel;
+    public int getConeTopTele() {
+        return coneTopTele;
     }
 
-    public void setPartnerClimbAssistEndLevel(int partnerClimbAssistEndLevel) {
-        this.partnerClimbAssistEndLevel = partnerClimbAssistEndLevel;
+    public int getCubeBttmTele() {
+        return cubeBttmTele;
     }
 
-    public int getCargoShipHatches() {
-        return cargoShipHatches;
+    public int getCubeDroppedTele() {
+        return cubeDroppedTele;
     }
 
-    public int getRocketLevelOneHatches() {
-        return rocketLevelOneHatches;
+    public int getCubeMidTele() {
+        return cubeMidTele;
     }
 
-    public int getRocketLevelTwoHatches() {
-        return rocketLevelTwoHatches;
+    public int getCubeTopTele() {
+        return cubeTopTele;
     }
 
-    public int getRocketLevelThreeHatches() {
-        return rocketLevelThreeHatches;
+    public String getDockStatusTele() {
+        return dockStatusTele;
     }
 
-    public int getCargoShipCargo() {
-        return cargoShipCargo;
-    }
-
-    public int getRocketLevelOneCargo() {
-        return rocketLevelOneCargo;
-    }
-
-    public int getRocketLevelTwoCargo() {
-        return rocketLevelTwoCargo;
-    }
-
-    public int getRocketLevelThreeCargo() {
-        return rocketLevelThreeCargo;
-    }
-
-    public int getHatchesDropped() {
-        return hatchesDropped;
-    }
-
-    public int getCargoDropped() {
-        return cargoDropped;
-    }
-
-    public boolean isAttemptHabClimb() {
-        return attemptHabClimb;
-    }
-
-    public int getAttemptHabClimbLevel() {
-        return attemptHabClimbLevel;
-    }
-
-    public boolean isSuccessHabClimb() {
-        return successHabClimb;
-    }
-
-    public int getSuccessHabClimbLevel() {
-        return successHabClimbLevel;
-    }
-
-    public boolean isClimbAssistedByPartner() {
-        return climbAssistedByPartner;
-    }
-
-    public int getAssistingClimbTeamNum() {
-        return assistingClimbTeamNum;
-    }
-
-    public int getNumPartnerClimbAssists() {
-        return numPartnerClimbAssists;
-    }
-
-    public int getPartnerClimbAssistEndLevel() {
-        return partnerClimbAssistEndLevel;
-    }
-
-    public int getPartnerClimbAssistStartLevel() {
-        return partnerClimbAssistStartLevel;
+    public String getFoulTypeTele() {
+        return foulTypeTele;
     }
 }
