@@ -65,6 +65,7 @@ public class ScoutEntry implements Serializable {
 
 
     public void calculateDerivedStats() {
+
 //        //Sandstorm
 //        sandstormCargo = sandstorm.getRocketCargo() + sandstorm.getCargoShipCargo();
 //
@@ -118,14 +119,14 @@ public class ScoutEntry implements Serializable {
 
         autonomousCubes = sandstorm.getCubeBttm() + sandstorm.getCubeMid() + sandstorm.getCubeTop();
 
-//        if(sandstorm.getDockStatus().equals("Docked")){
-//            autonomousDocked = true;
-//            autonomousDockedEngaged = false;
-//        }
-//        if(sandstorm.getDockStatus().equals("Docked and engaged")){
-//            autonomousDocked = false;
-//            autonomousDockedEngaged = true;
-//        }
+        if(sandstorm.getDockStatus().equals("Robot is docked")){
+            autonomousDocked = true;
+            autonomousDockedEngaged = false;
+        }
+        if(sandstorm.getDockStatus().equals("Robot is docked and engaged")){
+            autonomousDocked = false;
+            autonomousDockedEngaged = true;
+        }
 
         //TeleOP
 
@@ -133,14 +134,14 @@ public class ScoutEntry implements Serializable {
 
         teleOpCubes = teleOp.getCubeBttmTele() + teleOp.getCubeMidTele() + teleOp.getCubeTopTele();
 
-//        if(teleOp.getDockStatusTele().equals("Docked")){
-//            teleOpDocked = true;
-//            teleOpDockedEngaged = false;
-//        }
-//        if(teleOp.getDockStatusTele().equals("Docked and engaged")){
-//            teleOpDocked = false;
-//            teleOpDockedEngaged = true;
-//        }
+        if(teleOp.getDockStatusTele().equals("Robot is docked")){
+            teleOpDocked = true;
+            teleOpDockedEngaged = false;
+        }
+        if(teleOp.getDockStatusTele().equals("Robot is docked and engaged")){
+            teleOpDocked = false;
+            teleOpDockedEngaged = true;
+        }
 
         //Overall
 
@@ -148,7 +149,7 @@ public class ScoutEntry implements Serializable {
 
         totalCubes = autonomousCubes + teleOpCubes;
 
-        totalConesDropped = sandstorm.getConeDropped() + teleOp.getConeDroppedTele();
+        totalConesDropped = sandstorm.getConeDropped()+ teleOp.getConeDroppedTele();
 
         totalCubesDropped = sandstorm.getCubeDropped() + teleOp.getCubeDroppedTele();
 
@@ -156,18 +157,18 @@ public class ScoutEntry implements Serializable {
 
         //Point Calculation
 
-//        if(autonomousDocked){
-//            autonomousDockPoints = 8;
-//        }
-//        if(autonomousDockedEngaged){
-//            autonomousDockPoints = 12;
-//        }
-//        if(teleOpDocked){
-//            teleOpDockPoints = 6;
-//        }
-//        if(teleOpDockedEngaged){
-//            teleOpDockPoints = 10;
-//        }
+        if(autonomousDocked){
+            autonomousDockPoints = 8;
+        }
+        if(autonomousDockedEngaged){
+            autonomousDockPoints = 12;
+        }
+        if(teleOpDocked){
+            teleOpDockPoints = 6;
+        }
+        if(teleOpDockedEngaged){
+            teleOpDockPoints = 10;
+        }
         if(sandstorm.isRobotExitCommunity()){
             mobilityPoints = 3;
         }
@@ -178,9 +179,9 @@ public class ScoutEntry implements Serializable {
         calculatedTeleOpPoints =  teleOp.getConeBttmTele() * 2 + teleOp.getConeMidTele() * 3 + teleOp.getConeTopTele() * 5 +
                                   teleOp.getCubeBttmTele() * 2 + teleOp.getCubeMidTele() * 3 + teleOp.getCubeTopTele() * 5 ;
 
-        //calculatedTotalDockPoints = autonomousDockPoints + teleOpDockPoints;
+        calculatedTotalDockPoints = autonomousDockPoints + teleOpDockPoints;
 
-        calculatedPointContribution = calculatedAutonomousPoints + calculatedTeleOpPoints;// + calculatedTotalDockPoints;
+        calculatedPointContribution = calculatedAutonomousPoints + calculatedTeleOpPoints + calculatedTotalDockPoints;
 
 
 

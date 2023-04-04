@@ -2,6 +2,8 @@ package org.usfirst.frc.team25.scouting.data;
 
 import com.thebluealliance.api.v3.models.Match;
 import com.thebluealliance.api.v3.models.MatchScoreBreakdown2019Allliance;
+
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;

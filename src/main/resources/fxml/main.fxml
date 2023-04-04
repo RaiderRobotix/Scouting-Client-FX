@@ -18,7 +18,7 @@
         </ImageView>
         <ImageView fitHeight="85.0" fitWidth="86.0" layoutX="108.0" layoutY="14.0" pickOnBounds="true"
                    preserveRatio="true">
-            <Image url="@../img/deep_space_logo.png"/>
+            <Image url="@../img/charged_up_logo.png"/>
         </ImageView>
         <Button fx:id="chooseDataFolderButton" layoutX="204.0" layoutY="53.0" mnemonicParsing="false"
                 text="Choose Data Folder"/>

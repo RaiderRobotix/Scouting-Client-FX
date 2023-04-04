@@ -19,16 +19,15 @@ public class TeamReport {
     private final int teamNum;
 
     // Metric names defined to assist with iterating over values
-    public final static String[] autoMetricNames = new String[]{"cargoShipHatches", "rocketHatches", "cargoShipCargo",
-            "rocketCargo"};
+    public final static String[] autoMetricNames = new String[]{"coneTop", "cubeTop", "coneMid",
+            "cubeMid" , "coneBttm" , "cubeBttm"};
     public final static String[] levelPrefixes = new String[]{"levelOne", "levelTwo", "levelThree", "total"};
     // HashMaps containing metric name and value pairings
     private final HashMap<String, Double> averages;
-    public final static String[] teleMetricNames = new String[]{"cargoShipHatches", "rocketLevelOneHatches",
-            "rocketLevelTwoHatches", "rocketLevelThreeHatches", "cargoShipCargo", "rocketLevelOneCargo",
-            "rocketLevelTwoCargo", "rocketLevelThreeCargo", "numPartnerClimbAssists"};
+    public final static String[] teleMetricNames = new String[]{"coneTopTele", "cubeTopTele", "coneMidTele",
+            "cubeMidTele" , "coneBttmTele" , "cubeBttmTele"};
     public final static String[] overallMetricNames = new String[]{"calculatedPointContribution",
-            "calculatedSandstormPoints", "calculatedTeleOpPoints", "totalHatches", "totalCargo"};
+            "calculatedAutonomousPoints", "calculatedTeleOpPoints", "totalCones", "totalCubes"};
     private String teamName, frequentCommentStr, allComments;
     private ArrayList<String> frequentComments;
     private final HashMap<String, Double> standardDeviations;

@@ -13,6 +13,7 @@ import org.usfirst.frc.team25.scouting.data.models.ScoutEntry;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 /**
@@ -158,6 +159,22 @@ public class MainController {
         eventName = jsonFileList.get(0).getName().split(FileManager.FILE_EXTENSION_REGEX)[0].split(" - ")[2];
 
         ArrayList<ScoutEntry> scoutEntries = FileManager.deserializeData(jsonFileList);
+        for (ScoutEntry entry : scoutEntries) {
+//            System.out.println("*********************");
+//            System.out.println(entry.getPreMatch().getMatchNum());
+//            System.out.println(entry.getPreMatch().getScoutName());
+//            //System.out.println(entry.getAutonomous().getConeTop());
+            try {
+                System.out.println(entry.getAutonomous().getConeBttm());
+            }catch (NullPointerException e){
+                System.out.println("*********************");
+                System.out.println(entry.getPreMatch().getScoutPos());
+                System.out.println(entry.getPreMatch().getMatchNum());
+
+            }
+
+        }
+
         eventReport = new EventReport(scoutEntries, eventName, currentDataDirectory);
 
         File teamNameList = FileManager.getTeamNameList(currentDataDirectory);
