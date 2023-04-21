@@ -26,12 +26,14 @@ public class TeamReport {
     private final HashMap<String, Double> averages;
     public final static String[] teleMetricNames = new String[]{"coneTopTele", "cubeTopTele", "coneMidTele",
             "cubeMidTele" , "coneBttmTele" , "cubeBttmTele"};
+    public final static String[] endgameMetricNames = new String[]{"docked", "engaged"};
     public final static String[] overallMetricNames = new String[]{"calculatedPointContribution",
             "calculatedAutonomousPoints", "calculatedTeleOpPoints", "totalCones", "totalCubes"};
     private String teamName, frequentCommentStr, allComments;
     private ArrayList<String> frequentComments;
     private final HashMap<String, Double> standardDeviations;
     private final HashMap<String, Double> attemptSuccessRates;
+    private final HashMap<String, Double> attemptSuccessRatesDocked;
     private final HashMap<String, Integer> counts;
     private final HashMap<String, Boolean> abilities;
 
@@ -54,6 +56,10 @@ public class TeamReport {
 
         for (String key : model.attemptSuccessRates.keySet()) {
             attemptSuccessRates.put(key, 0.0);
+        }
+
+        for (String key : model.attemptSuccessRatesDocked.keySet()) {
+            attemptSuccessRatesDocked.put(key, 0.0);
         }
 
         for (String key : model.counts.keySet()) {
@@ -80,6 +86,7 @@ public class TeamReport {
         standardDeviations = new HashMap<>();
         counts = new HashMap<>();
         attemptSuccessRates = new HashMap<>();
+        attemptSuccessRatesDocked = new HashMap<>();
         abilities = new HashMap<>();
         frequentComments = new ArrayList<>();
     }
@@ -90,6 +97,7 @@ public class TeamReport {
      */
     public void processReport() {
         filterNoShow();
+        processDockedEngaged();
         findFrequentComments();
         calculateStats();
         //findAbilities();
@@ -135,6 +143,30 @@ public class TeamReport {
             return 0;
         }
         return counts.get(metric);
+    }
+
+    public void processDockedEngaged(){
+        for(int i = 0; i < entries.size(); i++){
+            if(entries.get(i).getTeleOp().isDockAttemptTele()){
+                incrementCount("dockAttempt");
+                if(entries.get(i).getTeleOp().getDockStatusTele().contains("docked")){
+                    incrementCount("docked");
+                }
+                if(entries.get(i).getTeleOp().getDockStatusTele().contains("engaged")){
+                    incrementCount("engaged");
+                }
+            }
+
+            if(entries.get(i).getAutonomous().isDockAttempt()){
+                incrementCount("autoDockAttempt");
+                if(entries.get(i).getAutonomous().getDockStatus().contains("docked")){
+                    incrementCount("autoDocked");
+                }
+                if(entries.get(i).getAutonomous().getDockStatus().contains("engaged")){
+                    incrementCount("autoEngaged");
+                }
+            }
+        }
     }
 
     /**
@@ -331,11 +363,20 @@ public class TeamReport {
         }
     }
 
+    private void calculateAttemptSuccessRatesDocked(){
+
+    }
+
     /**
      * Calculates the attempt-success rates of HAB climb, sandstorm bonus, and/or sandstorm game piece placing for a
      * team
      */
     private void calculateAttemptSuccessRates() {
+//        int attempts = 0;
+//        attempts = entries.size();
+//
+//        double dockedRate = getCount()
+
         for (int i = 0; i < 4; i++) {
             // Calculating HAB line crosses; skips level 3
             if (i != 2) {
@@ -382,6 +423,32 @@ public class TeamReport {
                     getCount(prefix + "AutoSuccess")));
             attemptSuccessRates.put(prefix + "AutoSuccess", placeRate);
         }
+
+        int AutoDockAttempts = getCount("autoDockAttempt");
+
+        attemptSuccessRates.put("AutoDockAttempts", (double) AutoDockAttempts);
+
+        double AutoDockRate = (double) getCount("autoDocked") / AutoDockAttempts;
+        double AutoEngageRate = (double) getCount("autoEngaged") / AutoDockAttempts;
+
+        attemptSuccessRates.put("AutoDockedSuccess", AutoDockRate);
+        attemptSuccessRates.put("AutoEngagedSuccess", AutoEngageRate);
+
+        standardDeviations.put("AutoDocked", Stats.standardDeviation(AutoDockAttempts, getCount("autoDocked")));
+        standardDeviations.put("AutoEngaged", Stats.standardDeviation(AutoDockAttempts, getCount("autoEngaged")));
+
+        int dockAttempts = getCount("dockAttempt");
+
+        attemptSuccessRates.put("DockAttempts", (double) dockAttempts);
+
+        double dockRate = (double) getCount("docked") / dockAttempts;
+        double engageRate = (double) getCount("engaged") / dockAttempts;
+
+        attemptSuccessRates.put("DockedSuccess", dockRate);
+        attemptSuccessRates.put("EngagedSuccess", engageRate);
+
+        standardDeviations.put("Docked", Stats.standardDeviation(dockAttempts, getCount("docked")));
+        standardDeviations.put("Engaged", Stats.standardDeviation(dockAttempts, getCount("engaged")));
     }
 
     /**
@@ -437,19 +504,27 @@ public class TeamReport {
             statusString.append(" - ").append(getTeamName());
         }
 
-        statusString.append("\n\nSandstorm:");
+        statusString.append("\n\nAutonomous:");
 
         for (String metric : autoMetricNames) {
             statusString.append("\nAvg. ").append(StringProcessing.convertCamelToSentenceCase(metric)).append(": ").append(Stats.round
                     (averages.get("auto" + metric), 2));
         }
-
-        statusString.append("\nHAB line cross: ").append(Stats.round(attemptSuccessRates.get("totalCross") * 100, 2)).append("% (").append(getCount("totalCross")).append("/").append(entries.size()).append(")");
-
-        for (int i = 0; i < 2; i++) {
-            statusString.append("\nHAB lvl ").append(i + 1).append(" cross: ");
-            statusString.append(Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Cross") * 100, 2)).append("% "
-            ).append("(").append(getCount(levelPrefixes[i] + "Cross")).append("/").append(getCount(levelPrefixes[i] + "Start")).append(")");
+        statusString.append("\nDocked success: ");
+        try {
+            statusString.append(Stats.round(attemptSuccessRates.get("AutoDockedSuccess") * 100, 0)).append("% ")
+                    .append("(").append(getCount("autoDocked")).append("/").append(attemptSuccessRates.get("AutoDockAttempts").intValue())
+                    .append(")");
+        } catch(NumberFormatException e) {
+            statusString.append("\nDid not attempt to dock");
+        }
+        try {
+            statusString.append("\nEngaged success: ");
+            statusString.append(Stats.round(attemptSuccessRates.get("AutoEngagedSuccess") * 100, 0)).append("% ")
+                    .append("(").append(getCount("autoEngaged")).append("/").append(attemptSuccessRates.get("AutoDockAttempts").intValue())
+                    .append(")");
+        } catch (NumberFormatException e){
+            statusString.append("\nDid not attempt to engage");
         }
 
         statusString.append("\n\nTele-Op:");
@@ -460,18 +535,23 @@ public class TeamReport {
         }
 
         statusString.append("\n\nEndgame:");
+//
+        statusString.append("\nDocked success: ");
+        try {
+            statusString.append(Stats.round(attemptSuccessRates.get("DockedSuccess") * 100, 0)).append("% ")
+                    .append("(").append(getCount("docked")).append("/").append(attemptSuccessRates.get("DockAttempts").intValue())
+                    .append(")");
+            statusString.append("\nEngaged success: ");
+        } catch (NumberFormatException e){
+            statusString.append("\nDid not attempt to dock");
+        }
 
-        for (int i = 0; i < 4; i++) {
-
-            if (i == 3) {
-                statusString.append("\nTotal climb success: ");
-            } else {
-                statusString.append("\nLvl ").append(i + 1).append(" climb success: ");
-            }
-            statusString.append(Stats.round(attemptSuccessRates.get(levelPrefixes[i] + "Climb") * 100, 0)).append("% "
-            ).append("(").append(getCount(levelPrefixes[i] + "ClimbSuccess")).append("/").append(getCount(levelPrefixes[i] +
-                    "ClimbAttempt")).append(")");
-
+        try{
+            statusString.append(Stats.round(attemptSuccessRates.get("EngagedSuccess") * 100, 0)).append("% ")
+                    .append("(").append(getCount("engaged")).append("/").append(attemptSuccessRates.get("DockAttempts").intValue())
+                    .append(")");
+        } catch (NumberFormatException e){
+            statusString.append("\nDid not attempt to engage");
         }
 
         statusString.append("\n\nOverall:");
@@ -487,6 +567,8 @@ public class TeamReport {
         if (!allComments.isEmpty()) {
             statusString.append("\nAll comments:\n").append(allComments);
         }
+
+        statusString.append("\n\n");
 
         return statusString.toString();
 

@@ -82,20 +82,20 @@
                    prefWidth="70.0" promptText="Match #"/>
 
     </Pane>
-    <Pane prefHeight="130.0" prefWidth="559.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+    <Pane prefHeight="130.0" prefWidth="557.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
         <RadioButton fx:id="teamEventsDownload" layoutX="14.0" layoutY="56.0" mnemonicParsing="false" selected="true"
                      text="All events in current year"/>
         <RadioButton fx:id="eventDownload" layoutX="179.0" layoutY="56.0" mnemonicParsing="false"
                      text="Individual event"/>
-        <TextField fx:id="teamNumEventCode" layoutX="300.0" layoutY="52.0" prefHeight="25.0" prefWidth="170.0"
-                   promptText="Select All Events or Individual"/>
+        <TextField fx:id="teamNumEventCode" layoutX="300.0" layoutY="52.0" prefHeight="25.0" prefWidth="167.0"
+                   promptText="Please Select either All Events or Individual Event"/>
         <Text layoutX="14.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0"
               text="Download The Blue Alliance Data">
             <font>
                 <Font name="Calibri Bold" size="18.0"/>
             </font>
         </Text>
-        <Button fx:id="downloadDataButton" disable="true" layoutX="484.0" layoutY="52.0" mnemonicParsing="false"
+        <Button fx:id="downloadDataButton" disable="true" layoutX="487.0" layoutY="52.0" mnemonicParsing="false"
                 text="Download"/>
     </Pane>
     <TextArea fx:id="statusTextBox" editable="false" prefHeight="382.0" prefWidth="260.0" wrapText="true"

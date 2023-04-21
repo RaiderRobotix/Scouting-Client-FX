@@ -67,6 +67,9 @@ public class MainController {
         matchBasedGroup = new TextField[]{analysisOppTeamOne, analysisOppTeamTwo, analysisOppTeamThree,
                 analysisMatchNum};
 
+        teamEventsDownload.setOnAction(event -> updateTextCodeTextField(true));
+        eventDownload.setOnAction(event -> updateTextCodeTextField(false));
+
         for (RadioButton button : reportButtons) {
             button.setOnAction(event -> {
                 enableTextFieldGroup(allianceBasedGroup,
@@ -114,6 +117,14 @@ public class MainController {
      */
     private void addStatus(String message) {
         statusTextBox.setText(message + "\n====================\n" + statusTextBox.getText());
+    }
+
+    private void updateTextCodeTextField(boolean isIndividual) {
+        if(isIndividual){
+            teamNumEventCode.setPromptText("Please enter a Team Number");
+        } else {
+            teamNumEventCode.setPromptText("Please enter an Event Code.");
+        }
     }
 
     /**
@@ -363,8 +374,9 @@ public class MainController {
     private void tryDownloadData() {
         String response;
         if (teamNumEventCode.getText().isEmpty()) {
-            response = "Please enter a team number or event key.";
+            response = "Please select Individual Event or All Events";
         } else if (teamEventsDownload.isSelected()) {
+            response = "Please enter a valid team number.";
             try {
                 response = BlueAlliance.downloadTeamEvents(currentDataDirectory,
                         Integer.parseInt(teamNumEventCode.getText()));
@@ -372,8 +384,13 @@ public class MainController {
                 response = teamNumEventCode.getText() + " is not a valid team number";
             }
         } else {
-            response = BlueAlliance.downloadEventTeamData(currentDataDirectory, teamNumEventCode.getText());
-
+            response = "Please enter a valid event code.";
+            try {
+                Integer.parseInt(teamNumEventCode.getText());
+                response = teamNumEventCode.getText() + " is not a valid event code";
+            } catch (NumberFormatException e){
+                response = BlueAlliance.downloadEventTeamData(currentDataDirectory, teamNumEventCode.getText());
+            }
         }
         addStatus(response);
     }

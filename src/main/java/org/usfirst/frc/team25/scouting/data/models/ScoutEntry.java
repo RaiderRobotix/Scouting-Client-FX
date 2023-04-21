@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ScoutEntry implements Serializable {
 
     private PreMatch preMatch;
-    private Autonomous sandstorm;
+    private Autonomous autonomous;
     private TeleOp teleOp;
     private PostMatch postMatch;
 
@@ -115,15 +115,15 @@ public class ScoutEntry implements Serializable {
 //        calculatedPointContribution = calculatedSandstormPoints + calculatedClimbPoints + calculatedTeleOpPoints;
 
         //Autonomous
-        autonomousCones = sandstorm.getConeBttm() + sandstorm.getConeMid() + sandstorm.getConeTop();
+        autonomousCones = autonomous.getConeBttm() + autonomous.getConeMid() + autonomous.getConeTop();
 
-        autonomousCubes = sandstorm.getCubeBttm() + sandstorm.getCubeMid() + sandstorm.getCubeTop();
+        autonomousCubes = autonomous.getCubeBttm() + autonomous.getCubeMid() + autonomous.getCubeTop();
 
-        if(sandstorm.getDockStatus().equals("Robot is docked")){
+        if(autonomous.getDockStatus().equals("Robot is docked")){
             autonomousDocked = true;
             autonomousDockedEngaged = false;
         }
-        if(sandstorm.getDockStatus().equals("Robot is docked and engaged")){
+        if(autonomous.getDockStatus().equals("Robot is docked and engaged")){
             autonomousDocked = false;
             autonomousDockedEngaged = true;
         }
@@ -149,9 +149,9 @@ public class ScoutEntry implements Serializable {
 
         totalCubes = autonomousCubes + teleOpCubes;
 
-        totalConesDropped = sandstorm.getConeDropped()+ teleOp.getConeDroppedTele();
+        totalConesDropped = autonomous.getConeDropped()+ teleOp.getConeDroppedTele();
 
-        totalCubesDropped = sandstorm.getCubeDropped() + teleOp.getCubeDroppedTele();
+        totalCubesDropped = autonomous.getCubeDropped() + teleOp.getCubeDroppedTele();
 
         totalCycles = totalCones + totalCubes + totalConesDropped + totalCubesDropped;
 
@@ -169,12 +169,12 @@ public class ScoutEntry implements Serializable {
         if(teleOpDockedEngaged){
             teleOpDockPoints = 10;
         }
-        if(sandstorm.isRobotExitCommunity()){
+        if(autonomous.isRobotExitCommunity()){
             mobilityPoints = 3;
         }
 
-        calculatedAutonomousPoints = sandstorm.getConeBttm() * 3 + sandstorm.getConeMid() * 4 + sandstorm.getConeTop() * 6 +
-                                    sandstorm.getCubeBttm() * 3 + sandstorm.getCubeMid() * 4 + sandstorm.getCubeTop() * 6  + mobilityPoints;
+        calculatedAutonomousPoints = autonomous.getConeBttm() * 3 + autonomous.getConeMid() * 4 + autonomous.getConeTop() * 6 +
+                autonomous.getCubeBttm() * 3 + autonomous.getCubeMid() * 4 + autonomous.getCubeTop() * 6  + mobilityPoints;
 
         calculatedTeleOpPoints =  teleOp.getConeBttmTele() * 2 + teleOp.getConeMidTele() * 3 + teleOp.getConeTopTele() * 5 +
                                   teleOp.getCubeBttmTele() * 2 + teleOp.getCubeMidTele() * 3 + teleOp.getCubeTopTele() * 5 ;
@@ -194,7 +194,7 @@ public class ScoutEntry implements Serializable {
     }
 
     public Autonomous getAutonomous() {
-        return sandstorm;
+        return autonomous;
     }
 
     public TeleOp getTeleOp() {

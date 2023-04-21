@@ -297,12 +297,15 @@ public class EventReport {
 
         try {
             File matchList = FileManager.getMatchList(directory);
-
             String[] matches = FileManager.getFileString(matchList).split("\n");
             for (String match : matches) {
+                System.out.println(match);
                 String[] terms = match.split(",");
 
                 if (Integer.parseInt(terms[0]) == matchNum) {
+                    for(String term : terms){
+//                        System.out.print("terms " + term + " ");
+                    }
                     for (int i = 0; i < 2; i++) {
                         int[] teamNums = new int[3];
 
@@ -310,7 +313,8 @@ public class EventReport {
                             // Multiply by i here to represent the two alliances
                             teamNums[j] = Integer.parseInt(terms[j + 1 + 3 * i]);
                         }
-                        allianceReports[i] = getAllianceReport(teamNums);
+//                        System.out.println("team " + teamNums[0]);
+//                        allianceReports[i] = getAllianceReport(teamNums);
                     }
 
                     return allianceReports;

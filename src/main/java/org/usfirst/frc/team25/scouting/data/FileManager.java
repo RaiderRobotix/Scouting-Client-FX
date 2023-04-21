@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -126,7 +127,25 @@ public class FileManager {
      * @return Array of File objects from the directory
      */
     public static File[] getFilesFromDirectory(File directory) {
-        return directory.listFiles();
+        ArrayList<File> tmpFiles = new ArrayList<File>(Arrays.asList(directory.listFiles()));
+        ArrayList<File> files = new ArrayList<File>();
+        for(File file : tmpFiles){
+            try{
+                if(file.listFiles() == null){
+                    files.add(file);
+                }
+            } catch (Exception e){
+                System.out.println(e);
+            }
+        }
+
+        File[] filesArray = new File[files.size()];
+
+        for(int i = 0; i < files.size(); i++){
+            filesArray[i] = files.get(i);
+        }
+
+        return filesArray;
     }
 
     /**
@@ -148,6 +167,7 @@ public class FileManager {
         }
         return null;
     }
+
 
     /**
      * Deletes all JSON data files from a data directory that come from individual scouting apps, only retaining the

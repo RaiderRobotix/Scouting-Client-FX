@@ -67,6 +67,9 @@ public class BlueAlliance {
      * @return Status text of the download
      */
     public static String downloadEventTeamData(File outputFolder, String eventCode) {
+//        int year = Calendar.getInstance().get(Calendar.YEAR);
+//
+//        eventCode = year + eventCode;
 
         String response = "Successfully downloaded data for event " + eventCode;
 
